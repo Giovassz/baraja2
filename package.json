@@ -10,7 +10,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "importar-catalogo": "tsx scripts/importar-catalogo.ts",
+    "importar-catalogo": "node --env-file=.env.local --import tsx scripts/importar-catalogo.ts",
     "db:reset": "supabase db reset"
   },
   "dependencies": {
