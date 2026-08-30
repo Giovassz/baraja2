@@ -284,15 +284,46 @@ body {
     animation: brillo-pasa 3.4s ease-in-out infinite;
   }
 
-  /* --- Landing / página web --- */
+  /* --- Landing / página web (estilo Tinder: audaz, degradado, tipografía grande) --- */
   .lp-seccion {
-    @apply mx-auto w-full max-w-5xl px-5;
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
   }
   .lp-titulo {
     @apply font-heading text-3xl font-bold leading-tight text-white sm:text-4xl;
   }
+  /* Titular gigante estilo Tinder */
+  .lp-mega {
+    @apply font-heading font-extrabold leading-[0.95] tracking-tight text-white;
+    font-size: clamp(2.6rem, 8vw, 5.5rem);
+  }
   .lp-card {
     @apply rounded-3xl border border-white/10 bg-white/[0.035] p-5 backdrop-blur-sm;
+  }
+  /* Degradado de marca (el "Tinder" de Baraja2) */
+  .degradado-marca {
+    background: linear-gradient(115deg, #ff5c8a 0%, #e85d8a 42%, #ff7a59 100%);
+  }
+  .texto-degradado {
+    background: linear-gradient(115deg, #ff8fb0, #ff7a59);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* Fondo del hero: degradado vivo + oscurecido abajo para el texto */
+  .hero-fondo {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(circle at 78% 18%, rgba(255, 122, 89, 0.55), transparent 46%),
+      radial-gradient(circle at 12% 8%, rgba(255, 92, 138, 0.6), transparent 44%),
+      linear-gradient(180deg, #3a1526 0%, #20101b 62%, #140810 100%);
+  }
+  .nav-landing {
+    @apply sticky top-0 z-50 transition-colors duration-300;
+  }
+  .nav-landing[data-scrolled='true'] {
+    @apply border-b border-white/10 bg-noche/85 backdrop-blur-xl;
   }
   /* Marco de teléfono para el mockup */
   .telefono {
