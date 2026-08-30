@@ -4,6 +4,8 @@ import { cache } from 'react';
 import { redirect } from 'next/navigation';
 import { crearClienteServidor } from '@/lib/supabase/server';
 import { calcularCicloNumero } from '@/lib/reglas/ciclos';
+import { nivelPareja, type EstadoNivel } from '@/lib/reglas/niveles';
+import { PRECIO_PLOT_TWIST_TIENDA } from '@/lib/reglas/constantes';
 import type { Fila, Modalidad } from '@/lib/supabase/tipos';
 
 export interface UsuarioActual extends Fila<'usuarios'> {
@@ -79,6 +81,7 @@ export async function exigirParejaVinculada(): Promise<ParejaConMiembros> {
 export interface CartaConTexto extends Fila<'cartas_asignadas'> {
   texto: string;
   tipo: 'estandar' | 'spicy';
+  puntosOtorgados: number;
 }
 
 export interface DatosDashboard {
@@ -126,7 +129,7 @@ export async function obtenerDatosDashboard(): Promise<DatosDashboard> {
       .select('*')
       .eq('pareja_id', pareja.id)
       .eq('ciclo_numero', ciclo),
-    supabase.from('catalogo_cartas').select('id, texto, tipo'),
+    supabase.from('catalogo_cartas').select('id, texto, tipo, puntos_otorgados'),
     supabase
       .from('puntos_semanales')
       .select('*')
@@ -155,6 +158,7 @@ export async function obtenerDatosDashboard(): Promise<DatosDashboard> {
       ...c,
       texto: cat?.texto ?? 'Carta',
       tipo: (cat?.tipo as 'estandar' | 'spicy') ?? 'estandar',
+      puntosOtorgados: cat?.puntos_otorgados ?? 1,
     };
   };
 
@@ -187,5 +191,142 @@ export async function obtenerDatosDashboard(): Promise<DatosDashboard> {
       };
     }),
     reloadUsado: !!reload,
+  };
+}
+
+// --- Chrome (barra superior) ----------------------------------------------
+
+export interface ResumenChrome {
+  nombreEspacio: string;
+  nivel: EstadoNivel;
+  puntos: number;
+  cicloNumero: number;
+}
+
+export const obtenerResumenChrome = cache(async (): Promise<ResumenChrome> => {
+  const supabase = crearClienteServidor();
+  const usuario = await obtenerUsuarioActual();
+  const pareja = await exigirParejaVinculada();
+
+  const [{ count: cumplidas }, { data: puntos }] = await Promise.all([
+    supabase
+      .from('historial_eventos')
+      .select('*', { count: 'exact', head: true })
+      .eq('pareja_id', pareja.id)
+      .eq('tipo_evento', 'carta_cumplida'),
+    supabase
+      .from('puntos_semanales')
+      .select('puntos')
+      .eq('usuario_id', usuario.id)
+      .eq('ciclo_numero', pareja.cicloNumero)
+      .maybeSingle(),
+  ]);
+
+  return {
+    nombreEspacio: pareja.nombre_espacio ?? 'Baraja2',
+    nivel: nivelPareja(cumplidas ?? 0),
+    puntos: puntos?.puntos ?? 0,
+    cicloNumero: pareja.cicloNumero,
+  };
+});
+
+// --- Tienda de plot twists ----------------------------------------------
+
+export interface OpcionTienda {
+  id: string;
+  nombre: string;
+  descripcion: string;
+  efecto: 'bloquear_carta' | 'robar_carta' | 'otro';
+  tipo: 'estandar' | 'spicy';
+}
+
+export interface DatosTienda {
+  puntos: number;
+  precio: number;
+  opciones: OpcionTienda[];
+  compradosEsteCiclo: number;
+}
+
+export async function obtenerDatosTienda(): Promise<DatosTienda> {
+  const supabase = crearClienteServidor();
+  const usuario = await obtenerUsuarioActual();
+  const pareja = await exigirParejaVinculada();
+
+  const tipos: ('estandar' | 'spicy')[] = usuario.modo_spicy_activo
+    ? ['estandar', 'spicy']
+    : ['estandar'];
+
+  const [{ data: catalogo }, { data: puntos }, { data: comprados }] = await Promise.all([
+    supabase
+      .from('catalogo_plot_twists')
+      .select('id, nombre, descripcion, efecto, tipo')
+      .eq('activo', true)
+      .eq('modalidad', pareja.modalidad)
+      .in('tipo', tipos),
+    supabase
+      .from('puntos_semanales')
+      .select('puntos')
+      .eq('usuario_id', usuario.id)
+      .eq('ciclo_numero', pareja.cicloNumero)
+      .maybeSingle(),
+    supabase
+      .from('plot_twists_desbloqueados')
+      .select('id')
+      .eq('usuario_id', usuario.id)
+      .eq('ciclo_numero', pareja.cicloNumero),
+  ]);
+
+  return {
+    puntos: puntos?.puntos ?? 0,
+    precio: PRECIO_PLOT_TWIST_TIENDA,
+    opciones: (catalogo ?? []) as OpcionTienda[],
+    compradosEsteCiclo: (comprados ?? []).length,
+  };
+}
+
+// --- Perfil -------------------------------------------------------------
+
+export interface DatosPerfil {
+  usuario: UsuarioActual;
+  pareja: ParejaConMiembros;
+  preferencias: { reset_semanal: boolean; carta_recibida: boolean };
+  totalCartasCumplidas: number;
+  totalPlotTwists: number;
+  nivel: EstadoNivel;
+}
+
+export async function obtenerDatosPerfil(): Promise<DatosPerfil> {
+  const supabase = crearClienteServidor();
+  const usuario = await obtenerUsuarioActual();
+  const pareja = await exigirParejaVinculada();
+
+  const [{ data: pref }, { count: cumplidas }, { count: plotTwists }] = await Promise.all([
+    supabase
+      .from('preferencias_notificacion')
+      .select('reset_semanal, carta_recibida')
+      .eq('usuario_id', usuario.id)
+      .maybeSingle(),
+    supabase
+      .from('historial_eventos')
+      .select('*', { count: 'exact', head: true })
+      .eq('pareja_id', pareja.id)
+      .eq('tipo_evento', 'carta_cumplida'),
+    supabase
+      .from('historial_eventos')
+      .select('*', { count: 'exact', head: true })
+      .eq('pareja_id', pareja.id)
+      .eq('tipo_evento', 'plot_twist_usado'),
+  ]);
+
+  return {
+    usuario,
+    pareja,
+    preferencias: {
+      reset_semanal: pref?.reset_semanal ?? true,
+      carta_recibida: pref?.carta_recibida ?? true,
+    },
+    totalCartasCumplidas: cumplidas ?? 0,
+    totalPlotTwists: plotTwists ?? 0,
+    nivel: nivelPareja(cumplidas ?? 0),
   };
 }

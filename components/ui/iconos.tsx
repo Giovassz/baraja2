@@ -2,16 +2,15 @@
 // Implementa BJ2-002
 import {
   Heart,
-  Diamond,
-  Club,
-  Spade,
-  Sparkles,
+  HeartHandshake,
   Flame,
+  Sparkles,
   RefreshCw,
   Check,
   CircleCheck,
   X,
   ChevronLeft,
+  ChevronRight,
   ArrowRight,
   BellRing,
   BellOff,
@@ -22,7 +21,6 @@ import {
   Plane,
   Repeat,
   House,
-  HeartHandshake,
   Lock,
   Swords,
   Hand,
@@ -34,6 +32,27 @@ import {
   ShieldCheck,
   Clock,
   Mail,
+  Store,
+  ShoppingBag,
+  Coins,
+  Gem,
+  Star,
+  TrendingUp,
+  Gift,
+  Music,
+  Coffee,
+  Camera,
+  MessageCircle,
+  Phone,
+  MapPin,
+  Sun,
+  Moon,
+  Utensils,
+  Gamepad2,
+  Feather,
+  Flower2,
+  Mic,
+  Video,
   PawPrint,
   Cat,
   Dog,
@@ -51,16 +70,14 @@ export type { LucideIcon };
 export const Icono = {
   corazon: Heart,
   corazones: HeartHandshake,
-  rombo: Diamond,
-  trebol: Club,
-  pica: Spade,
-  chispa: Sparkles,
   llama: Flame,
+  chispa: Sparkles,
   recargar: RefreshCw,
   check: Check,
   cumplida: CircleCheck,
   cerrar: X,
   atras: ChevronLeft,
+  siguiente: ChevronRight,
   flecha: ArrowRight,
   campana: BellRing,
   campanaOff: BellOff,
@@ -82,8 +99,55 @@ export const Icono = {
   escudo: ShieldCheck,
   reloj: Clock,
   sobre: Mail,
+  tienda: Store,
+  bolsa: ShoppingBag,
+  moneda: Coins,
+  gema: Gem,
+  estrella: Star,
+  nivel: TrendingUp,
+  // íconos de carta estándar
+  regalo: Gift,
+  musica: Music,
+  cafe: Coffee,
+  camara: Camera,
+  mensaje: MessageCircle,
+  llamada: Phone,
+  mapa: MapPin,
+  sol: Sun,
+  luna: Moon,
+  plato: Utensils,
+  juego: Gamepad2,
+  pluma: Feather,
+  flor: Flower2,
+  micro: Mic,
+  video: Video,
   huella: PawPrint,
-} as const;
+} satisfies Record<string, LucideIcon>;
+
+export type NombreIcono = keyof typeof Icono;
+
+/** Subconjunto de íconos válidos como cara de una carta. */
+export type NombreIconoCarta =
+  | 'llama'
+  | 'regalo'
+  | 'musica'
+  | 'cafe'
+  | 'camara'
+  | 'mensaje'
+  | 'llamada'
+  | 'mapa'
+  | 'estrella'
+  | 'sol'
+  | 'luna'
+  | 'plato'
+  | 'juego'
+  | 'pluma'
+  | 'flor'
+  | 'micro'
+  | 'video'
+  | 'mano'
+  | 'candado'
+  | 'chispa';
 
 // Íconos-animal para los avatares provisionales (los definitivos llegan después).
 export const ICONOS_ANIMAL = {
@@ -95,6 +159,6 @@ export const ICONOS_ANIMAL = {
   ardilla: Squirrel,
   tortuga: Turtle,
   caracol: Snail,
-} as const;
+} satisfies Record<string, LucideIcon>;
 
 export type NombreAnimal = keyof typeof ICONOS_ANIMAL;

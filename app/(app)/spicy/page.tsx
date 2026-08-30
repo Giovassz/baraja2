@@ -7,7 +7,7 @@ import {
   etiquetaModalidad,
 } from '@/lib/datos';
 import { PanelSpicy } from './PanelSpicy';
-import { WidgetCarta } from '@/components/widgets/WidgetCarta';
+import { CatalogoSpicy } from './CatalogoSpicy';
 import { EnlaceVolver, TituloPagina } from '@/components/ui/EncabezadoPagina';
 import { Icono } from '@/components/ui/iconos';
 
@@ -31,7 +31,7 @@ export default async function SpicyPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <EnlaceVolver />
+      <EnlaceVolver href="/perfil" />
       <TituloPagina
         icono={Icono.llama}
         subtitulo="Un extra para mayores de edad, independiente de tus 5 cartas semanales. Puedes jugar estas cartas cuando quieran."
@@ -49,24 +49,10 @@ export default async function SpicyPage() {
           <h2 className="mb-2 text-lg">
             Catálogo Spicy · {etiquetaModalidad(pareja.modalidad)}
           </h2>
-          {cartasSpicy.length === 0 ? (
-            <p className="text-sm text-morado-marca/60">
-              Todavía no hay cartas Spicy cargadas para su modalidad.
-            </p>
-          ) : (
-            <div className="grid grid-cols-2 gap-4">
-              {cartasSpicy.map((c) => (
-                <WidgetCarta
-                  key={c.id}
-                  id={c.id}
-                  texto={c.texto}
-                  tipo="spicy"
-                  rol="spicy-catalogo"
-                  nombreCompanero={pareja.companero?.nombre}
-                />
-              ))}
-            </div>
-          )}
+          <CatalogoSpicy
+            cartas={cartasSpicy}
+            nombreCompanero={pareja.companero?.nombre}
+          />
         </section>
       )}
     </div>

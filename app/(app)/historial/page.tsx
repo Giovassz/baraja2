@@ -3,7 +3,7 @@
 import { crearClienteServidor } from '@/lib/supabase/server';
 import { exigirParejaVinculada } from '@/lib/datos';
 import { ListaHistorial, type EventoHistorial } from './ListaHistorial';
-import { EnlaceVolver, TituloPagina } from '@/components/ui/EncabezadoPagina';
+import { TituloPagina } from '@/components/ui/EncabezadoPagina';
 import { Icono } from '@/components/ui/iconos';
 
 export const metadata = { title: 'Historial' };
@@ -33,7 +33,6 @@ export default async function HistorialPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <EnlaceVolver />
       <TituloPagina icono={Icono.corazones}>Su historia juntos</TituloPagina>
       <ListaHistorial eventos={items} />
     </div>

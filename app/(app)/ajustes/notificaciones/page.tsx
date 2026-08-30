@@ -1,37 +1,8 @@
-// Ajustes de notificaciones: suscripción Web Push + preferencias por tipo (Fase 6)
-// Implementa BJ2-038, BJ2-040
-import { crearClienteServidor } from '@/lib/supabase/server';
-import { obtenerUsuarioActual } from '@/lib/datos';
-import { PanelNotificaciones } from './PanelNotificaciones';
-import { EnlaceVolver, TituloPagina } from '@/components/ui/EncabezadoPagina';
-import { Icono } from '@/components/ui/iconos';
+// La configuración de notificaciones ahora vive dentro de /perfil (barra inferior).
+// Se mantiene la ruta por compatibilidad y redirige.
+// Implementa BJ2-040
+import { redirect } from 'next/navigation';
 
-export const metadata = { title: 'Notificaciones' };
-
-export default async function AjustesNotificacionesPage() {
-  const supabase = crearClienteServidor();
-  const usuario = await obtenerUsuarioActual();
-
-  const { data: pref } = await supabase
-    .from('preferencias_notificacion')
-    .select('reset_semanal, carta_recibida')
-    .eq('usuario_id', usuario.id)
-    .maybeSingle();
-
-  const vapidPublica = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? '';
-
-  return (
-    <div className="flex flex-col gap-4">
-      <EnlaceVolver />
-      <TituloPagina icono={Icono.campana}>Notificaciones</TituloPagina>
-
-      <PanelNotificaciones
-        vapidPublica={vapidPublica}
-        preferencias={{
-          reset_semanal: pref?.reset_semanal ?? true,
-          carta_recibida: pref?.carta_recibida ?? true,
-        }}
-      />
-    </div>
-  );
+export default function AjustesNotificacionesPage() {
+  redirect('/perfil');
 }

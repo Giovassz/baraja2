@@ -25,7 +25,6 @@ export async function usarPlotTwistBloquear(
   if (error) return fallo(codigoDesdeError(error));
 
   revalidatePath('/dashboard');
-  revalidatePath('/plot-twists');
   revalidatePath('/historial');
   return exito('Bloqueaste esa carta por este ciclo.');
 }
@@ -48,7 +47,6 @@ export async function usarPlotTwistRobar(
   if (error) return fallo(codigoDesdeError(error));
 
   revalidatePath('/dashboard');
-  revalidatePath('/plot-twists');
   revalidatePath('/historial');
   return exito('Robaste esa carta. Ahora es tuya.');
 }

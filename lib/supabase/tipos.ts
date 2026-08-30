@@ -232,6 +232,7 @@ export interface Database {
       };
       recargar_cartas: { Args: Record<string, never>; Returns: number };
       reiniciar_ciclos_semanales: { Args: Record<string, never>; Returns: number };
+      comprar_plot_twist: { Args: { p_catalogo_id: string }; Returns: string };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

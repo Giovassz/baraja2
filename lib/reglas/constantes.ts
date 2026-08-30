@@ -17,3 +17,9 @@ export const DIAS_POR_CICLO = 7;
 
 /** Máximo de reloads permitidos por ciclo (sección 4.8). */
 export const RELOADS_POR_CICLO = 1;
+
+/** Precio en puntos de comprar un plot twist en la Tienda. */
+export const PRECIO_PLOT_TWIST_TIENDA = 3;
+
+/** Cartas cumplidas necesarias para subir un nivel de pareja. */
+export const CARTAS_CUMPLIDAS_POR_NIVEL = 5;

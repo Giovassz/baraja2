@@ -45,6 +45,9 @@ export function mensajePorCodigo(codigo: string): string {
     SIN_CARTAS_DISPONIBLES: 'No tienes cartas disponibles para recargar.',
     SIN_PAREJA: 'Primero completa la vinculación con tu pareja.',
     MENOR_DE_EDAD: 'El modo Spicy solo está disponible para personas mayores de edad.',
+    PUNTOS_INSUFICIENTES: 'No tienes puntos suficientes para comprar esto.',
+    PLOT_TWIST_FUERA_DE_MODALIDAD: 'Ese plot twist no es de su modalidad.',
+    MODO_SPICY_INACTIVO: 'Activa el modo Spicy para conseguir plot twists Spicy.',
     ERROR_INESPERADO: 'Algo salió mal. Inténtalo de nuevo en un momento.',
   };
   return mapa[codigo] ?? mapa.ERROR_INESPERADO;

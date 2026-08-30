@@ -53,7 +53,7 @@ export async function confirmarCumplida(
   if (error) return fallo(codigoDesdeError(error));
 
   revalidatePath('/dashboard');
-  revalidatePath('/plot-twists');
+  revalidatePath('/tienda');
   revalidatePath('/historial');
   return exito('¡Reto cumplido! Sumaste puntos para tu pareja.');
 }
