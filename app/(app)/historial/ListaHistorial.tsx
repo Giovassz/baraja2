@@ -4,6 +4,7 @@
 
 import { useState } from 'react';
 import { WidgetHistorialEvento } from '@/components/widgets/WidgetHistorialEvento';
+import { Icono } from '@/components/ui/iconos';
 import type { TipoEventoHistorial } from '@/lib/supabase/tipos';
 
 export interface EventoHistorial {
@@ -16,10 +17,10 @@ export interface EventoHistorial {
 
 type Filtro = 'todos' | TipoEventoHistorial;
 
-const FILTROS: { valor: Filtro; etiqueta: string }[] = [
+const FILTROS: { valor: Filtro; etiqueta: string; icono?: typeof Icono.check }[] = [
   { valor: 'todos', etiqueta: 'Todo' },
-  { valor: 'carta_cumplida', etiqueta: '✅ Cartas cumplidas' },
-  { valor: 'plot_twist_usado', etiqueta: '🎭 Plot twists' },
+  { valor: 'carta_cumplida', etiqueta: 'Cartas cumplidas', icono: Icono.cumplida },
+  { valor: 'plot_twist_usado', etiqueta: 'Plot twists', icono: Icono.chispa },
 ];
 
 export function ListaHistorial({ eventos }: { eventos: EventoHistorial[] }) {
@@ -31,19 +32,23 @@ export function ListaHistorial({ eventos }: { eventos: EventoHistorial[] }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap gap-2">
-        {FILTROS.map((f) => (
-          <button
-            key={f.valor}
-            onClick={() => setFiltro(f.valor)}
-            className={`rounded-full px-3 py-1 text-sm font-semibold transition ${
-              filtro === f.valor
-                ? 'bg-rosa-acento text-white'
-                : 'bg-white/70 text-morado-marca/70'
-            }`}
-          >
-            {f.etiqueta}
-          </button>
-        ))}
+        {FILTROS.map((f) => {
+          const Ico = f.icono;
+          return (
+            <button
+              key={f.valor}
+              onClick={() => setFiltro(f.valor)}
+              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold transition ${
+                filtro === f.valor
+                  ? 'bg-rosa-acento text-white'
+                  : 'bg-white/70 text-morado-marca/70'
+              }`}
+            >
+              {Ico && <Ico className="h-3.5 w-3.5" strokeWidth={2.5} />}
+              {f.etiqueta}
+            </button>
+          );
+        })}
       </div>
 
       {visibles.length === 0 ? (

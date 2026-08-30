@@ -4,8 +4,10 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { Modal } from '@/components/ui/Modal';
 import { useCelebracion } from '@/components/ui/Celebracion';
+import { Icono } from '@/components/ui/iconos';
 import { usarPlotTwistBloquear, usarPlotTwistRobar } from '@/lib/actions/plot-twists';
 
 export interface CartaObjetivo {
@@ -38,6 +40,7 @@ export function WidgetPlotTwist({
 
   const esRobar = efecto === 'robar_carta';
   const accionable = efecto === 'robar_carta' || efecto === 'bloquear_carta';
+  const IconoEfecto = esRobar ? Icono.mano : Icono.candado;
 
   function usar(cartaObjetivoId: string) {
     setError(null);
@@ -56,18 +59,22 @@ export function WidgetPlotTwist({
   }
 
   return (
-    <article
-      className={`widget flex flex-col justify-between bg-gradient-to-br from-rosa-acento/20 to-blanco-calido ${
-        usado ? 'opacity-60' : ''
+    <motion.article
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className={`widget widget-acento flex flex-col justify-between ${
+        usado ? 'opacity-60' : 'destello'
       }`}
     >
       <Corazones />
       <div>
         <div className="flex items-center gap-2">
-          <span className="text-2xl">🎭</span>
-          <h3 className="text-lg">{nombre}</h3>
+          <span className="rounded-full bg-rosa-acento/20 p-2 text-rosa-acento">
+            <Icono.chispa className="h-4 w-4" strokeWidth={2.5} />
+          </span>
+          <h3 className="text-base leading-tight">{nombre}</h3>
         </div>
-        <p className="mt-1 text-sm text-morado-marca/70">{descripcion}</p>
+        <p className="mt-2 text-sm text-morado-marca/70">{descripcion}</p>
       </div>
 
       <button
@@ -75,6 +82,9 @@ export function WidgetPlotTwist({
         disabled={usado || !accionable || objetivos.length === 0}
         onClick={() => setAbierto(true)}
       >
+        {!usado && accionable && objetivos.length > 0 && (
+          <IconoEfecto className="h-4 w-4" strokeWidth={2.5} />
+        )}
         {usado
           ? 'Ya usado'
           : !accionable
@@ -105,6 +115,6 @@ export function WidgetPlotTwist({
           {error && <p className="text-xs text-vino-marca">{error}</p>}
         </div>
       </Modal>
-    </article>
+    </motion.article>
   );
 }

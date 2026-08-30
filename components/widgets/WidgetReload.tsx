@@ -4,7 +4,9 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { recargarCartas } from '@/lib/actions/cartas';
+import { Icono } from '@/components/ui/iconos';
 
 export function WidgetReload({
   usado,
@@ -33,10 +35,18 @@ export function WidgetReload({
   }
 
   return (
-    <article className="widget flex flex-col justify-between bg-gradient-to-br from-menta to-blanco-calido">
+    <article className="widget widget-menta flex flex-col justify-between">
       <div>
-        <h3 className="text-lg">🔄 Reload</h3>
-        <p className="mt-1 text-sm text-morado-marca/70">
+        <div className="flex items-center gap-2">
+          <span className="rounded-full bg-white/70 p-2 text-vino-marca">
+            <Icono.recargar
+              className={`h-4 w-4 ${pendiente ? 'animate-spin' : ''}`}
+              strokeWidth={2.5}
+            />
+          </span>
+          <h3 className="text-base">Reload</h3>
+        </div>
+        <p className="mt-2 text-sm text-morado-marca/70">
           Cambia todas tus cartas disponibles por otras nuevas. Una vez por semana.
         </p>
       </div>
@@ -47,19 +57,21 @@ export function WidgetReload({
         </p>
       )}
 
-      <button
+      <motion.button
+        whileTap={{ scale: 0.96 }}
         className="boton-primario mt-3 w-full py-2 text-sm"
         disabled={bloqueado || pendiente}
         onClick={recargar}
       >
+        {!bloqueado && !pendiente && <Icono.barajar className="h-4 w-4" strokeWidth={2.5} />}
         {pendiente
           ? 'Recargando…'
           : usado
             ? `Disponible en ${diasParaReinicio} día(s)`
             : cartasDisponibles === 0
-              ? 'No tienes cartas para recargar'
+              ? 'Sin cartas para recargar'
               : `Recargar ${cartasDisponibles} carta(s)`}
-      </button>
+      </motion.button>
     </article>
   );
 }

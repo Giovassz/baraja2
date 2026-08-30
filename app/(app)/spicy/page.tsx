@@ -1,10 +1,15 @@
 // Modo Spicy (sección 4.7): toggle, aviso de privacidad y catálogo Spicy jugable
 // Implementa BJ2-030, BJ2-031, BJ2-032, BJ2-033
-import Link from 'next/link';
 import { crearClienteServidor } from '@/lib/supabase/server';
-import { obtenerUsuarioActual, exigirParejaVinculada } from '@/lib/datos';
+import {
+  obtenerUsuarioActual,
+  exigirParejaVinculada,
+  etiquetaModalidad,
+} from '@/lib/datos';
 import { PanelSpicy } from './PanelSpicy';
 import { WidgetCarta } from '@/components/widgets/WidgetCarta';
+import { EnlaceVolver, TituloPagina } from '@/components/ui/EncabezadoPagina';
+import { Icono } from '@/components/ui/iconos';
 
 export const metadata = { title: 'Modo Spicy' };
 
@@ -26,17 +31,13 @@ export default async function SpicyPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <Link href="/dashboard" className="text-sm font-semibold text-morado-marca/60">
-        ← Volver
-      </Link>
-
-      <header>
-        <h1 className="text-2xl">🌶️ Modo Spicy</h1>
-        <p className="text-sm text-morado-marca/70">
-          Un extra para mayores de edad, independiente de tus 5 cartas semanales. Puedes
-          jugar estas cartas cuando quieran.
-        </p>
-      </header>
+      <EnlaceVolver />
+      <TituloPagina
+        icono={Icono.llama}
+        subtitulo="Un extra para mayores de edad, independiente de tus 5 cartas semanales. Puedes jugar estas cartas cuando quieran."
+      >
+        Modo Spicy
+      </TituloPagina>
 
       <PanelSpicy
         activo={usuario.modo_spicy_activo}
@@ -45,7 +46,9 @@ export default async function SpicyPage() {
 
       {usuario.modo_spicy_activo && (
         <section>
-          <h2 className="mb-2 text-lg">Catálogo Spicy · {pareja.modalidad}</h2>
+          <h2 className="mb-2 text-lg">
+            Catálogo Spicy · {etiquetaModalidad(pareja.modalidad)}
+          </h2>
           {cartasSpicy.length === 0 ? (
             <p className="text-sm text-morado-marca/60">
               Todavía no hay cartas Spicy cargadas para su modalidad.

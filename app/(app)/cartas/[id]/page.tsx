@@ -1,10 +1,10 @@
 // Detalle de una carta asignada (sección 2)
 // Implementa BJ2-017
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { crearClienteServidor } from '@/lib/supabase/server';
 import { obtenerUsuarioActual, exigirParejaVinculada } from '@/lib/datos';
 import { WidgetCarta } from '@/components/widgets/WidgetCarta';
+import { EnlaceVolver } from '@/components/ui/EncabezadoPagina';
 
 export const metadata = { title: 'Carta' };
 
@@ -31,10 +31,8 @@ export default async function CartaDetallePage({ params }: { params: { id: strin
   const esRecibida = carta.jugada_hacia_usuario_id === usuario.id;
 
   return (
-    <div className="mx-auto flex max-w-sm flex-col gap-4">
-      <Link href="/dashboard" className="text-sm font-semibold text-morado-marca/60">
-        ← Volver
-      </Link>
+    <div className="mx-auto flex max-w-xs flex-col gap-4">
+      <EnlaceVolver />
 
       <WidgetCarta
         id={carta.id}

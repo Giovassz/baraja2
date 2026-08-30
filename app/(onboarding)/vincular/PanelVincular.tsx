@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useFormState } from 'react-dom';
 import { unirseConCodigo } from '@/lib/actions/parejas';
 import { Boton, BotonEnviar } from '@/components/ui/Boton';
+import { Icono } from '@/components/ui/iconos';
 
 export function PanelVincular() {
   const [modo, setModo] = useState<'elegir' | 'unirme'>('elegir');
@@ -67,9 +68,10 @@ export function PanelVincular() {
 
       <button
         onClick={() => setModo('elegir')}
-        className="text-sm font-semibold text-morado-marca/60"
+        className="inline-flex items-center gap-1 self-start text-sm font-semibold text-morado-marca/60"
       >
-        ← Volver
+        <Icono.atras className="h-4 w-4" strokeWidth={2.5} />
+        Volver
       </button>
     </section>
   );

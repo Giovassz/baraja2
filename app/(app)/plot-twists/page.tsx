@@ -1,9 +1,10 @@
 // Todos los plot twists del ciclo actual (desbloqueados y usados)
 // Implementa BJ2-023, BJ2-029
-import Link from 'next/link';
 import { obtenerDatosDashboard } from '@/lib/datos';
 import { WidgetPlotTwist, type CartaObjetivo } from '@/components/widgets/WidgetPlotTwist';
 import { AutoRefresh } from '@/components/AutoRefresh';
+import { EnlaceVolver, TituloPagina } from '@/components/ui/EncabezadoPagina';
+import { Icono } from '@/components/ui/iconos';
 import {
   puntosParaSiguientePlotTwist,
   plotTwistsMerecidos,
@@ -25,17 +26,15 @@ export default async function PlotTwistsPage() {
   return (
     <div className="flex flex-col gap-4">
       <AutoRefresh segundos={12} />
-      <Link href="/dashboard" className="text-sm font-semibold text-morado-marca/60">
-        ← Volver
-      </Link>
-
-      <header>
-        <h1 className="text-2xl">🎭 Plot twists</h1>
-        <p className="text-sm text-morado-marca/70">
-          Llevas {datos.misPuntos} punto(s) este ciclo · {plotTwistsMerecidos(datos.misPuntos)}{' '}
-          desbloqueado(s). Te faltan {faltan} punto(s) para el siguiente.
-        </p>
-      </header>
+      <EnlaceVolver />
+      <TituloPagina
+        icono={Icono.chispa}
+        subtitulo={`Llevas ${datos.misPuntos} punto(s) este ciclo · ${plotTwistsMerecidos(
+          datos.misPuntos,
+        )} desbloqueado(s). Te faltan ${faltan} punto(s) para el siguiente.`}
+      >
+        Plot twists
+      </TituloPagina>
 
       {disponibles.length > 0 && (
         <section>

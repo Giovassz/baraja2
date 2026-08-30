@@ -24,7 +24,7 @@ export async function jugarCarta(cartaAsignadaId: string): Promise<ResultadoAcci
     const pareja = await obtenerParejaActual();
     if (pareja?.companero) {
       await enviarPushAUsuario(pareja.companero.id, {
-        titulo: '💌 Nueva carta',
+        titulo: 'Nueva carta',
         cuerpo: `${pareja.yo.nombre} te jugó una carta. Ábrela para verla.`,
         url: '/dashboard',
         tag: 'carta-recibida',

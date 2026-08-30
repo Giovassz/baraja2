@@ -1,32 +1,27 @@
 // Micro-animación de celebración (sección 5): confeti + corazones ascendentes.
-// Nunca usar alert() ni un toast genérico para acciones de éxito.
+// Sin emojis: los corazones son íconos. Nunca alert() ni toast genérico.
 // Implementa BJ2-021
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
+import { Icono } from './iconos';
 
 const COLORES = ['#F7C6DA', '#E85D8A', '#D9C9EC', '#BFEAD1'];
 
 export function lanzarConfeti() {
   if (typeof window === 'undefined') return;
-  const reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reducido) return;
-  confetti({
-    particleCount: 90,
-    spread: 70,
-    origin: { y: 0.7 },
-    colors: COLORES,
-    scalar: 0.9,
-  });
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const disparo = (opts: confetti.Options) =>
+    confetti({ colors: COLORES, disableForReducedMotion: true, ...opts });
+  disparo({ particleCount: 70, spread: 60, origin: { y: 0.7 }, scalar: 0.9 });
+  disparo({ particleCount: 40, angle: 60, spread: 55, origin: { x: 0, y: 0.75 } });
+  disparo({ particleCount: 40, angle: 120, spread: 55, origin: { x: 1, y: 0.75 } });
 }
 
 /**
- * Hook de celebración: expone `celebrar()` y renderiza los corazones ascendentes.
- * Uso:
- *   const { celebrar, Corazones } = useCelebracion();
- *   ...
- *   <Corazones />
+ * Hook de celebración: `celebrar()` dispara confeti + corazones ascendentes,
+ * que se renderizan con <Corazones />.
  */
 export function useCelebracion() {
   const [activo, setActivo] = useState(false);
@@ -36,7 +31,7 @@ export function useCelebracion() {
     lanzarConfeti();
     setActivo(true);
     if (temporizador.current) clearTimeout(temporizador.current);
-    temporizador.current = setTimeout(() => setActivo(false), 1800);
+    temporizador.current = setTimeout(() => setActivo(false), 1900);
   }, []);
 
   useEffect(
@@ -49,15 +44,15 @@ export function useCelebracion() {
   const Corazones = useCallback(() => {
     if (!activo) return null;
     return (
-      <div className="pointer-events-none fixed inset-x-0 bottom-24 z-50 flex justify-center gap-3">
-        {['💗', '💖', '💕', '💝', '💓'].map((c, i) => (
-          <span
+      <div className="pointer-events-none fixed inset-x-0 bottom-24 z-[60] flex justify-center gap-4">
+        {[0, 1, 2, 3, 4].map((i) => (
+          <Icono.corazon
             key={i}
-            className="animate-corazon-sube text-3xl"
+            className="h-7 w-7 animate-corazon-sube text-rosa-acento"
             style={{ animationDelay: `${i * 90}ms` }}
-          >
-            {c}
-          </span>
+            fill="currentColor"
+            strokeWidth={0}
+          />
         ))}
       </div>
     );

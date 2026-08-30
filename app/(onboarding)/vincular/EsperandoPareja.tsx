@@ -5,6 +5,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Boton } from '@/components/ui/Boton';
+import { Icono } from '@/components/ui/iconos';
 
 export function EsperandoPareja({
   codigo,
@@ -41,7 +42,10 @@ export function EsperandoPareja({
 
   return (
     <section className="widget flex flex-col items-center gap-4 text-center">
-      <p className="font-heading text-5xl animate-late-corazon">💞</p>
+      <Icono.corazones
+        className="h-14 w-14 animate-late-corazon text-rosa-acento"
+        strokeWidth={2}
+      />
       <h2 className="text-2xl">Ya casi</h2>
       <p className="text-sm text-morado-marca/70">
         Comparte este código con tu pareja para que se una a <strong>{nombreEspacio}</strong>.
@@ -52,7 +56,15 @@ export function EsperandoPareja({
       </div>
 
       <Boton variante="secundario" className="w-full" onClick={compartir}>
-        {copiado ? '¡Código copiado!' : 'Compartir código'}
+        {copiado ? (
+          <>
+            <Icono.check className="h-4 w-4" strokeWidth={2.5} /> Código copiado
+          </>
+        ) : (
+          <>
+            <Icono.compartir className="h-4 w-4" strokeWidth={2.5} /> Compartir código
+          </>
+        )}
       </Boton>
 
       <p className="text-xs text-morado-marca/50">

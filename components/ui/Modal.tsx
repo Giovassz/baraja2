@@ -3,6 +3,8 @@
 'use client';
 
 import { useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Icono } from './iconos';
 
 interface ModalProps {
   abierto: boolean;
@@ -27,36 +29,45 @@ export function Modal({ abierto, onCerrar, titulo, children, bloqueante = false 
     };
   }, [abierto, bloqueante, onCerrar]);
 
-  if (!abierto) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-morado-marca/40 p-4 backdrop-blur-sm"
-      onClick={() => !bloqueante && onCerrar?.()}
-    >
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label={titulo}
-        className="w-full max-w-sm animate-aparece-suave rounded-widget bg-blanco-calido p-6 shadow-widget"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {(titulo || (!bloqueante && onCerrar)) && (
-          <div className="mb-3 flex items-start justify-between gap-3">
-            {titulo && <h2 className="text-xl">{titulo}</h2>}
-            {!bloqueante && onCerrar && (
-              <button
-                onClick={onCerrar}
-                aria-label="Cerrar"
-                className="rounded-full px-2 text-2xl leading-none text-morado-marca/50 transition hover:text-rosa-acento"
-              >
-                ×
-              </button>
+    <AnimatePresence>
+      {abierto && (
+        <motion.div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-morado-marca/45 p-4 backdrop-blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => !bloqueante && onCerrar?.()}
+        >
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label={titulo}
+            className="w-full max-w-sm rounded-widget border border-white/60 bg-blanco-calido p-6 shadow-widget"
+            initial={{ scale: 0.9, y: 24, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
+            exit={{ scale: 0.92, y: 16, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {(titulo || (!bloqueante && onCerrar)) && (
+              <div className="mb-3 flex items-start justify-between gap-3">
+                {titulo && <h2 className="text-xl">{titulo}</h2>}
+                {!bloqueante && onCerrar && (
+                  <button
+                    onClick={onCerrar}
+                    aria-label="Cerrar"
+                    className="rounded-full p-1 text-morado-marca/50 transition hover:bg-lavanda/30 hover:text-rosa-acento"
+                  >
+                    <Icono.cerrar className="h-5 w-5" strokeWidth={2.5} />
+                  </button>
+                )}
+              </div>
             )}
-          </div>
-        )}
-        {children}
-      </div>
-    </div>
+            {children}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

@@ -1,9 +1,10 @@
 // Ajustes de notificaciones: suscripción Web Push + preferencias por tipo (Fase 6)
 // Implementa BJ2-038, BJ2-040
-import Link from 'next/link';
 import { crearClienteServidor } from '@/lib/supabase/server';
 import { obtenerUsuarioActual } from '@/lib/datos';
 import { PanelNotificaciones } from './PanelNotificaciones';
+import { EnlaceVolver, TituloPagina } from '@/components/ui/EncabezadoPagina';
+import { Icono } from '@/components/ui/iconos';
 
 export const metadata = { title: 'Notificaciones' };
 
@@ -21,10 +22,8 @@ export default async function AjustesNotificacionesPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <Link href="/dashboard" className="text-sm font-semibold text-morado-marca/60">
-        ← Volver
-      </Link>
-      <h1 className="text-2xl">Notificaciones</h1>
+      <EnlaceVolver />
+      <TituloPagina icono={Icono.campana}>Notificaciones</TituloPagina>
 
       <PanelNotificaciones
         vapidPublica={vapidPublica}

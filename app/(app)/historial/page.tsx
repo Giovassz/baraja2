@@ -1,9 +1,10 @@
 // Línea de tiempo de eventos de la pareja (Fase 8), orden cronológico descendente
 // Implementa BJ2-045, BJ2-046, BJ2-047
-import Link from 'next/link';
 import { crearClienteServidor } from '@/lib/supabase/server';
 import { exigirParejaVinculada } from '@/lib/datos';
 import { ListaHistorial, type EventoHistorial } from './ListaHistorial';
+import { EnlaceVolver, TituloPagina } from '@/components/ui/EncabezadoPagina';
+import { Icono } from '@/components/ui/iconos';
 
 export const metadata = { title: 'Historial' };
 
@@ -32,10 +33,8 @@ export default async function HistorialPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <Link href="/dashboard" className="text-sm font-semibold text-morado-marca/60">
-        ← Volver
-      </Link>
-      <h1 className="text-2xl">Su historia juntos</h1>
+      <EnlaceVolver />
+      <TituloPagina icono={Icono.corazones}>Su historia juntos</TituloPagina>
       <ListaHistorial eventos={items} />
     </div>
   );

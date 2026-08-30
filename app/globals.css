@@ -1,4 +1,4 @@
-/* Estilos base de Baraja2 — estética de widgets pastel (sección 5 del prompt maestro) */
+/* Estilos base de Baraja2 — rediseño total "enamorada": widgets pastel + naipes de póker */
 /* Implementa BJ2-002 */
 @tailwind base;
 @tailwind components;
@@ -17,14 +17,30 @@ body {
 
 body {
   color: var(--texto);
-  background:
-    radial-gradient(circle at 15% 0%, rgba(217, 201, 236, 0.45), transparent 45%),
-    radial-gradient(circle at 85% 10%, rgba(191, 234, 209, 0.4), transparent 40%),
-    var(--fondo);
-  background-attachment: fixed;
-  min-height: 100dvh;
   font-family: var(--fuente-cuerpo), 'Nunito', sans-serif;
   -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at 12% -5%, rgba(217, 201, 236, 0.55), transparent 42%),
+    radial-gradient(circle at 88% 6%, rgba(191, 234, 209, 0.45), transparent 40%),
+    radial-gradient(circle at 50% 118%, rgba(247, 198, 218, 0.6), transparent 55%),
+    var(--fondo);
+  background-attachment: fixed;
+  background-size: 160% 160%, 160% 160%, 180% 180%, auto;
+  animation: gradiente-mueve 18s ease infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
 
 @layer base {
@@ -34,36 +50,96 @@ body {
   h4 {
     font-family: var(--fuente-titulos), 'Fredoka', sans-serif;
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
+    color: var(--texto);
   }
 }
 
 @layer components {
-  /* Base compartida por todos los widgets del dashboard */
+  /* --- Widgets del dashboard --- */
   .widget {
-    @apply rounded-widget bg-gradient-to-br from-rosa-pastel to-blanco-calido p-5 shadow-widget;
+    @apply relative overflow-hidden rounded-widget border border-white/60
+      bg-gradient-to-br from-rosa-pastel/90 to-blanco-calido p-5 shadow-widget
+      backdrop-blur-sm;
   }
 
+  .widget-lavanda {
+    @apply bg-gradient-to-br from-lavanda/90 to-blanco-calido;
+  }
+  .widget-menta {
+    @apply bg-gradient-to-br from-menta/90 to-blanco-calido;
+  }
+  .widget-acento {
+    @apply bg-gradient-to-br from-rosa-acento/25 to-blanco-calido;
+  }
+
+  /* Panel de vidrio (headers, barras) */
+  .vidrio {
+    @apply border border-white/60 bg-blanco-calido/80 backdrop-blur-md;
+  }
+
+  /* --- Botones --- */
   .boton-primario {
-    @apply rounded-full bg-rosa-acento px-6 py-3 font-heading text-base font-semibold text-white
-      shadow-widget-sm transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-rosa-acento
+      px-6 py-3 font-heading text-base font-semibold text-white shadow-widget-sm
+      transition-all duration-200 hover:brightness-105 active:scale-95
+      disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100;
   }
 
   .boton-secundario {
-    @apply rounded-full border-2 border-rosa-acento/40 bg-white/70 px-6 py-3 font-heading
-      text-base font-semibold text-vino-marca transition active:scale-95
-      disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border-2
+      border-rosa-acento/35 bg-white/70 px-6 py-3 font-heading text-base font-semibold
+      text-vino-marca transition-all duration-200 hover:border-rosa-acento/70
+      active:scale-95 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .campo-texto {
-    @apply w-full rounded-widget border-2 border-lavanda/60 bg-white/80 px-4 py-3 font-body
-      text-morado-marca outline-none transition placeholder:text-morado-marca/40
-      focus:border-rosa-acento;
+    @apply w-full rounded-widget border-2 border-lavanda/60 bg-white/85 px-4 py-3
+      font-body text-morado-marca outline-none transition
+      placeholder:text-morado-marca/40 focus:border-rosa-acento
+      focus:ring-4 focus:ring-rosa-acento/15;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-white/75 px-2.5 py-1
+      text-[11px] font-bold uppercase tracking-wide text-vino-marca;
+  }
+
+  /* --- Naipe de póker --- */
+  .naipe {
+    @apply relative flex flex-col overflow-hidden rounded-naipe bg-brillo-naipe
+      shadow-naipe ring-1 ring-morado-marca/10;
+    aspect-ratio: 5 / 7;
+  }
+
+  /* Reverso tipo baraja (rombos), como las cartas de la referencia */
+  .naipe-reverso {
+    background-color: #fff9fb;
+    background-image:
+      repeating-linear-gradient(45deg, rgba(232, 93, 138, 0.55) 0 2px, transparent 2px 9px),
+      repeating-linear-gradient(-45deg, rgba(232, 93, 138, 0.55) 0 2px, transparent 2px 9px);
+    background-size: 13px 13px;
+  }
+  .naipe-reverso-azul {
+    background-image:
+      repeating-linear-gradient(45deg, rgba(59, 31, 77, 0.5) 0 2px, transparent 2px 9px),
+      repeating-linear-gradient(-45deg, rgba(59, 31, 77, 0.5) 0 2px, transparent 2px 9px);
+  }
+
+  /* Destello que recorre elementos destacados */
+  .destello::after {
+    content: '';
+    @apply pointer-events-none absolute inset-y-0 -left-1/3 w-1/3
+      bg-gradient-to-r from-transparent via-white/60 to-transparent;
+    animation: brillo-pasa 3s ease-in-out infinite;
   }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  .sombra-texto-suave {
+    text-shadow: 0 1px 8px rgba(255, 255, 255, 0.6);
   }
 }

@@ -50,7 +50,7 @@ export async function jugarCartaSpicy(catalogoCartaId: string): Promise<Resultad
     const pareja = await obtenerParejaActual();
     if (pareja?.companero) {
       await enviarPushAUsuario(pareja.companero.id, {
-        titulo: '🌶️ Carta Spicy',
+        titulo: 'Carta Spicy',
         cuerpo: `${pareja.yo.nombre} te jugó una carta Spicy.`,
         url: '/dashboard',
         tag: 'carta-recibida',

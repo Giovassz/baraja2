@@ -1,19 +1,20 @@
 // Widget de un evento de la línea de tiempo (sección 5 / Fase 8)
 // Implementa BJ2-045, BJ2-046
+import { Icono, type LucideIcon } from '@/components/ui/iconos';
 import type { TipoEventoHistorial } from '@/lib/supabase/tipos';
 
 const CONFIG: Record<
   TipoEventoHistorial,
-  { emoji: string; gradiente: string; etiqueta: string }
+  { icono: LucideIcon; clase: string; etiqueta: string }
 > = {
   carta_cumplida: {
-    emoji: '✅',
-    gradiente: 'from-menta to-blanco-calido',
+    icono: Icono.cumplida,
+    clase: 'widget-menta',
     etiqueta: 'Carta cumplida',
   },
   plot_twist_usado: {
-    emoji: '🎭',
-    gradiente: 'from-rosa-acento/20 to-blanco-calido',
+    icono: Icono.chispa,
+    clase: 'widget-acento',
     etiqueta: 'Plot twist',
   },
 };
@@ -30,6 +31,7 @@ export function WidgetHistorialEvento({
   fecha: string;
 }) {
   const cfg = CONFIG[tipoEvento];
+  const Ico = cfg.icono;
   const cuando = new Date(fecha).toLocaleString('es-MX', {
     day: 'numeric',
     month: 'short',
@@ -38,15 +40,16 @@ export function WidgetHistorialEvento({
   });
 
   return (
-    <article className={`widget bg-gradient-to-br ${cfg.gradiente}`}>
+    <article className={`widget ${cfg.clase} !p-4`}>
       <div className="flex items-start gap-3">
-        <span className="text-2xl">{cfg.emoji}</span>
+        <span className="mt-0.5 rounded-full bg-white/70 p-2 text-vino-marca">
+          <Ico className="h-4 w-4" strokeWidth={2.5} />
+        </span>
         <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-vino-marca">
-            {cfg.etiqueta}
-          </p>
+          <p className="chip !bg-transparent !px-0">{cfg.etiqueta}</p>
           <p className="mt-0.5 text-sm text-morado-marca">{descripcion}</p>
-          <p className="mt-1 text-xs text-morado-marca/60">
+          <p className="mt-1 flex items-center gap-1.5 text-xs text-morado-marca/60">
+            <Icono.reloj className="h-3 w-3" strokeWidth={2.5} />
             {autor} · {cuando}
           </p>
         </div>

@@ -42,7 +42,7 @@ async function ejecutar(request: Request) {
   let pushEnviados = 0;
   for (const n of nuevas ?? []) {
     pushEnviados += await enviarPushAUsuario(n.usuario_id, {
-      titulo: '🃏 Nueva semana en Baraja2',
+      titulo: 'Nueva semana en Baraja2',
       cuerpo: 'Ya tienes 5 cartas nuevas. Ábrelas y juega con tu pareja.',
       url: '/dashboard',
       tag: 'reset-semanal',
