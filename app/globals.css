@@ -1,0 +1,69 @@
+/* Estilos base de Baraja2 — estética de widgets pastel (sección 5 del prompt maestro) */
+/* Implementa BJ2-002 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --fondo: #fff9fb;
+  --texto: #3b1f4d;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  color: var(--texto);
+  background:
+    radial-gradient(circle at 15% 0%, rgba(217, 201, 236, 0.45), transparent 45%),
+    radial-gradient(circle at 85% 10%, rgba(191, 234, 209, 0.4), transparent 40%),
+    var(--fondo);
+  background-attachment: fixed;
+  min-height: 100dvh;
+  font-family: var(--fuente-cuerpo), 'Nunito', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--fuente-titulos), 'Fredoka', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer components {
+  /* Base compartida por todos los widgets del dashboard */
+  .widget {
+    @apply rounded-widget bg-gradient-to-br from-rosa-pastel to-blanco-calido p-5 shadow-widget;
+  }
+
+  .boton-primario {
+    @apply rounded-full bg-rosa-acento px-6 py-3 font-heading text-base font-semibold text-white
+      shadow-widget-sm transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .boton-secundario {
+    @apply rounded-full border-2 border-rosa-acento/40 bg-white/70 px-6 py-3 font-heading
+      text-base font-semibold text-vino-marca transition active:scale-95
+      disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .campo-texto {
+    @apply w-full rounded-widget border-2 border-lavanda/60 bg-white/80 px-4 py-3 font-body
+      text-morado-marca outline-none transition placeholder:text-morado-marca/40
+      focus:border-rosa-acento;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
