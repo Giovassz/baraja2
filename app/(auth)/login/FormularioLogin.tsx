@@ -2,47 +2,62 @@
 // Implementa BJ2-008
 'use client';
 
-import { useFormState } from 'react-dom';
+import { useFormState, useFormStatus } from 'react-dom';
 import { iniciarSesion } from '@/lib/actions/auth';
-import { BotonEnviar } from '@/components/ui/Boton';
+import { CampoAuth } from '@/components/auth/CampoAuth';
+import { Icono } from '@/components/ui/iconos';
+
+function BotonEntrar() {
+  const { pending } = useFormStatus();
+  return (
+    <button type="submit" className="boton-primario mt-1 h-12 w-full text-[15px]" disabled={pending}>
+      {pending ? (
+        <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+      ) : (
+        <>
+          Entrar
+          <Icono.flecha className="h-4 w-4" strokeWidth={2.5} />
+        </>
+      )}
+    </button>
+  );
+}
 
 export function FormularioLogin() {
   const [estado, accion] = useFormState(iniciarSesion, null);
 
   return (
-    <form action={accion} className="mt-5 flex flex-col gap-3">
-      <label className="flex flex-col gap-1 text-sm font-semibold text-morado-marca">
-        Correo
-        <input
-          name="email"
-          type="email"
-          className="campo-texto"
-          autoComplete="email"
-          required
-        />
-      </label>
-
-      <label className="flex flex-col gap-1 text-sm font-semibold text-morado-marca">
-        Contraseña
-        <input
-          name="password"
-          type="password"
-          className="campo-texto"
-          autoComplete="current-password"
-          required
-        />
-      </label>
+    <form action={accion} className="mt-6 flex flex-col gap-4">
+      <CampoAuth
+        etiqueta="Correo"
+        icono={Icono.sobre}
+        name="email"
+        type="email"
+        autoComplete="email"
+        placeholder="tucorreo@ejemplo.com"
+        required
+      />
+      <CampoAuth
+        etiqueta="Contraseña"
+        icono={Icono.candado}
+        name="password"
+        type="password"
+        autoComplete="current-password"
+        placeholder="Tu contraseña"
+        required
+      />
 
       {estado?.error && (
         <p
           role="alert"
-          className="rounded-widget bg-rosa-pastel/60 px-3 py-2 text-sm text-vino-marca"
+          className="flex items-center gap-2 rounded-2xl bg-rosa-pastel/60 px-3.5 py-2.5 text-sm font-semibold text-vino-marca"
         >
+          <Icono.cerrar className="h-4 w-4 shrink-0" strokeWidth={2.5} />
           {estado.mensaje}
         </p>
       )}
 
-      <BotonEnviar className="mt-2 w-full">Entrar</BotonEnviar>
+      <BotonEntrar />
     </form>
   );
 }

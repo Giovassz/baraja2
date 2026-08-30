@@ -20,8 +20,8 @@ test.describe('una semana completa en pareja', () => {
   async function registrar(page: import('@playwright/test').Page, u: typeof ana) {
     await page.goto('/registro');
     await page.getByLabel('Tu nombre').fill(u.nombre);
-    await page.getByLabel('Correo').fill(u.email);
-    await page.getByLabel('Contraseña').fill(u.password);
+    await page.getByLabel('Correo', { exact: true }).fill(u.email);
+    await page.getByLabel('Contraseña', { exact: true }).fill(u.password);
     await page.getByRole('checkbox').check();
     await page.getByRole('button', { name: 'Crear cuenta' }).click();
     await expect(page).toHaveURL(/\/vincular$/);
