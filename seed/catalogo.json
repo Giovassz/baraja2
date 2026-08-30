@@ -1,0 +1,30 @@
+{
+  "_comentario": "⚠️ CONTENIDO DE PRUEBA — NO ES EL CATÁLOGO FINAL. Los textos definitivos (20 cartas estándar + 10 spicy + plot twists por modalidad) corresponden a los ítems BJ2-046..049 del backlog y los entrega el usuario. Reemplaza este archivo respetando exactamente este formato (ver sección 4.6 del prompt maestro).",
+  "cartas": [
+    { "texto": "[PRUEBA] Mándale un mensaje de voz diciéndole tres cosas que te encantan de tu pareja.", "tipo": "estandar", "modalidad": "todas", "puntos_otorgados": 1 },
+    { "texto": "[PRUEBA] Planea y comparte el itinerario de una cita ideal para cuando se vean.", "tipo": "estandar", "modalidad": "todas", "puntos_otorgados": 1 },
+    { "texto": "[PRUEBA] Elige una canción que te recuerde a tu pareja y explícale por qué.", "tipo": "estandar", "modalidad": "todas", "puntos_otorgados": 1 },
+    { "texto": "[PRUEBA] Hagan juntos una videollamada de 20 minutos sin teléfono de por medio.", "tipo": "estandar", "modalidad": "distancia", "puntos_otorgados": 1 },
+    { "texto": "[PRUEBA] Prepárale su bebida favorita y llévasela sin que lo pida.", "tipo": "estandar", "modalidad": "fisica", "puntos_otorgados": 1 },
+    { "texto": "[PRUEBA] Escríbele una carta a mano y dásela la próxima vez que se vean.", "tipo": "estandar", "modalidad": "hibrida", "puntos_otorgados": 1 },
+    { "texto": "[PRUEBA] Comparte una foto de algo que viste hoy y te hizo pensar en tu pareja.", "tipo": "estandar", "modalidad": "todas", "puntos_otorgados": 1 },
+    { "texto": "[PRUEBA] Regálale 15 minutos de tu tiempo para hacer lo que tu pareja quiera.", "tipo": "estandar", "modalidad": "fisica", "puntos_otorgados": 1 },
+    { "texto": "[PRUEBA] Cuéntale un recuerdo favorito que tengan juntos con todos los detalles.", "tipo": "estandar", "modalidad": "todas", "puntos_otorgados": 1 },
+    { "texto": "[PRUEBA] Propón una serie para ver en sincronía este fin de semana.", "tipo": "estandar", "modalidad": "distancia", "puntos_otorgados": 1 },
+    { "texto": "[PRUEBA] Beso largo de despedida antes de que alguno salga de casa.", "tipo": "spicy", "modalidad": "fisica", "puntos_otorgados": 1 },
+    { "texto": "[PRUEBA] Manda un mensaje coqueto describiendo qué extrañas de tu pareja.", "tipo": "spicy", "modalidad": "distancia", "puntos_otorgados": 1 },
+    { "texto": "[PRUEBA] Elige tú la ropa que tu pareja usará en su próxima cita.", "tipo": "spicy", "modalidad": "hibrida", "puntos_otorgados": 1 },
+    { "texto": "[PRUEBA] Dale un masaje de 10 minutos en la espalda.", "tipo": "spicy", "modalidad": "fisica", "puntos_otorgados": 1 },
+    { "texto": "[PRUEBA] Cuéntale por llamada una fantasía suave que te gustaría cumplir juntos.", "tipo": "spicy", "modalidad": "distancia", "puntos_otorgados": 1 }
+  ],
+  "plot_twists": [
+    { "nombre": "[PRUEBA] Semana en pausa", "descripcion": "Bloquea una carta disponible de tu pareja durante este ciclo.", "efecto": "bloquear_carta", "modalidad": "distancia", "tipo": "estandar" },
+    { "nombre": "[PRUEBA] Cambio de manos", "descripcion": "Roba una carta disponible de tu pareja y hazla tuya.", "efecto": "robar_carta", "modalidad": "distancia", "tipo": "estandar" },
+    { "nombre": "[PRUEBA] Semana en pausa", "descripcion": "Bloquea una carta disponible de tu pareja durante este ciclo.", "efecto": "bloquear_carta", "modalidad": "hibrida", "tipo": "estandar" },
+    { "nombre": "[PRUEBA] Cambio de manos", "descripcion": "Roba una carta disponible de tu pareja y hazla tuya.", "efecto": "robar_carta", "modalidad": "hibrida", "tipo": "estandar" },
+    { "nombre": "[PRUEBA] Semana en pausa", "descripcion": "Bloquea una carta disponible de tu pareja durante este ciclo.", "efecto": "bloquear_carta", "modalidad": "fisica", "tipo": "estandar" },
+    { "nombre": "[PRUEBA] Cambio de manos", "descripcion": "Roba una carta disponible de tu pareja y hazla tuya.", "efecto": "robar_carta", "modalidad": "fisica", "tipo": "estandar" },
+    { "nombre": "[PRUEBA] Noche prometida", "descripcion": "Bloquea una carta spicy disponible de tu pareja para reservarla.", "efecto": "bloquear_carta", "modalidad": "fisica", "tipo": "spicy" },
+    { "nombre": "[PRUEBA] Doble o nada", "descripcion": "Roba una carta spicy disponible de tu pareja.", "efecto": "robar_carta", "modalidad": "distancia", "tipo": "spicy" }
+  ]
+}
