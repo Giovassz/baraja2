@@ -1,13 +1,18 @@
-/* Baraja2 — rediseño "picante" (estilo Tinder, mobile-first): chrome oscuro + cartas con carácter */
+/* Baraja2 — UX estilo Tinder: tema oscuro, cartas con carácter, mobile-first */
 /* Implementa BJ2-002 */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --fondo: #fff9fb;
-  --texto: #3b1f4d;
-  --nav-alto: 68px;
+  --noche: #140810;
+  --noche-2: #1c0e18;
+  --sup: #26141f;
+  --sup-alta: #33202d;
+  --linea: rgba(255, 255, 255, 0.09);
+  --texto: rgba(255, 249, 251, 0.95);
+  --nav-alto: 66px;
+  color-scheme: dark;
 }
 
 html,
@@ -23,19 +28,14 @@ body {
   -webkit-font-smoothing: antialiased;
   min-height: 100dvh;
   background:
-    radial-gradient(circle at 12% -8%, rgba(232, 93, 138, 0.26), transparent 46%),
-    radial-gradient(circle at 92% 2%, rgba(217, 201, 236, 0.42), transparent 42%),
-    radial-gradient(circle at 50% 120%, rgba(179, 72, 107, 0.2), transparent 55%),
-    var(--fondo);
+    radial-gradient(circle at 12% -6%, rgba(232, 93, 138, 0.22), transparent 42%),
+    radial-gradient(circle at 92% 4%, rgba(107, 74, 134, 0.28), transparent 40%),
+    radial-gradient(circle at 50% 118%, rgba(179, 72, 107, 0.18), transparent 52%),
+    var(--noche);
   background-attachment: fixed;
-  background-size: 170% 170%, 170% 170%, 190% 190%, auto;
-  animation: gradiente-mueve 20s ease infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body {
-    animation: none;
-  }
   *,
   *::before,
   *::after {
@@ -53,156 +53,155 @@ body {
     font-family: var(--fuente-titulos), 'Fredoka', sans-serif;
     font-weight: 600;
     letter-spacing: -0.015em;
-    color: var(--texto);
+    color: #fff;
   }
 }
 
 @layer components {
   /* --- Superficies --- */
   .widget {
-    @apply relative overflow-hidden rounded-widget border border-white/60
-      bg-gradient-to-br from-rosa-pastel/85 to-blanco-calido p-5 shadow-widget;
+    @apply relative overflow-hidden rounded-widget border p-5;
+    background: var(--sup);
+    border-color: var(--linea);
+    box-shadow: 0 20px 44px -22px rgba(0, 0, 0, 0.7);
   }
   .widget-lavanda {
-    @apply bg-gradient-to-br from-lavanda/90 to-blanco-calido;
+    background: linear-gradient(160deg, #33203c, #1c0e18);
   }
   .widget-menta {
-    @apply bg-gradient-to-br from-menta/90 to-blanco-calido;
+    background: linear-gradient(160deg, #1e3330, #16100f);
   }
   .widget-acento {
-    @apply bg-gradient-to-br from-rosa-acento/25 to-blanco-calido;
+    background: linear-gradient(160deg, #3a1a2a, #1c0e18);
   }
 
-  /* Chrome oscuro (barras de navegación) */
+  /* Chrome (barras de navegación) — casi negro estilo Tinder */
   .chrome-oscuro {
-    background: linear-gradient(180deg, rgba(59, 31, 77, 0.92), rgba(59, 31, 77, 0.82));
+    background: rgba(15, 8, 13, 0.86);
     @apply border-white/10 text-white backdrop-blur-xl;
   }
-
   .vidrio {
-    @apply border border-white/60 bg-blanco-calido/85 backdrop-blur-md;
+    @apply border border-white/10 bg-[#1c0e18]/85 backdrop-blur-md;
   }
 
   /* --- Botones --- */
   .boton-primario {
     @apply inline-flex items-center justify-center gap-2 rounded-full
-      bg-gradient-to-r from-rosa-acento to-vino-marca px-6 py-3 font-heading text-base
-      font-semibold text-white shadow-[0_10px_24px_-8px_rgba(232,93,138,0.6)]
-      transition-all duration-200 hover:brightness-105 active:scale-95
+      bg-gradient-to-r from-rosa-acento to-[#ff7a59] px-6 py-3 font-heading text-base
+      font-semibold text-white shadow-[0_12px_28px_-8px_rgba(232,93,138,0.65)]
+      transition-all duration-200 hover:brightness-110 active:scale-95
       disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100;
   }
   .boton-secundario {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border-2
-      border-rosa-acento/35 bg-white/75 px-6 py-3 font-heading text-base font-semibold
-      text-vino-marca transition-all duration-200 hover:border-rosa-acento/70
-      active:scale-95 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border
+      border-white/20 bg-white/[0.06] px-6 py-3 font-heading text-base font-semibold
+      text-white transition-all duration-200 hover:bg-white/10 active:scale-95
+      disabled:cursor-not-allowed disabled:opacity-50;
   }
   .boton-fantasma {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border-2
-      border-white/40 bg-white/10 px-6 py-3 font-heading text-base font-semibold
+    @apply inline-flex items-center justify-center gap-2 rounded-full border
+      border-white/25 bg-white/10 px-6 py-3 font-heading text-base font-semibold
       text-white transition active:scale-95;
   }
 
   .campo-texto {
-    @apply w-full rounded-widget border-2 border-lavanda/60 bg-white/90 px-4 py-3
-      font-body text-morado-marca outline-none transition
-      placeholder:text-morado-marca/40 focus:border-rosa-acento
-      focus:ring-4 focus:ring-rosa-acento/15;
+    @apply w-full rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3
+      font-body text-white outline-none transition
+      placeholder:text-white/40 focus:border-rosa-acento
+      focus:ring-4 focus:ring-rosa-acento/20;
   }
 
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full bg-white/80 px-2.5 py-1
-      text-[11px] font-bold uppercase tracking-wide text-vino-marca;
+    @apply inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1
+      text-[11px] font-bold uppercase tracking-wide text-white/85;
   }
   .chip-oscuro {
-    @apply inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1
+    @apply inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1
       text-[11px] font-bold uppercase tracking-wide text-white;
   }
 
-  /* --- Carta de juego --- */
+  /* --- Carta de juego (oscura, estilo Tinder) --- */
   .carta {
-    @apply relative flex flex-col overflow-hidden rounded-naipe bg-white
-      shadow-naipe ring-1 ring-morado-marca/15;
-    aspect-ratio: 4 / 5;
+    @apply relative flex flex-col overflow-hidden rounded-naipe;
+    aspect-ratio: 3 / 4;
+    background: linear-gradient(180deg, #3a2233 0%, #23121e 62%, #180c14 100%);
+    box-shadow: 0 18px 38px -14px rgba(0, 0, 0, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
   .carta-reverso {
     background:
-      repeating-linear-gradient(45deg, rgba(232, 93, 138, 0.5) 0 2px, transparent 2px 10px),
-      repeating-linear-gradient(-45deg, rgba(232, 93, 138, 0.5) 0 2px, transparent 2px 10px),
-      #fff9fb;
+      repeating-linear-gradient(45deg, rgba(232, 93, 138, 0.4) 0 2px, transparent 2px 10px),
+      repeating-linear-gradient(-45deg, rgba(232, 93, 138, 0.4) 0 2px, transparent 2px 10px),
+      #1c0e18;
     background-size: 14px 14px;
   }
 
-  /* Bandas de color por tipo de carta */
+  /* Bandas / acentos por tipo */
   .banda-estandar {
-    background: linear-gradient(100deg, #e85d8a, #b3486b);
+    background: linear-gradient(100deg, #e85d8a, #ff7a59);
   }
   .banda-spicy {
-    background: linear-gradient(100deg, #b3486b, #3b1f4d);
+    background: linear-gradient(100deg, #b3486b, #ff5c7a);
   }
   .banda-plot {
-    background: linear-gradient(100deg, #6b4a86, #3b1f4d);
+    background: linear-gradient(100deg, #7d5aa8, #b39ddb);
   }
 
-  /* Superficie de "lane" (mesa de batalla) — clara para que las cartas resalten */
+  /* Lanes de la mesa de batalla */
   .lane {
-    @apply rounded-widget border border-white/70 bg-white/55 p-3 backdrop-blur-sm;
+    @apply rounded-widget border border-white/10 bg-white/[0.03] p-3;
   }
   .lane-rival {
-    @apply border-rosa-acento/40 bg-rosa-acento/[0.07] shadow-glow;
+    @apply border-rosa-acento/40 bg-rosa-acento/[0.08];
+    box-shadow: 0 0 34px -6px rgba(232, 93, 138, 0.35);
   }
   .lane-plot {
-    @apply border-lavanda/70 bg-lavanda/25;
+    @apply border-white/10;
+    background: rgba(179, 157, 219, 0.09);
   }
-
-  /* Encabezado de lane */
   .lane-titulo {
-    @apply mb-2 inline-flex items-center gap-1.5 rounded-full bg-picante px-3 py-1
+    @apply mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1
       font-heading text-[11px] font-bold uppercase tracking-widest text-white;
   }
 
-  /* Carta-héroe estilo Tinder para el reto recibido */
-  .hero-reto {
-    @apply relative overflow-hidden rounded-widget p-1 shadow-naipe-alta;
-    background: linear-gradient(140deg, #e85d8a, #b3486b 60%, #3b1f4d);
-  }
-
-  /* --- Pantallas de autenticación --- */
+  /* --- Autenticación --- */
   .auth-fondo {
     position: fixed;
     inset: 0;
     z-index: -1;
     background:
-      radial-gradient(circle at 18% 12%, rgba(232, 93, 138, 0.9), transparent 42%),
-      radial-gradient(circle at 84% 8%, rgba(179, 72, 107, 0.85), transparent 40%),
-      radial-gradient(circle at 50% 108%, rgba(217, 201, 236, 0.55), transparent 55%),
-      linear-gradient(160deg, #b3486b 0%, #3b1f4d 60%, #2a1538 100%);
+      radial-gradient(circle at 18% 12%, rgba(232, 93, 138, 0.85), transparent 42%),
+      radial-gradient(circle at 84% 8%, rgba(179, 72, 107, 0.8), transparent 40%),
+      radial-gradient(circle at 50% 108%, rgba(107, 74, 134, 0.5), transparent 55%),
+      linear-gradient(160deg, #3a1526 0%, #1c0e18 60%, #120810 100%);
   }
   .auth-blob {
     position: absolute;
     border-radius: 9999px;
     filter: blur(60px);
-    opacity: 0.5;
+    opacity: 0.45;
   }
   .auth-carta-deco {
     position: absolute;
     width: 92px;
     height: 128px;
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(2px);
   }
-
   .tarjeta-auth {
-    @apply w-full rounded-[28px] border border-white/70 bg-white/95 p-6 shadow-[0_40px_80px_-24px_rgba(20,8,28,0.55)] backdrop-blur-xl;
+    @apply w-full rounded-[28px] border p-6;
+    background: rgba(38, 20, 31, 0.92);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 40px 90px -24px rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(18px);
   }
-
 
   .destello::after {
     content: '';
     @apply pointer-events-none absolute inset-y-0 -left-1/3 w-1/3
-      bg-gradient-to-r from-transparent via-white/60 to-transparent;
+      bg-gradient-to-r from-transparent via-white/25 to-transparent;
     animation: brillo-pasa 3.4s ease-in-out infinite;
   }
 }
@@ -212,6 +211,6 @@ body {
     text-wrap: balance;
   }
   .area-segura-inferior {
-    padding-bottom: calc(var(--nav-alto) + 24px + env(safe-area-inset-bottom));
+    padding-bottom: calc(var(--nav-alto) + 22px + env(safe-area-inset-bottom));
   }
 }

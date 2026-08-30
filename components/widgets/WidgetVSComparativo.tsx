@@ -26,7 +26,7 @@ export function WidgetVSComparativo({
   return (
     <article className="widget widget-lavanda col-span-2 destello">
       <div className="flex items-center justify-center gap-2">
-        <Icono.espadas className="h-4 w-4 text-vino-marca" strokeWidth={2.5} />
+        <Icono.espadas className="h-4 w-4 text-rosa-acento" strokeWidth={2.5} />
         <h3 className="text-center text-lg">Marcador de la semana</h3>
       </div>
 
@@ -36,13 +36,13 @@ export function WidgetVSComparativo({
         {companero ? (
           <LadoJugador jugador={companero} etiquetaLado={companero.nombre} />
         ) : (
-          <div className="w-24 pt-8 text-center text-xs text-morado-marca/50">
+          <div className="w-24 pt-8 text-center text-xs text-white/50">
             Esperando a tu pareja
           </div>
         )}
       </div>
 
-      <p className="mt-4 flex items-center justify-center gap-1.5 text-center text-xs text-morado-marca/60">
+      <p className="mt-4 flex items-center justify-center gap-1.5 text-center text-xs text-white/60">
         <Icono.chispa className="h-3.5 w-3.5" strokeWidth={2.5} />
         Cada {PUNTOS_PARA_DESBLOQUEAR_PLOT_TWIST} puntos desbloqueas un plot twist
       </p>
@@ -60,13 +60,13 @@ function LadoJugador({ jugador, etiquetaLado }: { jugador: Jugador; etiquetaLado
       <AnilloProgreso progreso={progreso} tamano={82}>
         <Avatar avatarId={jugador.avatarId} nombre={jugador.nombre} tamano={54} anillo={false} />
       </AnilloProgreso>
-      <p className="max-w-full truncate font-heading text-sm text-morado-marca">
+      <p className="max-w-full truncate font-heading text-sm text-white">
         {etiquetaLado}
       </p>
       <p className="font-heading text-2xl font-bold text-rosa-acento">{jugador.puntos}</p>
       <span className="chip">{etiqueta}</span>
       {plotTwists > 0 && (
-        <p className="flex items-center gap-1 text-[11px] text-morado-marca/60">
+        <p className="flex items-center gap-1 text-[11px] text-white/60">
           <Icono.chispa className="h-3 w-3" strokeWidth={2.5} /> {plotTwists}
         </p>
       )}

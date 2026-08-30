@@ -14,7 +14,7 @@ export function FormularioNombrarEspacio({ modalidad }: { modalidad: Modalidad }
     <form action={accion} className="flex flex-col gap-3">
       <input type="hidden" name="modalidad" value={modalidad} />
 
-      <label className="flex flex-col gap-1 text-sm font-semibold text-morado-marca">
+      <label className="flex flex-col gap-1 text-sm font-semibold text-white">
         Nombre del espacio
         <input
           name="nombreEspacio"
@@ -28,7 +28,7 @@ export function FormularioNombrarEspacio({ modalidad }: { modalidad: Modalidad }
       {estado?.error && (
         <p
           role="alert"
-          className="rounded-widget bg-rosa-pastel/60 px-3 py-2 text-sm text-vino-marca"
+          className="rounded-widget bg-rosa-acento/15 px-3 py-2 text-sm text-rosa-acento"
         >
           {estado.mensaje}
         </p>

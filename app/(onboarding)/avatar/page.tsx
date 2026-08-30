@@ -16,7 +16,7 @@ export default async function AvatarPage() {
     <section className="widget flex flex-col gap-4">
       <div>
         <h2 className="text-2xl">Elige tu avatar</h2>
-        <p className="mt-1 text-sm text-morado-marca/70">
+        <p className="mt-1 text-sm text-white/70">
           Así te verá tu pareja en el marcador semanal.
         </p>
       </div>

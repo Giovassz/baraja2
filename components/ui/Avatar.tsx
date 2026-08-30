@@ -38,7 +38,7 @@ export function Avatar({
         />
       ) : (
         <IconoAnimal
-          className="text-morado-marca"
+          className="text-white"
           style={{ width: tamano * 0.52, height: tamano * 0.52 }}
           strokeWidth={2}
           aria-hidden

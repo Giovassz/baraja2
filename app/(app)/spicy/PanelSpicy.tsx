@@ -68,20 +68,20 @@ export function PanelSpicy({
   if (!puedeActivar) {
     // El botón de activación no se muestra si confirmo_mayor_edad = false (criterio Fase 4).
     return (
-      <p className="rounded-widget bg-rosa-pastel/40 px-4 py-3 text-sm text-vino-marca">
+      <p className="rounded-widget bg-rosa-acento/15 px-4 py-3 text-sm text-rosa-acento">
         El modo Spicy solo está disponible para cuentas que confirmaron ser mayores de edad.
       </p>
     );
   }
 
   return (
-    <div className="widget flex items-center justify-between gap-3 bg-gradient-to-br from-rosa-acento/15 to-blanco-calido">
+    <div className="widget widget-acento flex items-center justify-between gap-3">
       <div>
         <p className="font-heading text-lg">Modo Spicy</p>
-        <p className="text-sm text-morado-marca/70">
+        <p className="text-sm text-white/70">
           {activo ? 'Activo. Verás el catálogo Spicy abajo.' : 'Desactivado.'}
         </p>
-        {error && <p className="mt-1 text-xs text-vino-marca">{error}</p>}
+        {error && <p className="mt-1 text-xs text-rosa-acento">{error}</p>}
       </div>
 
       <button
@@ -90,7 +90,7 @@ export function PanelSpicy({
         disabled={pendiente}
         onClick={alPulsar}
         className={`relative h-8 w-14 rounded-full transition ${
-          activo ? 'bg-rosa-acento' : 'bg-lavanda'
+          activo ? 'bg-rosa-acento' : 'bg-white/15'
         } disabled:opacity-50`}
       >
         <span
@@ -105,7 +105,7 @@ export function PanelSpicy({
         onCerrar={() => setAvisoAbierto(false)}
         titulo="Antes de activar el modo Spicy"
       >
-        <p className="text-sm text-morado-marca">{AVISO_PRIVACIDAD}</p>
+        <p className="text-sm text-white">{AVISO_PRIVACIDAD}</p>
         <div className="mt-4 flex gap-2">
           <button
             className="boton-secundario flex-1 py-2 text-sm"

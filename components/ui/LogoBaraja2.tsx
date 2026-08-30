@@ -16,7 +16,7 @@ export function LogoBaraja2({ tamano = 40 }: { tamano?: number }) {
         style={{ width: c, height: h, transform: 'rotate(-14deg) translateX(-15%)' }}
       >
         <Icono.llama
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-vino-marca"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-rosa-acento"
           style={{ width: tamano * 0.3, height: tamano * 0.3 }}
           fill="currentColor"
           strokeWidth={0}

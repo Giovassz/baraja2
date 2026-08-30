@@ -96,30 +96,30 @@ export function PanelNotificaciones({
 
   return (
     <div className="flex flex-col gap-4">
-      <section className="widget bg-gradient-to-br from-lavanda to-blanco-calido">
+      <section className="widget bg-white/[0.04]">
         <h2 className="text-lg">Avisos en este dispositivo</h2>
-        <p className="mt-1 text-sm text-morado-marca/70">
+        <p className="mt-1 text-sm text-white/70">
           Recibe una notificación cuando tu pareja te juegue una carta o cuando empiece
           una semana nueva.
         </p>
 
         <div className="mt-3">
           {estado === 'cargando' && (
-            <p className="text-sm text-morado-marca/60">Comprobando…</p>
+            <p className="text-sm text-white/60">Comprobando…</p>
           )}
           {estado === 'no-soportado' && (
-            <p className="text-sm text-vino-marca">
+            <p className="text-sm text-rosa-acento">
               Este navegador no soporta notificaciones push. En iPhone, instala Baraja2 en
               tu pantalla de inicio y ábrela desde ahí.
             </p>
           )}
           {estado === 'sin-llave' && (
-            <p className="text-sm text-vino-marca">
+            <p className="text-sm text-rosa-acento">
               Falta configurar las llaves VAPID en el servidor.
             </p>
           )}
           {estado === 'bloqueado' && (
-            <p className="text-sm text-vino-marca">
+            <p className="text-sm text-rosa-acento">
               Bloqueaste las notificaciones para Baraja2. Habilítalas desde los ajustes del
               navegador.
             </p>
@@ -148,7 +148,7 @@ export function PanelNotificaciones({
       <form action={accionPref} className="widget flex flex-col gap-3">
         <h2 className="text-lg">¿De qué quieres enterarte?</h2>
 
-        <label className="flex items-center justify-between gap-3 text-sm text-morado-marca">
+        <label className="flex items-center justify-between gap-3 text-sm text-white">
           Nueva semana / cartas nuevas
           <input
             type="checkbox"
@@ -158,7 +158,7 @@ export function PanelNotificaciones({
           />
         </label>
 
-        <label className="flex items-center justify-between gap-3 text-sm text-morado-marca">
+        <label className="flex items-center justify-between gap-3 text-sm text-white">
           Mi pareja me jugó una carta
           <input
             type="checkbox"
@@ -170,7 +170,7 @@ export function PanelNotificaciones({
 
         {prefEstado?.mensaje && (
           <p
-            className={`text-xs ${prefEstado.ok ? 'text-morado-marca/70' : 'text-vino-marca'}`}
+            className={`text-xs ${prefEstado.ok ? 'text-white/70' : 'text-rosa-acento'}`}
           >
             {prefEstado.mensaje}
           </p>

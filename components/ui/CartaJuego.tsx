@@ -108,13 +108,13 @@ export function CaraCarta({
 
       {/* Cuerpo */}
       <div
-        className={`flex flex-1 flex-col items-center justify-center gap-2 px-3 text-center ${
-          compacta ? 'py-2.5' : 'py-5'
+        className={`flex flex-1 flex-col items-center justify-center text-center ${
+          compacta ? 'gap-1.5 px-2 py-2' : 'gap-2 px-3 py-5'
         }`}
       >
         <motion.span
           className={`flex items-center justify-center rounded-full shadow-[0_8px_18px_-6px_rgba(232,93,138,0.55)] ${CIRCULO[acento]} ${
-            compacta ? 'h-10 w-10' : 'h-16 w-16'
+            compacta ? 'h-8 w-8' : 'h-16 w-16'
           }`}
           animate={{ y: [0, -3, 0] }}
           transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }}
@@ -123,8 +123,8 @@ export function CaraCarta({
         </motion.span>
 
         <p
-          className={`font-heading font-semibold leading-tight text-morado-marca text-balance ${
-            compacta ? 'line-clamp-3 text-[11px]' : 'text-[15px]'
+          className={`font-heading font-semibold leading-tight text-white text-balance ${
+            compacta ? 'line-clamp-2 text-[10px]' : 'text-[15px]'
           }`}
         >
           {texto}
@@ -136,7 +136,7 @@ export function CaraCarta({
       </div>
 
       {estado && ETIQUETA_ESTADO[estado] && compacta && (
-        <span className="absolute right-1.5 top-1.5 rounded-full bg-white/95 p-1 text-morado-marca shadow-widget-sm">
+        <span className="absolute right-1.5 top-1.5 rounded-full bg-noche-2 p-1 text-white shadow-widget-sm">
           {estado === 'cumplida' ? (
             <Icono.check className="h-2.5 w-2.5" strokeWidth={3.5} />
           ) : estado === 'jugada' ? (

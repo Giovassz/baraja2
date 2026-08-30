@@ -22,7 +22,7 @@ export default async function NombrarEspacioPage({
     <section className="widget flex flex-col gap-4">
       <div>
         <h2 className="text-2xl">Ponle nombre a su espacio</h2>
-        <p className="mt-1 text-sm text-morado-marca/70">
+        <p className="mt-1 text-sm text-white/70">
           Puede ser un apodo, la fecha en que empezaron, lo que quieran.
         </p>
       </div>

@@ -21,7 +21,7 @@ export default async function TiendaPage() {
 
       <div className="widget widget-acento flex items-center justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wide text-vino-marca">
+          <p className="text-xs font-bold uppercase tracking-wide text-rosa-acento">
             Tus puntos
           </p>
           <p className="flex items-center gap-2 font-heading text-3xl font-bold text-rosa-acento">
@@ -29,7 +29,7 @@ export default async function TiendaPage() {
             {datos.puntos}
           </p>
         </div>
-        <p className="max-w-[45%] text-right text-xs text-morado-marca/60">
+        <p className="max-w-[45%] text-right text-xs text-white/60">
           Cada plot twist cuesta {datos.precio} puntos.
         </p>
       </div>

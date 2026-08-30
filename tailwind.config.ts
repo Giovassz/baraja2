@@ -14,11 +14,17 @@ const config: Config = {
       colors: {
         'rosa-pastel': '#F7C6DA',
         'rosa-acento': '#E85D8A',
+        coral: '#FF7A59',
         lavanda: '#D9C9EC',
         menta: '#BFEAD1',
         'morado-marca': '#3B1F4D',
         'vino-marca': '#B3486B',
         'blanco-calido': '#FFF9FB',
+        // Tema oscuro (UX estilo Tinder)
+        noche: '#140810',
+        'noche-2': '#1c0e18',
+        superficie: '#26141f',
+        'superficie-alta': '#33202d',
       },
       borderRadius: {
         widget: '22px',

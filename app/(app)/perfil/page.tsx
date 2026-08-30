@@ -33,11 +33,11 @@ export default async function PerfilPage() {
         </AnilloProgreso>
         <div className="min-w-0">
           <p className="truncate font-heading text-xl">{datos.usuario.nombre}</p>
-          <p className="flex items-center gap-1 text-sm text-vino-marca">
+          <p className="flex items-center gap-1 text-sm text-rosa-acento">
             <Icono.nivel className="h-3.5 w-3.5" strokeWidth={2.5} />
             Nivel {datos.nivel.nivel} · {datos.nivel.enNivel}/{datos.nivel.paraSubir} para subir
           </p>
-          <p className="mt-1 flex gap-3 text-xs text-morado-marca/60">
+          <p className="mt-1 flex gap-3 text-xs text-white/60">
             <span className="flex items-center gap-1">
               <Icono.cumplida className="h-3 w-3" strokeWidth={2.5} />
               {datos.totalCartasCumplidas} cumplidas
@@ -56,7 +56,7 @@ export default async function PerfilPage() {
           <Icono.corazones className="h-4 w-4 text-rosa-acento" strokeWidth={2.5} />
           Su espacio
         </h2>
-        <p className="text-sm text-morado-marca/70">
+        <p className="text-sm text-white/70">
           Modalidad: <strong>{etiquetaModalidad(datos.pareja.modalidad)}</strong>
           {datos.pareja.companero && (
             <>
@@ -79,12 +79,12 @@ export default async function PerfilPage() {
           </span>
           <div>
             <p className="font-heading text-base">Modo Spicy</p>
-            <p className="text-xs text-morado-marca/60">
+            <p className="text-xs text-white/60">
               {datos.usuario.modo_spicy_activo ? 'Activo' : 'Desactivado'} · toca para gestionar
             </p>
           </div>
         </div>
-        <Icono.siguiente className="h-5 w-5 text-morado-marca/40" strokeWidth={2.5} />
+        <Icono.siguiente className="h-5 w-5 text-white/45" strokeWidth={2.5} />
       </Link>
 
       {/* Notificaciones */}

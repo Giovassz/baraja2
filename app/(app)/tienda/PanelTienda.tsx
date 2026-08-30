@@ -43,7 +43,7 @@ export function PanelTienda({
 
   if (opciones.length === 0) {
     return (
-      <p className="text-sm text-morado-marca/60">
+      <p className="text-sm text-white/60">
         Todavía no hay plot twists cargados para su modalidad.
       </p>
     );
@@ -53,7 +53,7 @@ export function PanelTienda({
     <div className="flex flex-col gap-3">
       <Corazones />
       {error && (
-        <p className="rounded-widget bg-rosa-pastel/60 px-3 py-2 text-sm text-vino-marca">
+        <p className="rounded-widget bg-rosa-acento/15 px-3 py-2 text-sm text-rosa-acento">
           {error}
         </p>
       )}
@@ -72,7 +72,7 @@ export function PanelTienda({
               className="flex flex-col gap-2"
             >
               <CaraCarta icono={pr.icono} acento="plot" texto={o.nombre} />
-              <p className="text-[11px] leading-tight text-morado-marca/70">{o.descripcion}</p>
+              <p className="text-[11px] leading-tight text-white/70">{o.descripcion}</p>
               <button
                 className="boton-primario w-full py-2 text-xs"
                 disabled={!alcanza || pendiente}

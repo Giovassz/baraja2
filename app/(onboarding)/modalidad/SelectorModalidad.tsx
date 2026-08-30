@@ -53,20 +53,20 @@ export function SelectorModalidad() {
             whileTap={{ scale: 0.98 }}
             className={`flex items-start gap-3 rounded-widget border-2 p-4 text-left transition ${
               activo
-                ? 'border-rosa-acento bg-rosa-pastel/40'
-                : 'border-lavanda/50 bg-white/60'
+                ? 'border-rosa-acento bg-rosa-acento/15'
+                : 'border-white/12 bg-white/10'
             }`}
           >
             <span
               className={`rounded-full p-2 ${
-                activo ? 'bg-rosa-acento text-white' : 'bg-white/70 text-vino-marca'
+                activo ? 'bg-rosa-acento text-white' : 'bg-white/10 text-rosa-acento'
               }`}
             >
               <Ico className="h-5 w-5" strokeWidth={2.5} />
             </span>
             <span>
-              <span className="block font-heading text-lg text-morado-marca">{o.titulo}</span>
-              <span className="block text-sm text-morado-marca/70">{o.detalle}</span>
+              <span className="block font-heading text-lg text-white">{o.titulo}</span>
+              <span className="block text-sm text-white/70">{o.detalle}</span>
             </span>
           </motion.button>
         );

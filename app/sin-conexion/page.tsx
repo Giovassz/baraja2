@@ -12,7 +12,7 @@ export default function SinConexionPage() {
       <div className="widget max-w-sm">
         <WifiOff className="mx-auto h-12 w-12 text-rosa-acento" strokeWidth={2} />
         <h1 className="mt-3 text-2xl">Sin conexión</h1>
-        <p className="mt-2 text-morado-marca/70">
+        <p className="mt-2 text-white/70">
           No pudimos cargar esta parte de Baraja2. Revisa tu internet y vuelve a
           intentarlo; tus cartas te esperan.
         </p>

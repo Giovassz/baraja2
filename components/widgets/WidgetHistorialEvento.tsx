@@ -42,13 +42,13 @@ export function WidgetHistorialEvento({
   return (
     <article className={`widget ${cfg.clase} !p-4`}>
       <div className="flex items-start gap-3">
-        <span className="mt-0.5 rounded-full bg-white/70 p-2 text-vino-marca">
+        <span className="mt-0.5 rounded-full bg-white/10 p-2 text-rosa-acento">
           <Ico className="h-4 w-4" strokeWidth={2.5} />
         </span>
         <div className="min-w-0 flex-1">
           <p className="chip !bg-transparent !px-0">{cfg.etiqueta}</p>
-          <p className="mt-0.5 text-sm text-morado-marca">{descripcion}</p>
-          <p className="mt-1 flex items-center gap-1.5 text-xs text-morado-marca/60">
+          <p className="mt-0.5 text-sm text-white">{descripcion}</p>
+          <p className="mt-1 flex items-center gap-1.5 text-xs text-white/60">
             <Icono.reloj className="h-3 w-3" strokeWidth={2.5} />
             {autor} · {cuando}
           </p>

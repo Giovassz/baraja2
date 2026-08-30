@@ -44,7 +44,7 @@ export function CatalogoSpicy({
 
   if (cartas.length === 0) {
     return (
-      <p className="text-sm text-morado-marca/60">
+      <p className="text-sm text-white/60">
         Todavía no hay cartas Spicy cargadas para su modalidad.
       </p>
     );
@@ -74,7 +74,7 @@ export function CatalogoSpicy({
       <AnimatePresence>
         {activa && (
           <motion.div
-            className="fixed inset-0 z-[65] flex items-center justify-center bg-morado-marca/55 p-6 backdrop-blur-sm"
+            className="fixed inset-0 z-[65] flex items-center justify-center bg-black/70 p-6 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

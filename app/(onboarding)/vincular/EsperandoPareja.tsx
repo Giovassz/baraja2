@@ -47,11 +47,11 @@ export function EsperandoPareja({
         strokeWidth={2}
       />
       <h2 className="text-2xl">Ya casi</h2>
-      <p className="text-sm text-morado-marca/70">
+      <p className="text-sm text-white/70">
         Comparte este código con tu pareja para que se una a <strong>{nombreEspacio}</strong>.
       </p>
 
-      <div className="w-full rounded-widget bg-white/70 py-4 font-heading text-4xl tracking-[0.4em] text-rosa-acento">
+      <div className="w-full rounded-widget bg-white/10 py-4 font-heading text-4xl tracking-[0.4em] text-rosa-acento">
         {codigo}
       </div>
 
@@ -67,12 +67,12 @@ export function EsperandoPareja({
         )}
       </Boton>
 
-      <p className="text-xs text-morado-marca/50">
+      <p className="text-xs text-white/50">
         Esta pantalla se actualiza sola en cuanto tu pareja entre.
       </p>
 
       {!tieneAvatar && (
-        <p className="text-xs text-morado-marca/50">
+        <p className="text-xs text-white/50">
           Mientras tanto puedes{' '}
           <a href="/avatar" className="font-semibold text-rosa-acento">
             elegir tu avatar

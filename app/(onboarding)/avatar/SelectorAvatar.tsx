@@ -38,7 +38,7 @@ export function SelectorAvatar({ avatarActual }: { avatarActual: string | null }
               }`}
               style={{ backgroundColor: a.color }}
             >
-              <IconoAnimal className="h-1/2 w-1/2 text-morado-marca" strokeWidth={2} />
+              <IconoAnimal className="h-1/2 w-1/2 text-white" strokeWidth={2} />
               {activo && (
                 <span className="absolute -bottom-1 -right-1 rounded-full bg-rosa-acento p-1 text-white">
                   <Icono.check className="h-3 w-3" strokeWidth={3} />
@@ -49,14 +49,14 @@ export function SelectorAvatar({ avatarActual }: { avatarActual: string | null }
         })}
       </div>
 
-      <p className="text-center text-xs text-morado-marca/50">
+      <p className="text-center text-xs text-white/50">
         Los avatares ilustrados llegan pronto. Por ahora elige tu animalito.
       </p>
 
       {estado?.error && (
         <p
           role="alert"
-          className="rounded-widget bg-rosa-pastel/60 px-3 py-2 text-sm text-vino-marca"
+          className="rounded-widget bg-rosa-acento/15 px-3 py-2 text-sm text-rosa-acento"
         >
           {estado.mensaje}
         </p>

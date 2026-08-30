@@ -33,7 +33,7 @@ export function Modal({ abierto, onCerrar, titulo, children, bloqueante = false 
     <AnimatePresence>
       {abierto && (
         <motion.div
-          className="fixed inset-0 z-[70] flex items-center justify-center bg-morado-marca/45 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -43,7 +43,7 @@ export function Modal({ abierto, onCerrar, titulo, children, bloqueante = false 
             role="dialog"
             aria-modal="true"
             aria-label={titulo}
-            className="w-full max-w-sm rounded-widget border border-white/60 bg-blanco-calido p-6 shadow-widget"
+            className="w-full max-w-sm rounded-widget border border-white/10 bg-superficie p-6 shadow-[0_30px_70px_-20px_rgba(0,0,0,0.8)]"
             initial={{ scale: 0.9, y: 24, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.92, y: 16, opacity: 0 }}
@@ -57,7 +57,7 @@ export function Modal({ abierto, onCerrar, titulo, children, bloqueante = false 
                   <button
                     onClick={onCerrar}
                     aria-label="Cerrar"
-                    className="rounded-full p-1 text-morado-marca/50 transition hover:bg-lavanda/30 hover:text-rosa-acento"
+                    className="rounded-full p-1 text-white/50 transition hover:bg-white/[0.06] hover:text-rosa-acento"
                   >
                     <Icono.cerrar className="h-5 w-5" strokeWidth={2.5} />
                   </button>

@@ -14,7 +14,7 @@ export default async function ModalidadPage() {
     <section className="widget flex flex-col gap-4">
       <div>
         <h2 className="text-2xl">¿Cómo viven su relación?</h2>
-        <p className="mt-1 text-sm text-morado-marca/70">
+        <p className="mt-1 text-sm text-white/70">
           Elige la que más se parezca a su día a día. Define qué retos van a recibir.
         </p>
       </div>

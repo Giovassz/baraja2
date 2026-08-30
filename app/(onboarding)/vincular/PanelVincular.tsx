@@ -18,7 +18,7 @@ export function PanelVincular() {
       <section className="widget flex flex-col gap-4">
         <div>
           <h2 className="text-2xl">Vinculen su espacio</h2>
-          <p className="mt-1 text-sm text-morado-marca/70">
+          <p className="mt-1 text-sm text-white/70">
             Uno de los dos crea el espacio y le comparte el código a la otra persona.
           </p>
         </div>
@@ -38,7 +38,7 @@ export function PanelVincular() {
     <section className="widget flex flex-col gap-4">
       <div>
         <h2 className="text-2xl">Unirme con un código</h2>
-        <p className="mt-1 text-sm text-morado-marca/70">
+        <p className="mt-1 text-sm text-white/70">
           Pídele a tu pareja el código de 6 caracteres que le apareció al crear el espacio.
         </p>
       </div>
@@ -57,7 +57,7 @@ export function PanelVincular() {
         {estado?.error && (
           <p
             role="alert"
-            className="rounded-widget bg-rosa-pastel/60 px-3 py-2 text-sm text-vino-marca"
+            className="rounded-widget bg-rosa-acento/15 px-3 py-2 text-sm text-rosa-acento"
           >
             {estado.mensaje}
           </p>
@@ -68,7 +68,7 @@ export function PanelVincular() {
 
       <button
         onClick={() => setModo('elegir')}
-        className="inline-flex items-center gap-1 self-start text-sm font-semibold text-morado-marca/60"
+        className="inline-flex items-center gap-1 self-start text-sm font-semibold text-white/60"
       >
         <Icono.atras className="h-4 w-4" strokeWidth={2.5} />
         Volver

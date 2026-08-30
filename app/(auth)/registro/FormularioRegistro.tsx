@@ -57,7 +57,7 @@ export function FormularioRegistro() {
         required
       />
 
-      <label className="flex items-start gap-2.5 rounded-2xl bg-lavanda/25 px-3.5 py-3 text-[13px] text-morado-marca">
+      <label className="flex items-start gap-2.5 rounded-2xl bg-white/[0.06] px-3.5 py-3 text-[13px] text-white">
         <input
           name="confirmoMayorEdad"
           type="checkbox"
@@ -70,7 +70,7 @@ export function FormularioRegistro() {
       {estado?.error && (
         <p
           role="alert"
-          className="flex items-center gap-2 rounded-2xl bg-rosa-pastel/60 px-3.5 py-2.5 text-sm font-semibold text-vino-marca"
+          className="flex items-center gap-2 rounded-2xl bg-rosa-acento/15 px-3.5 py-2.5 text-sm font-semibold text-rosa-acento"
         >
           <Icono.cerrar className="h-4 w-4 shrink-0" strokeWidth={2.5} />
           {estado.mensaje}

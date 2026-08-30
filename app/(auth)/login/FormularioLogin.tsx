@@ -50,7 +50,7 @@ export function FormularioLogin() {
       {estado?.error && (
         <p
           role="alert"
-          className="flex items-center gap-2 rounded-2xl bg-rosa-pastel/60 px-3.5 py-2.5 text-sm font-semibold text-vino-marca"
+          className="flex items-center gap-2 rounded-2xl bg-rosa-acento/15 px-3.5 py-2.5 text-sm font-semibold text-rosa-acento"
         >
           <Icono.cerrar className="h-4 w-4 shrink-0" strokeWidth={2.5} />
           {estado.mensaje}

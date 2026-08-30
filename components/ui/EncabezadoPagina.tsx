@@ -7,7 +7,7 @@ export function EnlaceVolver({ href = '/dashboard' }: { href?: string }) {
   return (
     <Link
       href={href}
-      className="inline-flex items-center gap-1 text-sm font-semibold text-morado-marca/60 transition hover:text-rosa-acento"
+      className="inline-flex items-center gap-1 text-sm font-semibold text-white/60 transition hover:text-rosa-acento"
     >
       <Icono.atras className="h-4 w-4" strokeWidth={2.5} />
       Volver
@@ -32,7 +32,7 @@ export function TituloPagina({
         </span>
         <h1 className="text-2xl">{children}</h1>
       </div>
-      {subtitulo && <p className="text-sm text-morado-marca/70">{subtitulo}</p>}
+      {subtitulo && <p className="text-sm text-white/70">{subtitulo}</p>}
     </header>
   );
 }

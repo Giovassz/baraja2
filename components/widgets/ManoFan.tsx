@@ -1,0 +1,208 @@
+// La mano del jugador: cartas agarradas en abanico, como si las sostuvieras.
+// 1 toque = ver preview de la carta. 2 toques (otra vez sobre la misma) = lanzarla.
+// Implementa BJ2-017, BJ2-018
+'use client';
+
+import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
+import { CartaJuego } from '@/components/ui/CartaJuego';
+import { Icono } from '@/components/ui/iconos';
+import { useCelebracion } from '@/components/ui/Celebracion';
+import { jugarCarta } from '@/lib/actions/cartas';
+import type { EstadoCarta } from '@/lib/supabase/tipos';
+
+export interface CartaMano {
+  id: string;
+  texto: string;
+  tipo: 'estandar' | 'spicy';
+  puntosOtorgados: number;
+  estado: EstadoCarta;
+}
+
+const ETIQUETA: Partial<Record<EstadoCarta, string>> = {
+  jugada: 'En juego',
+  cumplida: 'Cumplida',
+  bloqueada: 'Bloqueada',
+  robada: 'Robada',
+};
+
+export function ManoFan({
+  cartas,
+  nombreCompanero,
+}: {
+  cartas: CartaMano[];
+  nombreCompanero?: string;
+}) {
+  const router = useRouter();
+  const [preview, setPreview] = useState<string | null>(null);
+  const [lanzando, setLanzando] = useState(false);
+  const [pendiente, iniciar] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+  const { celebrar, Corazones } = useCelebracion();
+
+  const cartaPreview = cartas.find((c) => c.id === preview) ?? null;
+  const n = cartas.length;
+  const centro = (n - 1) / 2;
+
+  function tocar(carta: CartaMano) {
+    setError(null);
+    if (preview !== carta.id) {
+      setPreview(carta.id);
+      return;
+    }
+    if (carta.estado !== 'disponible') {
+      setError(
+        carta.estado === 'jugada'
+          ? 'Ya está en juego, esperando a que la cumplan.'
+          : 'Esta carta ya no se puede jugar.',
+      );
+      return;
+    }
+    iniciar(async () => {
+      const r = await jugarCarta(carta.id);
+      if (!r.ok) {
+        setError(r.mensaje ?? 'No se pudo jugar la carta.');
+        return;
+      }
+      setLanzando(true);
+      celebrar();
+      setTimeout(() => {
+        setPreview(null);
+        setLanzando(false);
+        router.refresh();
+      }, 620);
+    });
+  }
+
+  if (n === 0) {
+    return (
+      <p className="py-6 text-center text-sm text-white/50">
+        Sin cartas esta semana. Vuelve pronto.
+      </p>
+    );
+  }
+
+  return (
+    <>
+      <Corazones />
+
+      <div className="relative mx-auto mb-1 flex h-[168px] w-full max-w-md items-end justify-center">
+        {cartas.map((carta, i) => {
+          const offset = i - centro;
+          const activa = preview === carta.id;
+          const usada = carta.estado !== 'disponible';
+          return (
+            <motion.button
+              key={carta.id}
+              type="button"
+              onClick={() => tocar(carta)}
+              className="absolute bottom-0 w-[114px] origin-bottom rounded-naipe outline-none focus-visible:ring-4 focus-visible:ring-rosa-acento/40"
+              style={{ zIndex: activa ? 50 : i }}
+              initial={{ opacity: 0, y: 60 }}
+              animate={{
+                opacity: activa ? 0 : 1,
+                x: offset * 54,
+                y: -Math.abs(offset) * 6,
+                rotate: offset * 4,
+              }}
+              transition={{ type: 'spring', stiffness: 240, damping: 24, delay: i * 0.04 }}
+              whileHover={{ y: -Math.abs(offset) * 6 - 22, rotate: offset * 1.6, zIndex: 40 }}
+              aria-label={`Carta: ${carta.texto}`}
+            >
+              <CartaJuego
+                id={carta.id}
+                texto={carta.texto}
+                tipo={carta.tipo}
+                puntosOtorgados={carta.puntosOtorgados}
+                estado={carta.estado}
+                compacta
+              />
+              {usada && (
+                <span className="absolute -right-1.5 -top-1.5 rounded-full bg-noche-2 p-1 text-white ring-1 ring-white/20">
+                  {carta.estado === 'cumplida' ? (
+                    <Icono.check className="h-3 w-3" strokeWidth={3.5} />
+                  ) : (
+                    <Icono.reloj className="h-3 w-3" strokeWidth={3} />
+                  )}
+                </span>
+              )}
+            </motion.button>
+          );
+        })}
+      </div>
+
+      <p className="mt-3 text-center text-[11px] text-white/40">
+        Toca una carta para verla · tócala otra vez para lanzarla
+      </p>
+
+      <AnimatePresence>
+        {cartaPreview && (
+          <motion.div
+            className="fixed inset-0 z-[65] flex flex-col items-center justify-center gap-4 bg-noche/90 p-6 backdrop-blur-md"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => !pendiente && setPreview(null)}
+          >
+            <button
+              className="absolute right-5 top-5 rounded-full bg-white/10 p-2 text-white"
+              onClick={() => setPreview(null)}
+              aria-label="Cerrar"
+            >
+              <Icono.cerrar className="h-5 w-5" strokeWidth={2.5} />
+            </button>
+
+            <motion.div
+              className="w-full max-w-[240px]"
+              initial={{ scale: 0.8, y: 50, rotate: -6 }}
+              animate={
+                lanzando
+                  ? { scale: 1.15, y: -170, rotate: 16, opacity: 0 }
+                  : { scale: 1, y: 0, rotate: 0, opacity: 1 }
+              }
+              transition={{ type: 'spring', stiffness: 240, damping: 22 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                tocar(cartaPreview);
+              }}
+            >
+              <CartaJuego
+                id={cartaPreview.id}
+                texto={cartaPreview.texto}
+                tipo={cartaPreview.tipo}
+                puntosOtorgados={cartaPreview.puntosOtorgados}
+                estado={cartaPreview.estado}
+              />
+            </motion.div>
+
+            <div
+              className="flex w-full max-w-[240px] flex-col gap-2"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {cartaPreview.estado === 'disponible' ? (
+                <button
+                  className="boton-primario w-full py-3 text-sm"
+                  disabled={pendiente || lanzando}
+                  onClick={() => tocar(cartaPreview)}
+                >
+                  <Icono.jugar className="h-4 w-4" strokeWidth={2.5} />
+                  {pendiente
+                    ? 'Lanzando…'
+                    : nombreCompanero
+                      ? `Lanzar a ${nombreCompanero}`
+                      : 'Lanzar carta'}
+                </button>
+              ) : (
+                <p className="text-center text-xs text-white/70">
+                  {ETIQUETA[cartaPreview.estado]}
+                </p>
+              )}
+              {error && <p className="text-center text-xs text-rosa-acento">{error}</p>}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}

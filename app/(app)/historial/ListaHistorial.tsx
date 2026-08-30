@@ -41,7 +41,7 @@ export function ListaHistorial({ eventos }: { eventos: EventoHistorial[] }) {
               className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold transition ${
                 filtro === f.valor
                   ? 'bg-rosa-acento text-white'
-                  : 'bg-white/70 text-morado-marca/70'
+                  : 'bg-white/10 text-white/70'
               }`}
             >
               {Ico && <Ico className="h-3.5 w-3.5" strokeWidth={2.5} />}
@@ -52,7 +52,7 @@ export function ListaHistorial({ eventos }: { eventos: EventoHistorial[] }) {
       </div>
 
       {visibles.length === 0 ? (
-        <p className="text-sm text-morado-marca/60">
+        <p className="text-sm text-white/60">
           Todavía no hay eventos aquí. Cumplan retos para empezar su historia.
         </p>
       ) : (

@@ -38,7 +38,7 @@ export function WidgetReload({
     <article className="widget widget-menta flex flex-col justify-between">
       <div>
         <div className="flex items-center gap-2">
-          <span className="rounded-full bg-white/70 p-2 text-vino-marca">
+          <span className="rounded-full bg-white/10 p-2 text-rosa-acento">
             <Icono.recargar
               className={`h-4 w-4 ${pendiente ? 'animate-spin' : ''}`}
               strokeWidth={2.5}
@@ -46,13 +46,13 @@ export function WidgetReload({
           </span>
           <h3 className="text-base">Reload</h3>
         </div>
-        <p className="mt-2 text-sm text-morado-marca/70">
+        <p className="mt-2 text-sm text-white/70">
           Cambia todas tus cartas disponibles por otras nuevas. Una vez por semana.
         </p>
       </div>
 
       {mensaje && (
-        <p className={`mt-2 text-xs ${esError ? 'text-vino-marca' : 'text-morado-marca/70'}`}>
+        <p className={`mt-2 text-xs ${esError ? 'text-rosa-acento' : 'text-white/70'}`}>
           {mensaje}
         </p>
       )}

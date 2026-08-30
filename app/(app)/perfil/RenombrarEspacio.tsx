@@ -11,7 +11,7 @@ export function RenombrarEspacio({ nombreActual }: { nombreActual: string }) {
 
   return (
     <form action={accion} className="flex flex-col gap-2">
-      <label className="text-xs font-semibold text-morado-marca">Nombre del espacio</label>
+      <label className="text-xs font-semibold text-white">Nombre del espacio</label>
       <input
         name="nombreEspacio"
         defaultValue={nombreActual}
@@ -20,7 +20,7 @@ export function RenombrarEspacio({ nombreActual }: { nombreActual: string }) {
         required
       />
       {estado?.mensaje && (
-        <p className={`text-xs ${estado.ok ? 'text-morado-marca/70' : 'text-vino-marca'}`}>
+        <p className={`text-xs ${estado.ok ? 'text-white/70' : 'text-rosa-acento'}`}>
           {estado.mensaje}
         </p>
       )}
