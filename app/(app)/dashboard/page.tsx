@@ -1,4 +1,4 @@
-// Casa: UX estilo Tinder — pila de retos recibidos + tu mano en abanico + plot twists
+// Casa: UX estilo Tinder + estructura Clash Royale — pila de retos, mano en abanico y plot twists
 // Implementa BJ2-017, BJ2-022, BJ2-026, BJ2-029, BJ2-033, BJ2-037
 import { obtenerDatosDashboard } from '@/lib/datos';
 import { diasParaProximoReinicio } from '@/lib/reglas/ciclos';
@@ -12,6 +12,7 @@ import {
   type ObjetivoLane,
 } from '@/components/widgets/PlotTwistsLane';
 import { AutoRefresh } from '@/components/AutoRefresh';
+import { BannerSeccion } from '@/components/ui/BannerSeccion';
 import { Icono } from '@/components/ui/iconos';
 
 export const metadata = { title: 'Casa' };
@@ -52,33 +53,40 @@ export default async function DashboardPage() {
 
   const cartasDisponibles = datos.misCartas.filter((c) => c.estado === 'disponible').length;
   const dias = diasParaProximoReinicio(datos.pareja.fecha_vinculacion);
+  const nombre = datos.pareja.companero?.nombre;
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <AutoRefresh segundos={12} />
 
-      <div>
+      <div className="text-center">
         <h1 className="text-2xl">Semana {datos.cicloNumero}</h1>
-        <p className="flex items-center gap-1.5 text-sm text-white/45">
+        <p className="mt-0.5 flex items-center justify-center gap-1.5 text-[13px] font-bold text-menta">
           <Icono.reloj className="h-3.5 w-3.5" strokeWidth={2.5} />
-          {dias > 0 ? `Cartas nuevas en ${dias} día(s)` : 'Reinicio pronto'}
+          {dias > 0 ? `Cartas nuevas en ${dias} día(s)` : 'Reinicio muy pronto'}
         </p>
       </div>
 
       {retos.length > 0 && (
-        <PilaRetos retos={retos} nombreCompanero={datos.pareja.companero?.nombre} />
+        <>
+          <BannerSeccion icono={Icono.sobre}>Retos de {nombre ?? 'tu pareja'}</BannerSeccion>
+          <PilaRetos retos={retos} nombreCompanero={nombre} />
+        </>
       )}
 
+      <BannerSeccion icono={Icono.mano}>Tu mano</BannerSeccion>
       <section className="lane">
-        <span className="lane-titulo">
-          <Icono.mano className="h-3 w-3" strokeWidth={2.5} />
-          Tu mano
-        </span>
-        <ManoFan cartas={mano} nombreCompanero={datos.pareja.companero?.nombre} />
+        <ManoFan cartas={mano} nombreCompanero={nombre} />
       </section>
 
-      <PlotTwistsLane plotTwists={plotTwists} objetivos={objetivos} />
+      {plotTwists.length > 0 && (
+        <>
+          <BannerSeccion icono={Icono.chispa}>Plot Twists</BannerSeccion>
+          <PlotTwistsLane plotTwists={plotTwists} objetivos={objetivos} />
+        </>
+      )}
 
+      <BannerSeccion icono={Icono.espadas}>Marcador</BannerSeccion>
       <WidgetVSComparativo
         yo={{
           nombre: datos.pareja.yo.nombre,

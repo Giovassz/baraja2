@@ -25,12 +25,7 @@ export function WidgetVSComparativo({
 }) {
   return (
     <article className="widget widget-lavanda col-span-2 destello">
-      <div className="flex items-center justify-center gap-2">
-        <Icono.espadas className="h-4 w-4 text-rosa-acento" strokeWidth={2.5} />
-        <h3 className="text-center text-lg">Marcador de la semana</h3>
-      </div>
-
-      <div className="mt-4 flex items-start justify-around gap-2">
+      <div className="flex items-start justify-around gap-2">
         <LadoJugador jugador={yo} etiquetaLado="Tú" />
         <span className="mt-9 font-heading text-xl font-bold text-rosa-acento">VS</span>
         {companero ? (

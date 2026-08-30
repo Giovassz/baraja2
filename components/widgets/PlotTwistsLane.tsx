@@ -6,7 +6,6 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CaraCarta } from '@/components/ui/CartaJuego';
-import { Icono } from '@/components/ui/iconos';
 import { useCelebracion } from '@/components/ui/Celebracion';
 import { presentacionPlotTwist } from '@/lib/reglas/carta';
 import { usarPlotTwistBloquear, usarPlotTwistRobar } from '@/lib/actions/plot-twists';
@@ -64,10 +63,6 @@ export function PlotTwistsLane({
   return (
     <section className="lane lane-plot">
       <Corazones />
-      <span className="lane-titulo">
-        <Icono.chispa className="h-3 w-3" strokeWidth={2.5} />
-        Tus plot twists
-      </span>
       <div className="grid grid-cols-3 gap-2.5">
         {plotTwists.map((pt, i) => {
           const pr = presentacionPlotTwist(pt.efecto);

@@ -4,6 +4,7 @@
 import { exigirParejaVinculada, obtenerResumenChrome } from '@/lib/datos';
 import { BarraSuperior } from '@/components/nav/BarraSuperior';
 import { BarraInferior } from '@/components/nav/BarraInferior';
+import { FondoCorazones } from '@/components/FondoCorazones';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   await exigirParejaVinculada();
@@ -11,6 +12,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-2xl flex-col">
+      <FondoCorazones />
       <BarraSuperior
         nombreEspacio={chrome.nombreEspacio}
         nivel={chrome.nivel.nivel}

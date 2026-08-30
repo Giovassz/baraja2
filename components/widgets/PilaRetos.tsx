@@ -64,17 +64,11 @@ export function PilaRetos({
   return (
     <div className="relative flex flex-col items-center">
       <Corazones />
-      <div className="mb-2 flex w-full items-center justify-between">
-        <span className="lane-titulo !bg-rosa-acento">
-          <Icono.sobre className="h-3 w-3" strokeWidth={2.5} />
-          Retos de {nombreCompanero ?? 'tu pareja'}
+      {total > 1 && (
+        <span className="mb-1 self-end text-xs font-bold text-white/50">
+          {(i % total) + 1}/{total}
         </span>
-        {total > 1 && (
-          <span className="text-xs font-bold text-white/50">
-            {(i % total) + 1}/{total}
-          </span>
-        )}
-      </div>
+      )}
 
       <div className="relative mx-auto h-[300px] w-full max-w-[280px]">
         {/* cartas de atrás asomando */}

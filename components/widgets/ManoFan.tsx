@@ -91,7 +91,6 @@ export function ManoFan({
         {cartas.map((carta, i) => {
           const offset = i - centro;
           const activa = preview === carta.id;
-          const usada = carta.estado !== 'disponible';
           return (
             <motion.button
               key={carta.id}
@@ -118,15 +117,6 @@ export function ManoFan({
                 estado={carta.estado}
                 compacta
               />
-              {usada && (
-                <span className="absolute -right-1.5 -top-1.5 rounded-full bg-noche-2 p-1 text-white ring-1 ring-white/20">
-                  {carta.estado === 'cumplida' ? (
-                    <Icono.check className="h-3 w-3" strokeWidth={3.5} />
-                  ) : (
-                    <Icono.reloj className="h-3 w-3" strokeWidth={3} />
-                  )}
-                </span>
-              )}
             </motion.button>
           );
         })}
