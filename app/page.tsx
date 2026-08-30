@@ -74,7 +74,7 @@ export default async function LandingPage() {
   const irApp = autenticado ? '/dashboard' : '/registro';
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative [overflow-x:clip]">
       <NavLanding autenticado={autenticado} />
 
       {/* ===== HERO ===== */}

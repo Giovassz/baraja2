@@ -66,21 +66,22 @@ export function CartasHero() {
 
   return (
     <div
-      className="relative mx-auto h-[420px] w-[260px] select-none sm:h-[460px] sm:w-[290px]"
+      className="relative mx-auto h-[440px] w-[300px] select-none overflow-hidden pr-6 sm:h-[480px] sm:w-[330px]"
       onMouseEnter={() => setPausado(true)}
       onMouseLeave={() => setPausado(false)}
       aria-hidden
     >
-      {/* Cartas de atrás */}
+      {/* Cartas de atrás asomando como una mano */}
       {orden.slice(1).reverse().map((c, idx) => {
         const profundidad = orden.length - 1 - idx; // 2, 1
         return (
           <div
             key={`${c.texto}-bg`}
-            className="absolute inset-x-0 top-0"
+            className="absolute left-0 top-0 w-[calc(100%-24px)]"
             style={{
-              transform: `translateY(${profundidad * 16}px) scale(${1 - profundidad * 0.06})`,
-              opacity: 1 - profundidad * 0.25,
+              transform: `translate(${profundidad * 16}px, ${profundidad * -12}px) rotate(${profundidad * 4}deg) scale(${1 - profundidad * 0.05})`,
+              transformOrigin: 'bottom right',
+              opacity: 1 - profundidad * 0.28,
             }}
           >
             <CaraCarta
@@ -95,13 +96,13 @@ export function CartasHero() {
       })}
 
       {/* Carta del frente que se "juega" */}
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence>
         <motion.div
           key={orden[0]!.texto}
-          className="absolute inset-x-0 top-0"
-          initial={{ x: 0, y: -18, rotate: 0, opacity: 0, scale: 0.94 }}
+          className="absolute left-0 top-0 w-[calc(100%-24px)]"
+          initial={{ x: -14, y: -14, rotate: -3, opacity: 0, scale: 0.94 }}
           animate={{ x: 0, y: 0, rotate: 0, opacity: 1, scale: 1 }}
-          exit={{ x: 320, y: -30, rotate: 18, opacity: 0 }}
+          exit={{ x: 140, y: -20, rotate: 15, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 220, damping: 26 }}
         >
           <CaraCarta
