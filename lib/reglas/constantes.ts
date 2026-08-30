@@ -1,6 +1,6 @@
 // Constantes de negocio de Baraja2 (supuestos S1 y S2 del prompt maestro).
 // Deben coincidir con las funciones puntos_por_carta_cumplida() y
-// puntos_para_desbloquear_plot_twist() de supabase/migrations/013_rpc_mecanica.sql.
+// puntos_para_desbloquear_plot_twist() de supabase/migrations/20260101001300_rpc_mecanica.sql.
 // Implementa BJ2-023
 
 /** Puntos que otorga cumplir una carta estándar o spicy (supuesto S1). */

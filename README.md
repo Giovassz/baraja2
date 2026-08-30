@@ -30,15 +30,25 @@ cp .env.example .env.local   # y rellena los valores
 
 ### 1. Supabase
 
+**Opción A — rápida, sin CLI ni Docker (recomendada para la nube):**
+En el Dashboard del proyecto → **SQL Editor** → **New query** → pega el contenido completo
+de [`supabase/setup_completo.sql`](supabase/setup_completo.sql) → **Run**. Crea todas las
+tablas, RLS y funciones de una sola vez.
+
+**Opción B — con Supabase CLI:**
+
 ```bash
+# Contra el proyecto en la nube:
+npx supabase link --project-ref <ref>   # pide la contraseña de la BD
+npx supabase db push                    # aplica supabase/migrations/*
+
 # Local (requiere Docker):
 npx supabase start
-npx supabase db reset          # aplica supabase/migrations/*
-
-# O contra un proyecto en la nube:
-npx supabase link --project-ref <ref>
-npx supabase db push
+npx supabase db reset
 ```
+
+Las migraciones usan nombres con marca de tiempo (`20260101HHMMSS_*.sql`) para que
+`supabase db push` las acepte. `setup_completo.sql` es la concatenación de todas ellas.
 
 Copia en `.env.local`:
 

@@ -1,6 +1,6 @@
 // Modelo puro y testeable de las transiciones de una carta y de la suma de puntos
 // (sección 4.3). Es el espejo en TypeScript de las funciones SQL jugar_carta /
-// confirmar_cumplida de supabase/migrations/013_rpc_mecanica.sql: si cambias una,
+// confirmar_cumplida de supabase/migrations/20260101001300_rpc_mecanica.sql: si cambias una,
 // cambia la otra. Se usa en las pruebas de Fase 2 y como referencia de comportamiento.
 // Implementa BJ2-018, BJ2-019, BJ2-020
 import type { EstadoCarta } from '@/lib/supabase/tipos';
