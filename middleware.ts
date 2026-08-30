@@ -12,8 +12,9 @@ export const config = {
     /*
      * Todas las rutas excepto:
      * - _next/static, _next/image
-     * - favicon, manifest, service worker, íconos y avatares
+     * - archivos públicos (manifest, sw, íconos, capturas) y cualquier archivo con
+     *   extensión de imagen/fuente/ícono.
      */
-    '/((?!_next/static|_next/image|favicon.ico|manifest.json|sw.js|icons/|avatares/).*)',
+    '/((?!_next/static|_next/image|favicon.ico|manifest.json|sw.js|icons/|avatares/|capturas/|.*\\.(?:png|jpg|jpeg|gif|svg|webp|ico|woff2?)$).*)',
   ],
 };

@@ -6,6 +6,8 @@ import type { Database } from './tipos';
 
 // Rutas que NO requieren sesión iniciada
 const RUTAS_PUBLICAS = ['/login', '/registro', '/sin-conexion'];
+// Rutas públicas de coincidencia exacta (la landing)
+const RUTAS_PUBLICAS_EXACTAS = ['/'];
 
 export async function actualizarSesion(request: NextRequest) {
   let respuesta = NextResponse.next({ request });
@@ -45,7 +47,9 @@ export async function actualizarSesion(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     const ruta = request.nextUrl.pathname;
-    const esPublica = RUTAS_PUBLICAS.some((r) => ruta === r || ruta.startsWith(`${r}/`));
+    const esPublica =
+      RUTAS_PUBLICAS_EXACTAS.includes(ruta) ||
+      RUTAS_PUBLICAS.some((r) => ruta === r || ruta.startsWith(`${r}/`));
 
     if (!user && !esPublica) {
       const destino = request.nextUrl.clone();
