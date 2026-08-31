@@ -1,5 +1,5 @@
-// Landing / página web de Baraja2 — estructura estilo Tinder (audaz, animada), tono amoroso y con picardía.
-// PWA instalable desde la misma web (como Spotify).
+// Landing / página web de Baraja2 — diseño consistente y responsivo (mismo aspecto en cualquier pantalla).
+// PWA instalable desde la misma web.
 // Implementa BJ2-002, BJ2-006
 import Link from 'next/link';
 import type { Metadata } from 'next';
@@ -8,7 +8,7 @@ import { FondoCorazones } from '@/components/FondoCorazones';
 import { LogoBaraja2 } from '@/components/ui/LogoBaraja2';
 import { NavLanding } from '@/components/landing/NavLanding';
 import { CartasHero } from '@/components/landing/CartasHero';
-import { SeccionAlterna } from '@/components/landing/SeccionAlterna';
+import { Telefono } from '@/components/landing/Telefono';
 import { Reveal } from '@/components/landing/Reveal';
 import { BotonInstalar } from '@/components/pwa/BotonInstalar';
 import { Icono, type LucideIcon } from '@/components/ui/iconos';
@@ -36,32 +36,34 @@ async function haySesion() {
   }
 }
 
-const PASOS: { icono: LucideIcon; titulo: string; texto: string }[] = [
-  { icono: Icono.usuario, titulo: 'Crea tu cuenta', texto: 'Cada quien la suya. Elige avatar y nombre.' },
-  { icono: Icono.corazones, titulo: 'Vinculen su espacio', texto: 'Uno comparte un código de 6 letras, el otro entra.' },
-  { icono: Icono.mano, titulo: 'Reciben 5 cartas', texto: 'Cada semana, retos según su modalidad de relación.' },
-  { icono: Icono.chispa, titulo: 'Jueguen y desbloqueen', texto: 'Cumplan, sumen puntos y consigan plot twists.' },
+const PASOS: { titulo: string; texto: string }[] = [
+  { titulo: 'Creen su cuenta', texto: 'Cada quien la suya, con su nombre y su avatar.' },
+  { titulo: 'Vinculen su espacio', texto: 'Uno comparte un código de 6 letras y el otro entra con él.' },
+  { titulo: 'Reciben 5 cartas', texto: 'Cada semana, retos según su modalidad. Cúmplanlos y sumen puntos.' },
 ];
 
-const EXTRAS: { icono: LucideIcon; titulo: string; texto: string }[] = [
-  { icono: Icono.espadas, titulo: 'Marcador y niveles', texto: 'Compiten sanamente y suben su nivel de pareja.' },
-  { icono: Icono.campana, titulo: 'Notificaciones', texto: 'Te avisa cuando te juegan una carta o empieza la semana.' },
-  { icono: Icono.reloj, titulo: 'Su historia', texto: 'Cada carta cumplida y cada plot twist, en su línea de tiempo.' },
+const INCLUYE: { icono: LucideIcon; titulo: string; texto: string }[] = [
+  { icono: Icono.mano, titulo: '5 cartas por semana', texto: 'Retos y detalles nuevos cada lunes, distintos para cada quien.' },
+  { icono: Icono.chispa, titulo: 'Plot twists y Tienda', texto: 'Bloquea o roba una carta de tu pareja. Cómpralos con tus puntos.' },
+  { icono: Icono.espadas, titulo: 'Marcador y niveles', texto: 'Compiten sanamente y suben su nivel de pareja juntos.' },
+  { icono: Icono.avion, titulo: 'Tres modalidades', texto: 'A distancia, híbrida o presencial: las cartas se adaptan.' },
+  { icono: Icono.llama, titulo: 'Modo Spicy opcional', texto: 'Para mayores de edad. Nunca pedimos ni guardamos fotos.' },
+  { icono: Icono.reloj, titulo: 'Su historia', texto: 'Cada carta cumplida y cada plot twist en su línea de tiempo.' },
 ];
 
 const FAQS: { q: string; a: string }[] = [
-  { q: '¿Es gratis?', a: 'Sí. Baraja2 es gratis para jugar.' },
+  { q: '¿Es gratis?', a: 'Sí, Baraja2 es gratis para jugar.' },
   {
     q: '¿Mi pareja necesita instalar algo?',
     a: 'Cada quien crea su cuenta y se vinculan con un código. Pueden usarlo desde el navegador o instalarlo en el teléfono, como prefieran.',
   },
   {
     q: '¿Guardan fotos o evidencias?',
-    a: 'No. Baraja2 nunca recibe ni almacena fotos. Cualquier evidencia de un reto la comparten ustedes por fuera de la app, como quieran.',
+    a: 'No. Baraja2 nunca recibe ni almacena fotos. Cualquier evidencia de un reto la comparten ustedes por fuera, como quieran.',
   },
   {
     q: '¿Cómo lo instalo en el celular?',
-    a: 'Es una PWA: se instala desde esta misma web, sin pasar por ninguna tienda. En Android tu navegador te ofrece "Instalar app". En iPhone: Compartir → Añadir a pantalla de inicio.',
+    a: 'Es una app web: se instala desde esta misma página, sin tiendas. En Android tu navegador ofrece “Instalar app”; en iPhone, Compartir → Añadir a pantalla de inicio.',
   },
   {
     q: '¿Y si no cumplimos las cartas de la semana?',
@@ -77,29 +79,29 @@ export default async function LandingPage() {
     <div className="relative [overflow-x:clip]">
       <NavLanding autenticado={autenticado} />
 
-      {/* ===== HERO ===== */}
-      <section className="relative flex min-h-[calc(100dvh-64px)] items-center">
+      {/* HERO */}
+      <section className="relative">
         <div className="hero-fondo" />
         <FondoCorazones />
-        <div className="lp-seccion grid items-center gap-12 py-12 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="lp grid items-center gap-10 py-12 sm:py-16 md:grid-cols-[1.05fr_0.95fr] md:gap-10 md:py-24">
           <Reveal>
-            <span className="chip mb-5 !bg-white/15 !text-white">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[0.75rem] font-bold uppercase tracking-wider text-white/85">
               <Icono.corazon className="h-3 w-3" strokeWidth={0} fill="currentColor" />
               Para parejas · gratis
             </span>
-            <h1 className="lp-mega">
+            <h1 className="lp-display mt-5">
               Su relación,
               <br />
               <span className="texto-degradado">su juego.</span>
             </h1>
-            <p className="mt-5 max-w-md text-lg text-white/75 sm:text-xl">
+            <p className="lp-lead mt-5 max-w-md">
               Cada semana, 5 cartas para retarse, consentirse y desbloquear plot twists.
               Cerca, lejos o a ratos: Baraja2 se adapta a ustedes.
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link href={irApp} className="cta-grande !px-8 !py-4 !text-lg">
+            <div className="mt-7 flex flex-wrap items-center gap-3">
+              <Link href={irApp} className="cta-grande">
                 {autenticado ? 'Entrar a mi baraja' : 'Crear cuenta'}
-                <Icono.flecha className="h-5 w-5" strokeWidth={2.5} />
+                <Icono.flecha className="h-4 w-4" strokeWidth={2.5} />
               </Link>
               <BotonInstalar />
             </div>
@@ -113,24 +115,20 @@ export default async function LandingPage() {
             )}
           </Reveal>
 
-          <Reveal delay={0.12} className="flex justify-center">
+          <Reveal delay={0.1}>
             <CartasHero />
           </Reveal>
         </div>
-
-        <div className="pointer-events-none absolute inset-x-0 bottom-6 flex justify-center">
-          <Icono.siguiente className="h-6 w-6 rotate-90 animate-bounce text-white/40" strokeWidth={2.5} />
-        </div>
       </section>
 
-      {/* ===== FRANJA ===== */}
+      {/* TIRA DE CONFIANZA */}
       <div className="border-y border-white/10 bg-white/[0.03]">
-        <div className="lp-seccion flex flex-wrap items-center justify-center gap-x-8 gap-y-2 py-4 text-sm font-bold text-white/55">
+        <div className="lp flex flex-wrap items-center justify-center gap-x-6 gap-y-2 py-3.5 text-[0.8rem] font-bold text-white/55">
           <span className="flex items-center gap-1.5">
             <Icono.check className="h-4 w-4 text-menta" strokeWidth={3} /> 100% gratis
           </span>
           <span className="flex items-center gap-1.5">
-            <Icono.check className="h-4 w-4 text-menta" strokeWidth={3} /> A distancia, híbrida o presencial
+            <Icono.check className="h-4 w-4 text-menta" strokeWidth={3} /> 3 modalidades
           </span>
           <span className="flex items-center gap-1.5">
             <Icono.check className="h-4 w-4 text-menta" strokeWidth={3} /> Nunca guardamos fotos
@@ -138,219 +136,162 @@ export default async function LandingPage() {
         </div>
       </div>
 
-      {/* ===== BLOQUES ALTERNANTES ===== */}
-      <SeccionAlterna
-        numero="01"
-        kicker="Cada semana"
-        titulo={<>5 cartas nuevas <span className="texto-degradado">recién repartidas</span></>}
-        texto="Tú recibes las tuyas, tu pareja las suyas. Juega una para retarla o consentirla; cuando la cumpla, ganas el punto. Al final de la semana, barajas nuevas."
-        mockupSrc="/capturas/casa.png"
-        mockupAlt="La pantalla de inicio de Baraja2 con la mano de cartas"
-      />
-
-      <SeccionAlterna
-        numero="02"
-        kicker="Tienda"
-        titulo={<>Plot twists que <span className="texto-degradado">cambian el juego</span></>}
-        texto="Con los puntos que ganas compras plot twists en la Tienda: bloquéale una carta a tu pareja o róbasela. También se desbloquean solos al llegar a los 3 puntos."
-        cta={{ href: irApp, label: 'Ver la Tienda' }}
-        mockupSrc="/capturas/tienda.png"
-        mockupAlt="La Tienda de Baraja2"
-        invertido
-      />
-
-      <SeccionAlterna
-        numero="03"
-        kicker="Modo Spicy"
-        titulo={<>Con picardía, <span className="texto-degradado">sin cámaras</span></>}
-        texto="Actívalo si son mayores de edad y aparece un catálogo aparte, más atrevido, para jugar cuando quieran. Baraja2 nunca pide ni guarda una sola foto: lo que pase, queda entre ustedes."
-        mockupSrc="/capturas/carta.png"
-        mockupAlt="Una carta de Baraja2 en detalle"
-      />
-
-      {/* ===== CÓMO FUNCIONA ===== */}
-      <section className="lp-seccion py-20">
+      {/* CÓMO FUNCIONA */}
+      <section className="lp lp-seccion">
         <Reveal>
-          <span className="font-heading text-sm font-extrabold uppercase tracking-[0.2em] text-rosa-acento">
-            Así empieza
-          </span>
-          <h2 className="lp-titulo mt-3 !text-4xl sm:!text-5xl">De cero a jugando en 2 minutos</h2>
+          <p className="lp-eyebrow">Cómo empieza</p>
+          <h2 className="lp-h2 mt-2 max-w-2xl">De cero a jugando en dos minutos</h2>
         </Reveal>
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {PASOS.map((p, i) => {
-            const Ico = p.icono;
-            return (
-              <Reveal key={p.titulo} delay={i * 0.06}>
-                <div className="lp-card h-full">
-                  <div className="flex items-center justify-between">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full degradado-marca text-white">
-                      <Ico className="h-5 w-5" strokeWidth={2.2} />
-                    </span>
-                    <span className="font-heading text-3xl font-extrabold text-white/10">
-                      0{i + 1}
-                    </span>
-                  </div>
-                  <h3 className="mt-3 font-heading text-lg font-bold text-white">{p.titulo}</h3>
-                  <p className="mt-1 text-sm text-white/60">{p.texto}</p>
-                </div>
-              </Reveal>
-            );
-          })}
-        </div>
-        <Reveal delay={0.1}>
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            {EXTRAS.map((e) => {
-              const Ico = e.icono;
-              return (
-                <div key={e.titulo} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                  <span className="mt-0.5 text-rosa-acento">
-                    <Ico className="h-5 w-5" strokeWidth={2} />
-                  </span>
-                  <div>
-                    <p className="font-heading text-sm font-bold text-white">{e.titulo}</p>
-                    <p className="text-xs text-white/55">{e.texto}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </Reveal>
+        <ol className="mt-10 grid gap-5 sm:grid-cols-3">
+          {PASOS.map((p, i) => (
+            <Reveal key={p.titulo} delay={i * 0.08}>
+              <li className="lp-card h-full">
+                <span className="font-heading text-2xl font-extrabold text-rosa-acento">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h3 className="mt-2 font-heading text-lg font-bold text-white">{p.titulo}</h3>
+                <p className="mt-1 text-sm text-white/60">{p.texto}</p>
+              </li>
+            </Reveal>
+          ))}
+        </ol>
       </section>
 
-      {/* ===== INSTALAR ===== */}
-      <section className="relative py-20">
-        <div className="absolute inset-0 -z-10 degradado-marca opacity-[0.14]" />
-        <div className="lp-seccion">
+      {/* SHOWCASE */}
+      <section className="lp lp-seccion border-t border-white/10">
+        <div className="grid items-center gap-10 md:grid-cols-2 md:gap-14">
           <Reveal>
-            <div className="mx-auto max-w-3xl text-center">
-              <span className="flex mx-auto h-16 w-16 items-center justify-center rounded-2xl degradado-marca text-white">
-                <Icono.bolsa className="h-8 w-8" strokeWidth={2} />
-              </span>
-              <h2 className="lp-titulo mt-5 !text-4xl sm:!text-5xl">Llévenla en el teléfono</h2>
-              <p className="mx-auto mt-4 max-w-lg text-lg text-white/70">
-                Baraja2 es una app web: se instala desde aquí, sin tiendas. Se abre a
-                pantalla completa, con su ícono, y funciona aunque haya poca señal.
-              </p>
-            </div>
+            <Telefono src="/capturas/casa.png" alt="La pantalla de inicio de Baraja2" />
           </Reveal>
-
-          <div className="mx-auto mt-10 grid max-w-3xl gap-4 sm:grid-cols-3">
-            {[
-              { n: '1', t: 'Abre baraja2 en tu navegador', i: Icono.casa },
-              { n: '2', t: 'Toca "Instalar" o "Añadir a inicio"', i: Icono.bolsa },
-              { n: '3', t: 'Ábrela desde tu pantalla de inicio', i: Icono.corazon },
-            ].map((s, idx) => {
-              const Ico = s.i;
-              return (
-                <Reveal key={s.n} delay={idx * 0.06}>
-                  <div className="lp-card h-full text-center">
-                    <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white">
-                      <Ico className="h-5 w-5" strokeWidth={2} />
+          <Reveal delay={0.08}>
+            <p className="lp-eyebrow">Qué incluye</p>
+            <h2 className="lp-h2 mt-2">Un juego que cambia cada semana</h2>
+            <ul className="mt-6 space-y-4">
+              {INCLUYE.map((c) => {
+                const Ico = c.icono;
+                return (
+                  <li key={c.titulo} className="flex gap-3.5">
+                    <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/[0.06] text-rosa-acento">
+                      <Ico className="h-[18px] w-[18px]" strokeWidth={2} />
                     </span>
-                    <p className="mt-2 font-heading text-2xl font-extrabold text-white/20">{s.n}</p>
-                    <p className="text-sm text-white/70">{s.t}</p>
-                  </div>
-                </Reveal>
-              );
-            })}
-          </div>
-
-          <Reveal delay={0.15}>
-            <div className="mt-8 flex flex-col items-center gap-3">
-              <BotonInstalar />
-              <Link href={irApp} className="text-sm font-bold text-white hover:underline">
-                {autenticado ? 'Abrir mi baraja →' : 'O empieza en el navegador →'}
-              </Link>
-            </div>
+                    <div>
+                      <p className="font-heading text-[0.95rem] font-bold text-white">{c.titulo}</p>
+                      <p className="text-sm text-white/60">{c.texto}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
           </Reveal>
         </div>
       </section>
 
-      {/* ===== FAQ ===== */}
-      <section className="lp-seccion py-20">
+      {/* INSTALAR */}
+      <section className="lp lp-seccion border-t border-white/10">
         <Reveal>
-          <h2 className="lp-titulo text-center !text-4xl sm:!text-5xl">Dudas rápidas</h2>
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="lp-eyebrow">En tu teléfono</p>
+            <h2 className="lp-h2 mt-2">Llévenla como app, sin tiendas</h2>
+            <p className="lp-lead mx-auto mt-3 max-w-lg">
+              Baraja2 se instala desde esta misma página. Se abre a pantalla completa, con su
+              ícono, y funciona aunque haya poca señal.
+            </p>
+          </div>
         </Reveal>
-        <div className="mx-auto mt-10 max-w-2xl space-y-3">
+        <div className="mx-auto mt-9 grid max-w-2xl gap-4 sm:grid-cols-3">
+          {[
+            { n: '1', t: 'Abre baraja2 en tu navegador' },
+            { n: '2', t: 'Toca “Instalar” o “Añadir a inicio”' },
+            { n: '3', t: 'Ábrela desde tu pantalla de inicio' },
+          ].map((s, i) => (
+            <Reveal key={s.n} delay={i * 0.06}>
+              <div className="lp-card h-full items-center text-center">
+                <span className="font-heading text-xl font-extrabold text-white/25">{s.n}</span>
+                <p className="mt-1 text-sm text-white/70">{s.t}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+        <Reveal delay={0.12}>
+          <div className="mt-8 flex flex-col items-center gap-3">
+            <BotonInstalar />
+            <Link href={irApp} className="text-sm font-bold text-white/80 hover:text-white">
+              {autenticado ? 'Abrir mi baraja →' : 'O empieza en el navegador →'}
+            </Link>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* FAQ */}
+      <section className="lp lp-seccion border-t border-white/10">
+        <Reveal>
+          <p className="lp-eyebrow text-center">Dudas</p>
+          <h2 className="lp-h2 mt-2 text-center">Preguntas frecuentes</h2>
+        </Reveal>
+        <div className="mx-auto mt-9 max-w-2xl space-y-2.5">
           {FAQS.map((f, i) => (
             <Reveal key={f.q} delay={i * 0.04}>
               <details className="lp-card group">
-                <summary className="flex cursor-pointer list-none items-center justify-between font-heading text-base font-bold text-white">
+                <summary className="flex cursor-pointer list-none items-center justify-between font-heading text-[0.95rem] font-bold text-white">
                   {f.q}
                   <Icono.siguiente
                     className="h-5 w-5 shrink-0 text-white/40 transition group-open:rotate-90"
                     strokeWidth={2.5}
                   />
                 </summary>
-                <p className="mt-3 text-sm text-white/65">{f.a}</p>
+                <p className="mt-3 text-sm text-white/60">{f.a}</p>
               </details>
             </Reveal>
           ))}
         </div>
       </section>
 
-      {/* ===== CIERRE ===== */}
-      <section className="relative py-24 text-center">
-        <div className="hero-fondo !opacity-90" />
-        <div className="lp-seccion">
+      {/* CIERRE */}
+      <section className="relative border-t border-white/10">
+        <div className="hero-fondo" />
+        <div className="lp lp-seccion text-center">
           <Reveal>
-            <h2 className="lp-mega !text-5xl sm:!text-6xl">
-              Empiecen a <span className="texto-degradado">jugar</span>.
+            <h2 className="lp-display">
+              Empiecen a <span className="texto-degradado">jugar</span>
             </h2>
-            <p className="mx-auto mt-4 max-w-md text-lg text-white/70">
-              5 cartas los esperan esta semana.
-            </p>
-            <Link href={irApp} className="cta-grande mt-8 !px-10 !py-4 !text-lg">
+            <p className="lp-lead mx-auto mt-3 max-w-sm">5 cartas los esperan esta semana.</p>
+            <Link href={irApp} className="cta-grande mt-7 !px-8 !py-3.5 !text-base">
               {autenticado ? 'Entrar a mi baraja' : 'Crear cuenta gratis'}
-              <Icono.flecha className="h-5 w-5" strokeWidth={2.5} />
+              <Icono.flecha className="h-4 w-4" strokeWidth={2.5} />
             </Link>
           </Reveal>
         </div>
       </section>
 
-      {/* ===== FOOTER ===== */}
+      {/* FOOTER */}
       <footer className="border-t border-white/10 bg-noche">
-        <div className="lp-seccion grid gap-8 py-12 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="lp grid gap-8 py-12 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="flex items-center gap-2">
-              <LogoBaraja2 tamano={26} />
-              <span className="font-heading text-lg font-extrabold text-white">Baraja2</span>
+              <LogoBaraja2 tamano={24} />
+              <span className="font-heading text-[1.05rem] font-extrabold text-white">Baraja2</span>
             </div>
             <p className="mt-3 text-sm text-white/50">
               El juego de cartas semanal para vivir su relación jugando.
             </p>
           </div>
-          <div>
-            <p className="font-heading text-xs font-bold uppercase tracking-widest text-white/40">
-              Producto
-            </p>
-            <ul className="mt-3 space-y-2 text-sm text-white/60">
-              <li><Link href="/registro" className="hover:text-white">Crear cuenta</Link></li>
-              <li><Link href="/login" className="hover:text-white">Iniciar sesión</Link></li>
-              <li><Link href={irApp} className="hover:text-white">Abrir la app</Link></li>
-            </ul>
-          </div>
-          <div>
-            <p className="font-heading text-xs font-bold uppercase tracking-widest text-white/40">
-              Privacidad
-            </p>
-            <ul className="mt-3 space-y-2 text-sm text-white/60">
-              <li>Nunca recibimos ni guardamos fotos</li>
-              <li>Solo tú y tu pareja ven sus cartas</li>
-              <li>Mayoría de edad para el modo Spicy</li>
-            </ul>
-          </div>
-          <div>
-            <p className="font-heading text-xs font-bold uppercase tracking-widest text-white/40">
-              Instalar
-            </p>
-            <p className="mt-3 text-sm text-white/60">
-              Se instala desde la web, sin tiendas. Android: menú → Instalar app. iPhone:
-              Compartir → Añadir a inicio.
-            </p>
-          </div>
+          <FooterCol titulo="Producto">
+            <FooterLink href="/registro">Crear cuenta</FooterLink>
+            <FooterLink href="/login">Iniciar sesión</FooterLink>
+            <FooterLink href={irApp}>Abrir la app</FooterLink>
+          </FooterCol>
+          <FooterCol titulo="Privacidad">
+            <li>Nunca recibimos ni guardamos fotos</li>
+            <li>Solo ustedes ven sus cartas</li>
+            <li>Mayoría de edad para el modo Spicy</li>
+          </FooterCol>
+          <FooterCol titulo="Instalar">
+            <li>Desde la web, sin tiendas</li>
+            <li>Android: menú → Instalar app</li>
+            <li>iPhone: Compartir → Añadir a inicio</li>
+          </FooterCol>
         </div>
-        <div className="lp-seccion flex flex-col items-center justify-between gap-2 border-t border-white/10 py-6 text-xs text-white/40 sm:flex-row">
+        <div className="lp flex flex-col items-center justify-between gap-2 border-t border-white/10 py-6 text-xs text-white/40 sm:flex-row">
           <p>© {new Date().getFullYear()} Baraja2</p>
           <p className="flex items-center gap-1.5">
             Hecho con
@@ -360,5 +301,26 @@ export default async function LandingPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function FooterCol({ titulo, children }: { titulo: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <p className="font-heading text-[0.7rem] font-bold uppercase tracking-widest text-white/40">
+        {titulo}
+      </p>
+      <ul className="mt-3 space-y-2 text-sm text-white/60">{children}</ul>
+    </div>
+  );
+}
+
+function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <li>
+      <Link href={href} className="transition hover:text-white">
+        {children}
+      </Link>
+    </li>
   );
 }

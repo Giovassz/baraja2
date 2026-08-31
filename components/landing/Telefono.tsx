@@ -1,4 +1,4 @@
-// Mockup de teléfono con una captura real de la app
+// Mockup de teléfono con una captura real de la app (escala proporcional)
 import Image from 'next/image';
 
 export function Telefono({
@@ -12,14 +12,7 @@ export function Telefono({
 }) {
   return (
     <div className={`telefono ${className}`}>
-      <Image
-        src={src}
-        alt={alt}
-        width={520}
-        height={1126}
-        className="block w-full"
-        priority
-      />
+      <Image src={src} alt={alt} fill sizes="280px" className="object-cover object-top" />
     </div>
   );
 }

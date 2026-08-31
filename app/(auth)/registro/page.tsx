@@ -2,7 +2,7 @@
 // Implementa BJ2-008
 import Link from 'next/link';
 import { TarjetaAuth } from '@/components/auth/TarjetaAuth';
-import { PanelAcceso } from '@/components/auth/PanelAcceso';
+import { FormularioRegistro } from './FormularioRegistro';
 
 export const metadata = { title: 'Crear cuenta' };
 
@@ -14,14 +14,11 @@ export default function RegistroPage() {
         Cada quien crea la suya y después vinculan su espacio.
       </p>
 
-      <PanelAcceso modo="registro" />
+      <div className="mt-6">
+        <FormularioRegistro />
+      </div>
 
-      <p className="mt-3 text-center text-[11px] text-white/45">
-        Con Google, Discord o teléfono te pediremos tu nombre y confirmar tu edad en el
-        siguiente paso.
-      </p>
-
-      <div className="mt-4 border-t border-white/10 pt-4 text-center text-sm text-white/70">
+      <div className="mt-5 border-t border-white/10 pt-4 text-center text-sm text-white/70">
         ¿Ya tienen cuenta?{' '}
         <Link href="/login" className="font-bold text-rosa-acento hover:underline">
           Inicia sesión

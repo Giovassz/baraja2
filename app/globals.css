@@ -291,40 +291,55 @@ body::before {
     animation: brillo-pasa 3.4s ease-in-out infinite;
   }
 
-  /* --- Landing / página web (estilo Tinder: audaz, degradado, tipografía grande) --- */
+  /* --- Landing / página web — sistema consistente y responsivo --- */
+  .lp {
+    /* contenedor único: mismo gutter proporcional en todas las pantallas */
+    width: 100%;
+    max-width: 1120px;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 3rem);
+  }
   .lp-seccion {
-    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+    padding-block: clamp(3rem, 7vw, 5.25rem);
   }
-  .lp-titulo {
-    @apply font-heading text-3xl font-bold leading-tight text-white sm:text-4xl;
+  /* Escala tipográfica fluida y controlada (sin saltos raros entre breakpoints) */
+  .lp-display {
+    @apply font-heading font-extrabold leading-[1.02] tracking-tight text-white;
+    font-size: clamp(2.25rem, 6.2vw, 4.25rem);
   }
-  /* Titular gigante estilo Tinder */
-  .lp-mega {
-    @apply font-heading font-extrabold leading-[0.95] tracking-tight text-white;
-    font-size: clamp(2.6rem, 8vw, 5.5rem);
+  .lp-h2 {
+    @apply font-heading font-bold leading-tight tracking-tight text-white;
+    font-size: clamp(1.75rem, 3.8vw, 2.75rem);
+  }
+  .lp-lead {
+    @apply text-white/70;
+    font-size: clamp(1rem, 1.6vw, 1.2rem);
+    line-height: 1.6;
+  }
+  .lp-eyebrow {
+    @apply font-heading text-[0.8rem] font-bold uppercase tracking-[0.18em] text-rosa-acento;
   }
   .lp-card {
-    @apply rounded-3xl border border-white/10 bg-white/[0.035] p-5 backdrop-blur-sm;
+    @apply flex flex-col rounded-2xl border border-white/10 bg-white/[0.04] p-5;
   }
-  /* Degradado de marca (el "Tinder" de Baraja2) */
   .degradado-marca {
-    background: linear-gradient(115deg, #ff5c8a 0%, #e85d8a 42%, #ff7a59 100%);
+    background: linear-gradient(115deg, #ff5c8a 0%, #e85d8a 45%, #ff7a59 100%);
   }
   .texto-degradado {
-    background: linear-gradient(115deg, #ff8fb0, #ff7a59);
+    background: linear-gradient(100deg, #ff9cb8, #ff7a59);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-  /* Fondo del hero: degradado vivo + oscurecido abajo para el texto */
+  /* Fondo del hero — sutil, no un "blob" de IA */
   .hero-fondo {
     position: absolute;
     inset: 0;
     z-index: -1;
     background:
-      radial-gradient(circle at 78% 18%, rgba(255, 122, 89, 0.55), transparent 46%),
-      radial-gradient(circle at 12% 8%, rgba(255, 92, 138, 0.6), transparent 44%),
-      linear-gradient(180deg, #3a1526 0%, #20101b 62%, #140810 100%);
+      radial-gradient(60rem 40rem at 82% -10%, rgba(255, 122, 89, 0.28), transparent 60%),
+      radial-gradient(50rem 40rem at 6% -6%, rgba(255, 92, 138, 0.3), transparent 58%),
+      linear-gradient(180deg, #2b1220 0%, #1a0d16 55%, var(--noche) 100%);
   }
   .nav-landing {
     @apply sticky top-0 z-50 transition-colors duration-300;
@@ -332,34 +347,48 @@ body::before {
   .nav-landing[data-scrolled='true'] {
     @apply border-b border-white/10 bg-noche/85 backdrop-blur-xl;
   }
-  /* Marco de teléfono para el mockup */
+  /* Marco de teléfono — escala proporcional en cualquier pantalla */
   .telefono {
-    @apply relative mx-auto overflow-hidden rounded-[38px] border-[7px] border-[#0c0509]
-      bg-[#0c0509] shadow-[0_50px_120px_-30px_rgba(232,93,138,0.45)];
-    width: 268px;
+    position: relative;
+    width: 100%;
+    max-width: 280px;
+    aspect-ratio: 9 / 19.2;
+    margin-inline: auto;
+    overflow: hidden;
+    border-radius: clamp(28px, 9%, 40px);
+    border: 6px solid #0b0409;
+    background: #0b0409;
+    box-shadow: 0 40px 90px -34px rgba(0, 0, 0, 0.85);
+  }
+  .telefono > * {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: top;
   }
   .telefono::before {
     content: '';
     position: absolute;
-    top: 8px;
+    top: 7px;
     left: 50%;
     transform: translateX(-50%);
-    width: 96px;
-    height: 20px;
+    width: 34%;
+    max-width: 100px;
+    height: 18px;
     border-radius: 999px;
-    background: #0c0509;
+    background: #0b0409;
     z-index: 2;
   }
   .cta-grande {
     @apply inline-flex items-center justify-center gap-2 rounded-full
-      bg-gradient-to-r from-rosa-acento to-coral px-7 py-3.5 font-heading text-base
-      font-bold text-white shadow-[0_16px_40px_-10px_rgba(232,93,138,0.75)]
-      transition hover:brightness-110 active:scale-95;
+      bg-gradient-to-r from-rosa-acento to-coral px-6 py-3 font-heading text-[0.95rem]
+      font-bold text-white shadow-[0_14px_36px_-12px_rgba(232,93,138,0.7)]
+      transition hover:brightness-110 active:scale-[0.98] sm:px-7 sm:py-3.5;
   }
   .cta-fantasma {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/25
-      bg-white/[0.06] px-7 py-3.5 font-heading text-base font-bold text-white
-      transition hover:bg-white/10 active:scale-95;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/20
+      bg-white/[0.05] px-6 py-3 font-heading text-[0.95rem] font-bold text-white
+      transition hover:bg-white/10 active:scale-[0.98] sm:px-7 sm:py-3.5;
   }
 }
 

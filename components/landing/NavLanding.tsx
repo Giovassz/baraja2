@@ -9,7 +9,7 @@ export function NavLanding({ autenticado }: { autenticado: boolean }) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const alScroll = () => setScrolled(window.scrollY > 24);
+    const alScroll = () => setScrolled(window.scrollY > 20);
     alScroll();
     window.addEventListener('scroll', alScroll, { passive: true });
     return () => window.removeEventListener('scroll', alScroll);
@@ -17,24 +17,24 @@ export function NavLanding({ autenticado }: { autenticado: boolean }) {
 
   return (
     <header className="nav-landing" data-scrolled={scrolled}>
-      <div className="lp-seccion flex items-center justify-between py-3.5">
+      <div className="lp flex items-center justify-between py-3.5">
         <Link href="/" className="flex items-center gap-2">
-          <LogoBaraja2 tamano={30} />
-          <span className="font-heading text-lg font-extrabold text-white">Baraja2</span>
+          <LogoBaraja2 tamano={28} />
+          <span className="font-heading text-[1.05rem] font-extrabold text-white">Baraja2</span>
         </Link>
         {autenticado ? (
-          <Link href="/dashboard" className="cta-grande !px-5 !py-2 !text-sm">
-            Entrar a mi baraja
+          <Link href="/dashboard" className="cta-grande !py-2 !text-[0.85rem]">
+            Entrar
           </Link>
         ) : (
-          <div className="flex items-center gap-1.5 sm:gap-3">
+          <div className="flex items-center gap-1 sm:gap-2">
             <Link
               href="/login"
-              className="rounded-full px-4 py-2 text-sm font-bold text-white/85 transition hover:text-white"
+              className="rounded-full px-3 py-2 text-sm font-bold text-white/80 transition hover:text-white sm:px-4"
             >
               Entrar
             </Link>
-            <Link href="/registro" className="cta-grande !px-5 !py-2 !text-sm">
+            <Link href="/registro" className="cta-grande !py-2 !text-[0.85rem]">
               Crear cuenta
             </Link>
           </div>

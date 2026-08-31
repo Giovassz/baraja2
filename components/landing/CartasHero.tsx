@@ -66,7 +66,7 @@ export function CartasHero() {
 
   return (
     <div
-      className="relative mx-auto h-[440px] w-[300px] select-none overflow-hidden pr-6 sm:h-[480px] sm:w-[330px]"
+      className="relative mx-auto aspect-[300/450] w-full max-w-[300px] select-none overflow-hidden pr-6"
       onMouseEnter={() => setPausado(true)}
       onMouseLeave={() => setPausado(false)}
       aria-hidden
