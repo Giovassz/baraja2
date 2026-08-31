@@ -100,3 +100,18 @@ export async function recargarCartas(): Promise<ResultadoAccion> {
   revalidatePath('/dashboard');
   return exito(`Recargaste ${data ?? 0} carta(s).`);
 }
+
+/**
+ * Solo para cuentas con modo_tester activo (desde la Tienda): reload normal solo
+ * puede cambiar cartas disponibles, así que si ya cumpliste las 5 no sirve de nada.
+ * Esto te da una mano nueva completa sin esperar los 7 días.
+ */
+export async function repartirBarajaTester(): Promise<ResultadoAccion> {
+  const supabase = crearClienteServidor();
+  const { data, error } = await supabase.rpc('repartir_baraja_tester');
+  if (error) return fallo(codigoDesdeError(error));
+
+  revalidatePath('/dashboard');
+  revalidatePath('/tienda');
+  return exito(`Nueva baraja lista: ${data ?? 0} carta(s) fresca(s).`);
+}

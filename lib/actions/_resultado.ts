@@ -51,6 +51,7 @@ export function mensajePorCodigo(codigo: string): string {
     PUNTOS_INSUFICIENTES: 'No tienes puntos suficientes para comprar esto.',
     PLOT_TWIST_FUERA_DE_MODALIDAD: 'Ese plot twist no es de su modalidad.',
     MODO_SPICY_INACTIVO: 'Activa el modo Spicy para conseguir plot twists Spicy.',
+    MODO_TESTER_INACTIVO: 'Esta cuenta no tiene modo tester activo.',
     ERROR_INESPERADO: 'Algo salió mal. Inténtalo de nuevo en un momento.',
   };
   return mapa[codigo] ?? mapa.ERROR_INESPERADO;

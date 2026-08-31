@@ -4,6 +4,7 @@ import { obtenerDatosTienda } from '@/lib/datos';
 import { Icono } from '@/components/ui/iconos';
 import { BannerSeccion } from '@/components/ui/BannerSeccion';
 import { PanelTienda } from './PanelTienda';
+import { BotonBarajaNueva } from './BotonBarajaNueva';
 
 export const metadata = { title: 'Tienda' };
 
@@ -13,16 +14,19 @@ export default async function TiendaPage() {
   return (
     <div className="flex flex-col gap-4">
       {datos.modoTester && (
-        <div className="widget !border-lavanda/40 flex items-center gap-3 !bg-[linear-gradient(160deg,#2a2340,#1c0e18)]">
-          <span className="rounded-full bg-lavanda/20 p-2 text-lavanda">
-            <Icono.escudo className="h-4 w-4" strokeWidth={2.5} />
-          </span>
-          <div>
-            <p className="font-heading text-sm text-lavanda">Modo tester activo</p>
-            <p className="text-xs text-white/60">
-              Compras aquí sin gastar puntos · recargas ilimitadas en Casa
-            </p>
+        <div className="widget !border-lavanda/40 flex flex-col gap-3 !bg-[linear-gradient(160deg,#2a2340,#1c0e18)]">
+          <div className="flex items-center gap-3">
+            <span className="rounded-full bg-lavanda/20 p-2 text-lavanda">
+              <Icono.escudo className="h-4 w-4" strokeWidth={2.5} />
+            </span>
+            <div>
+              <p className="font-heading text-sm text-lavanda">Modo tester activo</p>
+              <p className="text-xs text-white/60">
+                Compras aquí sin gastar puntos · recargas ilimitadas en Casa
+              </p>
+            </div>
           </div>
+          <BotonBarajaNueva />
         </div>
       )}
 
