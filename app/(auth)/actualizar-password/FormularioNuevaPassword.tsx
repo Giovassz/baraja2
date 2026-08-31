@@ -1,14 +1,13 @@
-// Formulario de inicio de sesión con Server Action
+// Formulario para guardar la contraseña nueva (llega desde el link del correo)
 // Implementa BJ2-008
 'use client';
 
-import Link from 'next/link';
 import { useFormState, useFormStatus } from 'react-dom';
-import { iniciarSesion } from '@/lib/actions/auth';
+import { actualizarPassword } from '@/lib/actions/auth';
 import { CampoAuth } from '@/components/auth/CampoAuth';
 import { Icono } from '@/components/ui/iconos';
 
-function BotonEntrar() {
+function BotonGuardar() {
   const { pending } = useFormStatus();
   return (
     <button type="submit" className="boton-primario mt-1 h-12 w-full text-[15px]" disabled={pending}>
@@ -16,7 +15,7 @@ function BotonEntrar() {
         <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
       ) : (
         <>
-          Entrar
+          Guardar contraseña
           <Icono.flecha className="h-4 w-4" strokeWidth={2.5} />
         </>
       )}
@@ -24,36 +23,32 @@ function BotonEntrar() {
   );
 }
 
-export function FormularioLogin() {
-  const [estado, accion] = useFormState(iniciarSesion, null);
+export function FormularioNuevaPassword() {
+  const [estado, accion] = useFormState(actualizarPassword, null);
 
   return (
     <form action={accion} className="flex flex-col gap-4">
       <CampoAuth
-        etiqueta="Correo"
-        icono={Icono.sobre}
-        name="email"
-        type="email"
-        autoComplete="email"
-        placeholder="tucorreo@ejemplo.com"
-        required
-      />
-      <CampoAuth
-        etiqueta="Contraseña"
+        etiqueta="Contraseña nueva"
         icono={Icono.candado}
         name="password"
         type="password"
-        autoComplete="current-password"
-        placeholder="Tu contraseña"
+        autoComplete="new-password"
+        minLength={8}
+        placeholder="Mínimo 8 caracteres"
+        ayuda="Usa al menos 8 caracteres."
         required
       />
-
-      <Link
-        href="/recuperar"
-        className="-mt-2 self-end text-[13px] font-bold text-white/60 hover:text-rosa-acento"
-      >
-        ¿Olvidaste tu contraseña?
-      </Link>
+      <CampoAuth
+        etiqueta="Confírmala"
+        icono={Icono.candado}
+        name="confirmarPassword"
+        type="password"
+        autoComplete="new-password"
+        minLength={8}
+        placeholder="Escríbela de nuevo"
+        required
+      />
 
       {estado?.error && (
         <p
@@ -65,7 +60,7 @@ export function FormularioLogin() {
         </p>
       )}
 
-      <BotonEntrar />
+      <BotonGuardar />
     </form>
   );
 }

@@ -5,7 +5,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import type { Database } from './tipos';
 
 // Rutas que NO requieren sesión iniciada
-const RUTAS_PUBLICAS = ['/login', '/registro', '/sin-conexion', '/auth'];
+const RUTAS_PUBLICAS = ['/login', '/registro', '/recuperar', '/sin-conexion', '/auth'];
 // Rutas públicas de coincidencia exacta (la landing)
 const RUTAS_PUBLICAS_EXACTAS = ['/'];
 

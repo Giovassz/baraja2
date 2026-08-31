@@ -1,5 +1,6 @@
-// Callback de OAuth (Google / Discord): intercambia el código por una sesión y
-// manda al enrutador post-login.
+// Callback de OAuth (Google / Discord) y de links de correo (recuperar contraseña):
+// intercambia el código por una sesión y manda a `next` o, si no viene, al
+// enrutador post-login.
 // Implementa BJ2-008
 import { NextResponse } from 'next/server';
 import { crearClienteServidor } from '@/lib/supabase/server';
@@ -7,6 +8,11 @@ import { crearClienteServidor } from '@/lib/supabase/server';
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
+  const nextParam = searchParams.get('next');
+  // Solo permitimos rutas internas (evita un redirect abierto vía ?next=).
+  const next = nextParam && nextParam.startsWith('/') && !nextParam.startsWith('//')
+    ? nextParam
+    : null;
   const errorDescripcion = searchParams.get('error_description');
 
   if (errorDescripcion) {
@@ -21,5 +27,5 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.redirect(`${origin}/auth/completar`);
+  return NextResponse.redirect(`${origin}${next ?? '/auth/completar'}`);
 }

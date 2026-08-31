@@ -29,3 +29,24 @@ export const esquemaLogin = z.object({
 });
 
 export type DatosLogin = z.infer<typeof esquemaLogin>;
+
+export const esquemaRecuperar = z.object({
+  email: z.string().trim().email('Correo no válido.'),
+});
+
+export type DatosRecuperar = z.infer<typeof esquemaRecuperar>;
+
+export const esquemaNuevaPassword = z
+  .object({
+    password: z
+      .string()
+      .min(8, 'La contraseña debe tener al menos 8 caracteres.')
+      .max(72, 'La contraseña es demasiado larga.'),
+    confirmarPassword: z.string(),
+  })
+  .refine((d) => d.password === d.confirmarPassword, {
+    message: 'Las contraseñas no coinciden.',
+    path: ['confirmarPassword'],
+  });
+
+export type DatosNuevaPassword = z.infer<typeof esquemaNuevaPassword>;

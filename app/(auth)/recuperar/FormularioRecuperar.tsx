@@ -1,14 +1,13 @@
-// Formulario de inicio de sesión con Server Action
+// Formulario para pedir el correo de recuperación de contraseña
 // Implementa BJ2-008
 'use client';
 
-import Link from 'next/link';
 import { useFormState, useFormStatus } from 'react-dom';
-import { iniciarSesion } from '@/lib/actions/auth';
+import { solicitarRecuperacion } from '@/lib/actions/auth';
 import { CampoAuth } from '@/components/auth/CampoAuth';
 import { Icono } from '@/components/ui/iconos';
 
-function BotonEntrar() {
+function BotonEnviar() {
   const { pending } = useFormStatus();
   return (
     <button type="submit" className="boton-primario mt-1 h-12 w-full text-[15px]" disabled={pending}>
@@ -16,7 +15,7 @@ function BotonEntrar() {
         <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
       ) : (
         <>
-          Entrar
+          Mandar link
           <Icono.flecha className="h-4 w-4" strokeWidth={2.5} />
         </>
       )}
@@ -24,8 +23,17 @@ function BotonEntrar() {
   );
 }
 
-export function FormularioLogin() {
-  const [estado, accion] = useFormState(iniciarSesion, null);
+export function FormularioRecuperar() {
+  const [estado, accion] = useFormState(solicitarRecuperacion, null);
+
+  if (estado?.ok) {
+    return (
+      <p className="flex items-start gap-2.5 rounded-2xl bg-white/[0.06] px-3.5 py-3 text-sm font-semibold text-white">
+        <Icono.sobre className="mt-0.5 h-4 w-4 shrink-0 text-rosa-acento" strokeWidth={2.5} />
+        {estado.mensaje}
+      </p>
+    );
+  }
 
   return (
     <form action={accion} className="flex flex-col gap-4">
@@ -38,22 +46,6 @@ export function FormularioLogin() {
         placeholder="tucorreo@ejemplo.com"
         required
       />
-      <CampoAuth
-        etiqueta="Contraseña"
-        icono={Icono.candado}
-        name="password"
-        type="password"
-        autoComplete="current-password"
-        placeholder="Tu contraseña"
-        required
-      />
-
-      <Link
-        href="/recuperar"
-        className="-mt-2 self-end text-[13px] font-bold text-white/60 hover:text-rosa-acento"
-      >
-        ¿Olvidaste tu contraseña?
-      </Link>
 
       {estado?.error && (
         <p
@@ -65,7 +57,7 @@ export function FormularioLogin() {
         </p>
       )}
 
-      <BotonEntrar />
+      <BotonEnviar />
     </form>
   );
 }

@@ -6,8 +6,13 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { crearClienteServidor } from '@/lib/supabase/server';
 import { crearClienteAdmin } from '@/lib/supabase/admin';
-import { esquemaRegistro, esquemaLogin } from '@/lib/validaciones/auth';
-import { fallo, type ResultadoAccion } from './_resultado';
+import {
+  esquemaRegistro,
+  esquemaLogin,
+  esquemaRecuperar,
+  esquemaNuevaPassword,
+} from '@/lib/validaciones/auth';
+import { exito, fallo, type ResultadoAccion } from './_resultado';
 
 export async function registrarse(
   _prev: ResultadoAccion | null,
@@ -84,6 +89,72 @@ export async function iniciarSesion(
 
   if (error) {
     return fallo('CREDENCIALES_INVALIDAS', 'Correo o contraseña incorrectos.');
+  }
+
+  revalidatePath('/', 'layout');
+  redirect('/dashboard');
+}
+
+/** Manda el correo de "olvidé mi contraseña" (sección 2 — recuperación de cuenta). */
+export async function solicitarRecuperacion(
+  _prev: ResultadoAccion | null,
+  formData: FormData,
+): Promise<ResultadoAccion> {
+  const parsed = esquemaRecuperar.safeParse({ email: formData.get('email') });
+
+  if (!parsed.success) {
+    return fallo('DATOS_INVALIDOS', parsed.error.issues[0]?.message);
+  }
+
+  const origen = process.env.NEXT_PUBLIC_URL_BASE ?? 'http://localhost:3000';
+  const supabase = crearClienteServidor();
+  const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+    redirectTo: `${origen}/auth/callback?next=/actualizar-password`,
+  });
+
+  // Nunca decimos si el correo existe o no (evita que alguien confirme cuentas ajenas
+  // probando emails); solo avisamos si Supabase truena por límite de envíos.
+  if (error && error.message.toLowerCase().includes('rate limit')) {
+    return fallo(
+      'LIMITE_CORREOS',
+      'Se pidieron muchos correos en poco tiempo. Espera unos minutos e inténtalo de nuevo.',
+    );
+  }
+
+  return exito(
+    'Si ese correo tiene una cuenta, te mandamos un link para crear una contraseña nueva. Revisa también la carpeta de spam.',
+  );
+}
+
+/** Guarda la contraseña nueva; se usa desde el link del correo de recuperación. */
+export async function actualizarPassword(
+  _prev: ResultadoAccion | null,
+  formData: FormData,
+): Promise<ResultadoAccion> {
+  const parsed = esquemaNuevaPassword.safeParse({
+    password: formData.get('password'),
+    confirmarPassword: formData.get('confirmarPassword'),
+  });
+
+  if (!parsed.success) {
+    return fallo('DATOS_INVALIDOS', parsed.error.issues[0]?.message);
+  }
+
+  const supabase = crearClienteServidor();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return fallo(
+      'SIN_SESION',
+      'Este link ya expiró o ya se usó. Pide uno nuevo desde "Olvidé mi contraseña".',
+    );
+  }
+
+  const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
+  if (error) {
+    return fallo('ERROR_INESPERADO', 'No pudimos actualizar tu contraseña. Inténtalo de nuevo.');
   }
 
   revalidatePath('/', 'layout');
