@@ -243,7 +243,8 @@ create table if not exists cartas_asignadas (
   fecha_asignacion timestamptz not null default now(),
   fecha_jugada timestamptz,
   fecha_cumplida timestamptz,
-  reclamada_en timestamptz
+  reclamada_en timestamptz,
+  notificado_en timestamptz
 );
 
 create index if not exists idx_cartas_asignadas_usuario_ciclo

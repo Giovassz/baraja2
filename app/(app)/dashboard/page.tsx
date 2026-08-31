@@ -11,6 +11,7 @@ import {
   type PlotTwistLane,
   type ObjetivoLane,
 } from '@/components/widgets/PlotTwistsLane';
+import { RevelacionPlotTwist } from '@/components/widgets/RevelacionPlotTwist';
 import { AutoRefresh } from '@/components/AutoRefresh';
 import { BannerSeccion } from '@/components/ui/BannerSeccion';
 import { Icono } from '@/components/ui/iconos';
@@ -63,9 +64,28 @@ export default async function DashboardPage() {
   const dias = diasParaProximoReinicio(datos.pareja.fecha_vinculacion);
   const nombre = datos.pareja.companero?.nombre;
 
+  // Un plot twist te cayó encima (te bloquearon o robaron una carta) y todavía no
+  // viste el aviso: se le muestra a la vez, una carta a la vez, para que no pase en
+  // silencio.
+  const plotTwistSinVer = datos.misCartas.find(
+    (c) => (c.estado === 'bloqueada' || c.estado === 'robada') && !c.notificado_en,
+  );
+
   return (
     <div className="flex flex-col gap-4">
       <AutoRefresh segundos={12} />
+
+      {plotTwistSinVer && (
+        <RevelacionPlotTwist
+          carta={{
+            id: plotTwistSinVer.id,
+            texto: plotTwistSinVer.texto,
+            tipo: plotTwistSinVer.tipo,
+            efecto: plotTwistSinVer.estado as 'bloqueada' | 'robada',
+          }}
+          nombreCompanero={nombre}
+        />
+      )}
 
       <div className="text-center">
         <h1 className="text-2xl">Semana {datos.cicloNumero}</h1>
