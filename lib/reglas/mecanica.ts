@@ -51,19 +51,20 @@ export interface ResultadoCumplir {
 }
 
 /**
- * confirmarCumplida: el receptor confirma que la carta jugada se cumplió.
- * Suma PUNTOS_POR_CARTA_CUMPLIDA al DUEÑO ORIGINAL (quien propuso el reto) y
- * evalúa el umbral de plot twists.
+ * confirmarCumplida: quien mandó la carta (el dueño original) confirma que su
+ * pareja cumplió el reto en la vida real. Suma PUNTOS_POR_CARTA_CUMPLIDA a quien
+ * lo cumplió (el RECEPTOR, no quien lo mandó) y evalúa el umbral de plot twists.
  */
 export function confirmarCumplida(
   carta: CartaEnJuego,
   actorId: string,
   estadoPuntos: EstadoPuntos,
 ): ResultadoMecanica<ResultadoCumplir> {
-  if (carta.receptorId !== actorId) return { ok: false, error: 'NO_ERES_RECEPTOR' };
+  if (carta.duenoId !== actorId) return { ok: false, error: 'NO_ERES_QUIEN_LA_MANDO' };
   if (carta.estado !== 'jugada') return { ok: false, error: 'CARTA_NO_JUGADA' };
 
-  const ganador = carta.duenoId;
+  const ganador = carta.receptorId;
+  if (!ganador) return { ok: false, error: 'PAREJA_INCOMPLETA' };
   const puntosAntes = estadoPuntos.puntosPorUsuario[ganador] ?? 0;
   const puntosDespues = puntosAntes + PUNTOS_POR_CARTA_CUMPLIDA;
 

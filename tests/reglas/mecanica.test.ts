@@ -22,7 +22,7 @@ function cartaDe(dueno: string): CartaEnJuego {
 }
 
 describe('ciclo completo de una carta', () => {
-  it('Ana juega una carta hacia Luis y Luis la confirma; Ana gana el punto', () => {
+  it('Ana juega una carta hacia Luis; Ana confirma que Luis la cumplió y Luis gana el punto', () => {
     let carta = cartaDe(ANA);
 
     const jugada = jugarCarta(carta, ANA, PAREJA, LUIS);
@@ -32,13 +32,13 @@ describe('ciclo completo de una carta', () => {
     expect(carta.estado).toBe('jugada');
     expect(carta.receptorId).toBe(LUIS);
 
-    const cumplida = confirmarCumplida(carta, LUIS, estadoPuntosVacio());
+    const cumplida = confirmarCumplida(carta, ANA, estadoPuntosVacio());
     expect(cumplida.ok).toBe(true);
     if (!cumplida.ok) return;
 
     expect(cumplida.valor.carta.estado).toBe('cumplida');
-    expect(cumplida.valor.usuarioQueGanoPuntos).toBe(ANA);
-    expect(cumplida.valor.estadoPuntos.puntosPorUsuario[ANA]).toBe(1);
+    expect(cumplida.valor.usuarioQueGanoPuntos).toBe(LUIS);
+    expect(cumplida.valor.estadoPuntos.puntosPorUsuario[LUIS]).toBe(1);
     expect(cumplida.valor.plotTwistsNuevos).toBe(0);
   });
 
@@ -47,25 +47,25 @@ describe('ciclo completo de una carta', () => {
     expect(r).toEqual({ ok: false, error: 'NO_ERES_DUENO' });
   });
 
-  it('no deja confirmar a quien no es el receptor', () => {
+  it('no deja confirmar a quien no mandó la carta', () => {
     const jugada = jugarCarta(cartaDe(ANA), ANA, PAREJA, LUIS);
     if (!jugada.ok) throw new Error('setup');
-    const r = confirmarCumplida(jugada.valor, ANA, estadoPuntosVacio());
-    expect(r).toEqual({ ok: false, error: 'NO_ERES_RECEPTOR' });
+    const r = confirmarCumplida(jugada.valor, LUIS, estadoPuntosVacio());
+    expect(r).toEqual({ ok: false, error: 'NO_ERES_QUIEN_LA_MANDO' });
   });
 
-  it('al tercer punto de Ana se desbloquea 1 plot twist', () => {
+  it('al tercer punto de Luis se desbloquea 1 plot twist', () => {
     let estado = estadoPuntosVacio();
     for (let i = 0; i < 3; i++) {
       const jugada = jugarCarta(cartaDe(ANA), ANA, PAREJA, LUIS);
       if (!jugada.ok) throw new Error('setup');
-      const cumplida = confirmarCumplida(jugada.valor, LUIS, estado);
+      const cumplida = confirmarCumplida(jugada.valor, ANA, estado);
       if (!cumplida.ok) throw new Error('cumplir');
       estado = cumplida.valor.estadoPuntos;
       if (i < 2) expect(cumplida.valor.plotTwistsNuevos).toBe(0);
       else expect(cumplida.valor.plotTwistsNuevos).toBe(1);
     }
-    expect(estado.puntosPorUsuario[ANA]).toBe(3);
-    expect(estado.plotTwistsPorUsuario[ANA]).toBe(1);
+    expect(estado.puntosPorUsuario[LUIS]).toBe(3);
+    expect(estado.plotTwistsPorUsuario[LUIS]).toBe(1);
   });
 });

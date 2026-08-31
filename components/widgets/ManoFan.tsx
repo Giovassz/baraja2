@@ -1,6 +1,10 @@
 // La mano del jugador: cartas agarradas en abanico, como si las sostuvieras.
-// 1 toque = ver preview de la carta. 2 toques (otra vez sobre la misma) = lanzarla.
-// Implementa BJ2-017, BJ2-018
+// 1 toque = ver preview de la carta. 2 toques (otra vez sobre la misma):
+// - si está disponible, la lanza hacia tu pareja.
+// - si ya está en juego (la lanzaste y tu pareja ya la hizo en la vida real), la
+//   confirma como cumplida — quien manda el reto es quien confirma, y el punto
+//   se lo lleva quien lo cumplió (tu pareja), no quien lo mandó.
+// Implementa BJ2-017, BJ2-018, BJ2-020
 'use client';
 
 import { useState, useTransition } from 'react';
@@ -9,7 +13,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { CartaJuego } from '@/components/ui/CartaJuego';
 import { Icono } from '@/components/ui/iconos';
 import { useCelebracion } from '@/components/ui/Celebracion';
-import { jugarCarta } from '@/lib/actions/cartas';
+import { jugarCarta, confirmarCumplida } from '@/lib/actions/cartas';
 import type { EstadoCarta } from '@/lib/supabase/tipos';
 
 export interface CartaMano {
@@ -51,28 +55,41 @@ export function ManoFan({
       setPreview(carta.id);
       return;
     }
-    if (carta.estado !== 'disponible') {
-      setError(
-        carta.estado === 'jugada'
-          ? 'Ya está en juego, esperando a que la cumplan.'
-          : 'Esta carta ya no se puede jugar.',
-      );
+    if (carta.estado === 'disponible') {
+      iniciar(async () => {
+        const r = await jugarCarta(carta.id);
+        if (!r.ok) {
+          setError(r.mensaje ?? 'No se pudo jugar la carta.');
+          return;
+        }
+        setLanzando(true);
+        celebrar();
+        setTimeout(() => {
+          setPreview(null);
+          setLanzando(false);
+          router.refresh();
+        }, 620);
+      });
       return;
     }
-    iniciar(async () => {
-      const r = await jugarCarta(carta.id);
-      if (!r.ok) {
-        setError(r.mensaje ?? 'No se pudo jugar la carta.');
-        return;
-      }
-      setLanzando(true);
-      celebrar();
-      setTimeout(() => {
-        setPreview(null);
-        setLanzando(false);
-        router.refresh();
-      }, 620);
-    });
+    if (carta.estado === 'jugada') {
+      iniciar(async () => {
+        const r = await confirmarCumplida(carta.id);
+        if (!r.ok) {
+          setError(r.mensaje ?? 'No se pudo confirmar.');
+          return;
+        }
+        setLanzando(true);
+        celebrar();
+        setTimeout(() => {
+          setPreview(null);
+          setLanzando(false);
+          router.refresh();
+        }, 620);
+      });
+      return;
+    }
+    setError('Esta carta ya no se puede jugar.');
   }
 
   if (n === 0) {
@@ -123,7 +140,7 @@ export function ManoFan({
       </div>
 
       <p className="mt-3 text-center text-[11px] text-white/40">
-        Toca una carta para verla · tócala otra vez para lanzarla
+        Toca una carta para verla · tócala otra vez para lanzarla o confirmarla
       </p>
 
       <AnimatePresence>
@@ -183,6 +200,20 @@ export function ManoFan({
                       ? `Lanzar a ${nombreCompanero}`
                       : 'Lanzar carta'}
                 </button>
+              ) : cartaPreview.estado === 'jugada' ? (
+                <>
+                  <button
+                    className="boton-primario w-full py-3 text-sm"
+                    disabled={pendiente || lanzando}
+                    onClick={() => tocar(cartaPreview)}
+                  >
+                    <Icono.check className="h-4 w-4" strokeWidth={2.5} />
+                    {pendiente ? 'Confirmando…' : '¿Ya la cumplió? Confirmar'}
+                  </button>
+                  <p className="text-center text-[11px] text-white/50">
+                    {nombreCompanero ?? 'Tu pareja'} gana el punto al confirmar.
+                  </p>
+                </>
               ) : (
                 <p className="text-center text-xs text-white/70">
                   {ETIQUETA[cartaPreview.estado]}

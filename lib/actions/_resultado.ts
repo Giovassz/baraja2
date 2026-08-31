@@ -31,7 +31,7 @@ export function mensajePorCodigo(codigo: string): string {
     NO_ERES_DUENO: 'Esa carta no es tuya.',
     CARTA_NO_DISPONIBLE: 'Esa carta ya no está disponible.',
     PAREJA_INCOMPLETA: 'Todavía falta que tu pareja se una.',
-    NO_ERES_RECEPTOR: 'Solo quien recibió el reto puede confirmarlo.',
+    NO_ERES_QUIEN_LA_MANDO: 'Solo quien mandó este reto puede confirmar que se cumplió.',
     CARTA_NO_JUGADA: 'Esa carta aún no se ha jugado.',
     PLOT_TWIST_NO_ENCONTRADO: 'No encontramos ese plot twist.',
     NO_ES_TU_PLOT_TWIST: 'Ese plot twist no es tuyo.',

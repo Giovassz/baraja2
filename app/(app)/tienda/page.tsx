@@ -45,7 +45,7 @@ export default async function TiendaPage() {
             <Icono.cumplida className="h-5 w-5" strokeWidth={2.5} />
           </span>
           <p className="text-sm text-white/80">
-            Tu pareja cumple un reto que tú le jugaste → <strong className="text-white">+1 punto</strong>
+            Cumples un reto que te jugó tu pareja y ella lo confirma → <strong className="text-white">+1 punto</strong>
           </p>
         </div>
         <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
