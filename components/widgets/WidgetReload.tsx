@@ -12,17 +12,20 @@ export function WidgetReload({
   usado,
   diasParaReinicio,
   cartasDisponibles,
+  modoTester = false,
 }: {
   usado: boolean;
   diasParaReinicio: number;
   cartasDisponibles: number;
+  /** Cuentas de prueba: ignora el límite de 1 reload por semana. */
+  modoTester?: boolean;
 }) {
   const router = useRouter();
   const [pendiente, iniciar] = useTransition();
   const [mensaje, setMensaje] = useState<string | null>(null);
   const [esError, setEsError] = useState(false);
 
-  const bloqueado = usado || cartasDisponibles === 0;
+  const bloqueado = (usado && !modoTester) || cartasDisponibles === 0;
 
   function recargar() {
     setMensaje(null);
@@ -45,9 +48,11 @@ export function WidgetReload({
             />
           </span>
           <h3 className="text-base">Reload</h3>
+          {modoTester && <span className="chip !bg-lavanda/20 !text-lavanda">Tester · ∞</span>}
         </div>
         <p className="mt-2 text-sm text-white/70">
-          Cambia todas tus cartas disponibles por otras nuevas. Una vez por semana.
+          Cambia todas tus cartas disponibles por otras nuevas.{' '}
+          {modoTester ? 'Sin límite en tu cuenta.' : 'Una vez por semana.'}
         </p>
       </div>
 
@@ -66,7 +71,7 @@ export function WidgetReload({
         {!bloqueado && !pendiente && <Icono.barajar className="h-4 w-4" strokeWidth={2.5} />}
         {pendiente
           ? 'Recargando…'
-          : usado
+          : usado && !modoTester
             ? `Disponible en ${diasParaReinicio} día(s)`
             : cartasDisponibles === 0
               ? 'Sin cartas para recargar'

@@ -14,6 +14,7 @@ create table if not exists usuarios (
   confirmo_mayor_edad boolean not null default false,
   pareja_id uuid,
   modo_spicy_activo boolean not null default false, -- preferencia de UI (supuesto S3/4.7)
+  modo_tester boolean not null default false, -- salta límites (recargas, etc.); solo desde /admin
   created_at timestamptz not null default now()
 );
 
@@ -888,16 +889,20 @@ as $$
 declare
   v_uid uuid := auth.uid();
   v_pareja uuid;
+  v_tester boolean;
   v_ciclo integer;
   v_perdidas uuid[];
   v_cuantas integer;
 begin
-  select pareja_id into v_pareja from usuarios where id = v_uid;
+  select pareja_id, coalesce(modo_tester, false)
+    into v_pareja, v_tester
+  from usuarios where id = v_uid;
+
   if v_pareja is null then raise exception 'SIN_PAREJA'; end if;
 
   v_ciclo := ciclo_actual(v_pareja);
 
-  if exists (
+  if not v_tester and exists (
     select 1 from reloads_usados where usuario_id = v_uid and ciclo_numero = v_ciclo
   ) then
     raise exception 'RELOAD_YA_USADO';
@@ -918,7 +923,9 @@ begin
 
   perform asignar_cartas(v_uid, v_pareja, v_ciclo, v_cuantas, v_perdidas);
 
-  insert into reloads_usados (usuario_id, ciclo_numero) values (v_uid, v_ciclo);
+  if not v_tester then
+    insert into reloads_usados (usuario_id, ciclo_numero) values (v_uid, v_ciclo);
+  end if;
 
   return v_cuantas;
 end;

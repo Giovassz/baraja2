@@ -130,6 +130,7 @@ export default async function DashboardPage() {
         usado={datos.reloadUsado}
         diasParaReinicio={dias}
         cartasDisponibles={cartasDisponibles}
+        modoTester={datos.pareja.yo.modo_tester}
       />
     </div>
   );

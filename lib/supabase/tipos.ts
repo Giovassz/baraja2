@@ -28,6 +28,8 @@ interface UsuariosRow {
   confirmo_mayor_edad: boolean;
   pareja_id: string | null;
   modo_spicy_activo: boolean;
+  /** Salta límites de juego (recargas, etc.). Solo se activa desde /admin. */
+  modo_tester: boolean;
   created_at: string;
 }
 
@@ -163,7 +165,12 @@ export interface Database {
     Tables: {
       usuarios: TablaSimple<
         UsuariosRow,
-        'avatar_id' | 'confirmo_mayor_edad' | 'pareja_id' | 'modo_spicy_activo' | 'created_at'
+        | 'avatar_id'
+        | 'confirmo_mayor_edad'
+        | 'pareja_id'
+        | 'modo_spicy_activo'
+        | 'modo_tester'
+        | 'created_at'
       >;
       parejas: TablaSimple<
         ParejasRow,
