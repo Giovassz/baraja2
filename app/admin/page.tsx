@@ -18,14 +18,33 @@ export default async function AdminPage() {
 
   const admin = crearClienteAdmin();
 
-  const [{ data: usuarios }, { data: parejas }, listaAuth] = await Promise.all([
-    admin
-      .from('usuarios')
-      .select('id, nombre, pareja_id, modo_tester')
-      .order('created_at', { ascending: false }),
-    admin.from('parejas').select('id, nombre_espacio'),
-    admin.auth.admin.listUsers({ perPage: 200 }),
-  ]);
+  const [{ data: usuarios, error: errorUsuarios }, { data: parejas }, listaAuth] =
+    await Promise.all([
+      admin
+        .from('usuarios')
+        .select('id, nombre, pareja_id, modo_tester')
+        .order('created_at', { ascending: false }),
+      admin.from('parejas').select('id, nombre_espacio'),
+      admin.auth.admin.listUsers({ perPage: 200 }),
+    ]);
+
+  if (errorUsuarios) {
+    return (
+      <div className="mx-auto flex min-h-dvh max-w-2xl flex-col gap-3 p-4">
+        <p className="widget !border-rosa-acento/40 text-sm text-rosa-acento">
+          No se pudo leer la tabla de usuarios: {errorUsuarios.message}
+          {errorUsuarios.message.includes('modo_tester') && (
+            <>
+              {' '}
+              — falta correr la migración{' '}
+              <code className="font-mono">20260101002000_modo_tester.sql</code> en el SQL
+              Editor de Supabase.
+            </>
+          )}
+        </p>
+      </div>
+    );
+  }
 
   const emailPorId = new Map(listaAuth.data.users.map((u) => [u.id, u.email ?? '—']));
   const espacioPorId = new Map((parejas ?? []).map((p) => [p.id, p.nombre_espacio]));
