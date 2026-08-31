@@ -76,3 +76,41 @@ export async function cerrarSesion(): Promise<void> {
   revalidatePath('/', 'layout');
   redirect('/login');
 }
+
+/** Completa el perfil de quien entró con Google / Discord / teléfono: nombre + edad. */
+export async function completarPerfilInicial(
+  _prev: ResultadoAccion | null,
+  formData: FormData,
+): Promise<ResultadoAccion> {
+  const nombre = String(formData.get('nombre') ?? '').trim();
+  const mayorEdad = formData.get('confirmoMayorEdad') === 'on';
+
+  if (nombre.length < 2 || nombre.length > 40) {
+    return fallo('DATOS_INVALIDOS', 'Escribe tu nombre (2 a 40 letras).');
+  }
+  if (!mayorEdad) {
+    return fallo('DATOS_INVALIDOS', 'Debes confirmar que eres mayor de edad.');
+  }
+
+  const supabase = crearClienteServidor();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return fallo('NO_AUTENTICADO');
+
+  const { error } = await supabase.from('usuarios').upsert(
+    {
+      id: user.id,
+      nombre,
+      confirmo_mayor_edad: true,
+    },
+    { onConflict: 'id' },
+  );
+
+  if (error) {
+    return fallo('ERROR_INESPERADO', 'No pudimos guardar tus datos. Inténtalo de nuevo.');
+  }
+
+  revalidatePath('/', 'layout');
+  redirect('/vincular');
+}

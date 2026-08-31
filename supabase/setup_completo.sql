@@ -1,17 +1,16 @@
-﻿-- ============================================================================
--- Baraja2 - Esquema completo (fases 0-10 + Tienda). Generado de supabase/migrations/*.sql
--- Pegar TODO este archivo en Supabase Dashboard -> SQL Editor -> Run.
--- Es idempotente en su mayoria (create table if not exists / create or replace).
+-- ============================================================================
+-- Baraja2 - Esquema completo. Pegar TODO en Supabase Dashboard -> SQL Editor -> Run.
+-- Idempotente en su mayoria (create table if not exists / create or replace).
 -- ============================================================================
 
 -- >>>>>>>>>>>>>>>>>>>>  20260101000100_usuarios.sql  <<<<<<<<<<<<<<<<<<<<
--- Implementa BJ2-004 â€” tabla de usuarios
+-- Implementa BJ2-004 — tabla de usuarios
 -- La FK usuarios.pareja_id -> parejas(id) se agrega en 002 (dependencia circular).
 
 create table if not exists usuarios (
   id uuid primary key references auth.users(id) on delete cascade,
   nombre text not null,
-  avatar_id text, -- referencia al catÃ¡logo estÃ¡tico de avatares (lib/reglas/avatares.ts)
+  avatar_id text, -- referencia al catálogo estático de avatares (lib/reglas/avatares.ts)
   confirmo_mayor_edad boolean not null default false,
   pareja_id uuid,
   modo_spicy_activo boolean not null default false, -- preferencia de UI (supuesto S3/4.7)
@@ -20,7 +19,7 @@ create table if not exists usuarios (
 
 comment on table usuarios is 'Perfil de cada jugador de Baraja2. El id coincide con auth.users.';
 
--- Crea automÃ¡ticamente la fila de usuarios al registrarse en Supabase Auth.
+-- Crea automáticamente la fila de usuarios al registrarse en Supabase Auth.
 create or replace function crear_perfil_usuario()
 returns trigger
 language plpgsql
@@ -47,7 +46,7 @@ create trigger al_crear_usuario_auth
 -- Row Level Security
 alter table usuarios enable row level security;
 
--- FunciÃ³n auxiliar sin recursiÃ³n de RLS: la pareja del usuario autenticado.
+-- Función auxiliar sin recursión de RLS: la pareja del usuario autenticado.
 create or replace function mi_pareja_id()
 returns uuid
 language sql
@@ -72,9 +71,8 @@ create policy "usuarios_insert_propio"
   with check (id = auth.uid());
 
 
-
 -- >>>>>>>>>>>>>>>>>>>>  20260101000200_parejas.sql  <<<<<<<<<<<<<<<<<<<<
--- Implementa BJ2-004 â€” tabla de parejas + FK circular con usuarios + helpers de RLS
+-- Implementa BJ2-004 — tabla de parejas + FK circular con usuarios + helpers de RLS
 
 create table if not exists parejas (
   id uuid primary key default gen_random_uuid(),
@@ -88,7 +86,7 @@ create table if not exists parejas (
   created_at timestamptz not null default now()
 );
 
-comment on table parejas is 'Un espacio compartido entre dos jugadores. usuario_2_id es null hasta la vinculaciÃ³n.';
+comment on table parejas is 'Un espacio compartido entre dos jugadores. usuario_2_id es null hasta la vinculación.';
 
 alter table usuarios
   drop constraint if exists fk_usuarios_pareja;
@@ -96,7 +94,7 @@ alter table usuarios
   add constraint fk_usuarios_pareja
   foreign key (pareja_id) references parejas(id);
 
--- Helper reutilizable para polÃ­ticas RLS de todas las tablas con pareja_id.
+-- Helper reutilizable para políticas RLS de todas las tablas con pareja_id.
 create or replace function es_miembro_de_pareja(p_pareja_id uuid)
 returns boolean
 language sql
@@ -113,8 +111,8 @@ $$;
 
 alter table parejas enable row level security;
 
--- Se puede leer una pareja si eres miembro, o si el cÃ³digo de invitaciÃ³n coincide
--- (necesario en el flujo de vinculaciÃ³n, antes de ser miembro).
+-- Se puede leer una pareja si eres miembro, o si el código de invitación coincide
+-- (necesario en el flujo de vinculación, antes de ser miembro).
 create policy "parejas_select_miembro"
   on parejas for select
   using (usuario_1_id = auth.uid() or usuario_2_id = auth.uid());
@@ -128,8 +126,8 @@ create policy "parejas_update_miembro"
   using (usuario_1_id = auth.uid() or usuario_2_id = auth.uid())
   with check (usuario_1_id = auth.uid() or usuario_2_id = auth.uid());
 
--- RPC de vinculaciÃ³n: el segundo jugador se une usando el cÃ³digo de invitaciÃ³n.
--- SECURITY DEFINER porque quien llama todavÃ­a no es miembro de la pareja.
+-- RPC de vinculación: el segundo jugador se une usando el código de invitación.
+-- SECURITY DEFINER porque quien llama todavía no es miembro de la pareja.
 create or replace function vincular_con_codigo(p_codigo text)
 returns uuid
 language plpgsql
@@ -178,9 +176,8 @@ end;
 $$;
 
 
-
 -- >>>>>>>>>>>>>>>>>>>>  20260101000300_catalogo_cartas.sql  <<<<<<<<<<<<<<<<<<<<
--- Implementa BJ2-004 â€” catÃ¡logo de cartas (contenido cargado por scripts/importar-catalogo.ts)
+-- Implementa BJ2-004 — catálogo de cartas (contenido cargado por scripts/importar-catalogo.ts)
 
 create table if not exists catalogo_cartas (
   id uuid primary key default gen_random_uuid(),
@@ -197,17 +194,16 @@ create index if not exists idx_catalogo_cartas_filtro
 
 alter table catalogo_cartas enable row level security;
 
--- Cualquier usuario autenticado puede leer el catÃ¡logo activo. La escritura queda
--- reservada al service_role (scripts de importaciÃ³n), que ignora RLS.
+-- Cualquier usuario autenticado puede leer el catálogo activo. La escritura queda
+-- reservada al service_role (scripts de importación), que ignora RLS.
 create policy "catalogo_cartas_select_autenticado"
   on catalogo_cartas for select
   to authenticated
   using (true);
 
 
-
 -- >>>>>>>>>>>>>>>>>>>>  20260101000400_catalogo_plot_twists.sql  <<<<<<<<<<<<<<<<<<<<
--- Implementa BJ2-004 â€” catÃ¡logo de plot twists (comodines)
+-- Implementa BJ2-004 — catálogo de plot twists (comodines)
 
 create table if not exists catalogo_plot_twists (
   id uuid primary key default gen_random_uuid(),
@@ -231,9 +227,8 @@ create policy "catalogo_plot_twists_select_autenticado"
   using (true);
 
 
-
 -- >>>>>>>>>>>>>>>>>>>>  20260101000500_cartas_asignadas.sql  <<<<<<<<<<<<<<<<<<<<
--- Implementa BJ2-004 â€” cartas repartidas a cada jugador por ciclo semanal
+-- Implementa BJ2-004 — cartas repartidas a cada jugador por ciclo semanal
 
 create table if not exists cartas_asignadas (
   id uuid primary key default gen_random_uuid(),
@@ -261,13 +256,13 @@ create policy "cartas_asignadas_select_pareja"
   on cartas_asignadas for select
   using (es_miembro_de_pareja(pareja_id));
 
--- Las mutaciones de juego pasan por Server Actions; aun asÃ­ se limita por pareja.
+-- Las mutaciones de juego pasan por Server Actions; aun así se limita por pareja.
 create policy "cartas_asignadas_update_pareja"
   on cartas_asignadas for update
   using (es_miembro_de_pareja(pareja_id))
   with check (es_miembro_de_pareja(pareja_id));
 
--- La inserciÃ³n real la hace el cron (service_role). Se permite al miembro solo
+-- La inserción real la hace el cron (service_role). Se permite al miembro solo
 -- para operaciones asistidas desde Server Actions (reload / robo de carta).
 create policy "cartas_asignadas_insert_pareja"
   on cartas_asignadas for insert
@@ -278,9 +273,8 @@ create policy "cartas_asignadas_delete_propio"
   using (usuario_id = auth.uid() and estado = 'disponible');
 
 
-
 -- >>>>>>>>>>>>>>>>>>>>  20260101000600_plot_twists_desbloqueados.sql  <<<<<<<<<<<<<<<<<<<<
--- Implementa BJ2-004 â€” plot twists que un jugador ha desbloqueado por ciclo
+-- Implementa BJ2-004 — plot twists que un jugador ha desbloqueado por ciclo
 
 create table if not exists plot_twists_desbloqueados (
   id uuid primary key default gen_random_uuid(),
@@ -314,9 +308,8 @@ create policy "plot_twists_desbloqueados_update_propio"
   with check (usuario_id = auth.uid());
 
 
-
 -- >>>>>>>>>>>>>>>>>>>>  20260101000700_puntos_semanales.sql  <<<<<<<<<<<<<<<<<<<<
--- Implementa BJ2-004 â€” puntos acumulados por jugador y ciclo (no se acumulan entre ciclos, supuesto S4)
+-- Implementa BJ2-004 — puntos acumulados por jugador y ciclo (no se acumulan entre ciclos, supuesto S4)
 
 create table if not exists puntos_semanales (
   id uuid primary key default gen_random_uuid(),
@@ -346,9 +339,8 @@ create policy "puntos_semanales_update_pareja"
   with check (es_miembro_de_pareja(pareja_id));
 
 
-
 -- >>>>>>>>>>>>>>>>>>>>  20260101000800_reloads_usados.sql  <<<<<<<<<<<<<<<<<<<<
--- Implementa BJ2-004 â€” registro de uso del botÃ³n de reload (1 por ciclo, secciÃ³n 4.8)
+-- Implementa BJ2-004 — registro de uso del botón de reload (1 por ciclo, sección 4.8)
 
 create table if not exists reloads_usados (
   id uuid primary key default gen_random_uuid(),
@@ -369,9 +361,8 @@ create policy "reloads_usados_insert_propio"
   with check (usuario_id = auth.uid());
 
 
-
 -- >>>>>>>>>>>>>>>>>>>>  20260101000900_historial_eventos.sql  <<<<<<<<<<<<<<<<<<<<
--- Implementa BJ2-004 â€” lÃ­nea de tiempo de eventos de la pareja (Fase 8)
+-- Implementa BJ2-004 — línea de tiempo de eventos de la pareja (Fase 8)
 
 create table if not exists historial_eventos (
   id uuid primary key default gen_random_uuid(),
@@ -397,9 +388,8 @@ create policy "historial_eventos_insert_pareja"
   with check (es_miembro_de_pareja(pareja_id));
 
 
-
 -- >>>>>>>>>>>>>>>>>>>>  20260101001000_notificaciones.sql  <<<<<<<<<<<<<<<<<<<<
--- Implementa BJ2-004 â€” bandeja de notificaciones internas por usuario
+-- Implementa BJ2-004 — bandeja de notificaciones internas por usuario
 
 create table if not exists notificaciones (
   id uuid primary key default gen_random_uuid(),
@@ -432,9 +422,8 @@ create policy "notificaciones_insert_pareja"
   );
 
 
-
 -- >>>>>>>>>>>>>>>>>>>>  20260101001100_suscripciones.sql  <<<<<<<<<<<<<<<<<<<<
--- Implementa BJ2-004 â€” estructura lista para Fase 9 (monetizaciÃ³n). SIN lÃ³gica de cobro todavÃ­a.
+-- Implementa BJ2-004 — estructura lista para Fase 9 (monetización). SIN lógica de cobro todavía.
 
 create table if not exists suscripciones (
   id uuid primary key default gen_random_uuid(),
@@ -452,13 +441,12 @@ alter table suscripciones enable row level security;
 create policy "suscripciones_select_propio"
   on suscripciones for select
   using (usuario_id = auth.uid());
--- Sin polÃ­ticas de insert/update para usuarios: la Fase 9 las gestionarÃ¡ vÃ­a webhook (service_role).
-
+-- Sin políticas de insert/update para usuarios: la Fase 9 las gestionará vía webhook (service_role).
 
 
 -- >>>>>>>>>>>>>>>>>>>>  20260101001200_push_y_preferencias.sql  <<<<<<<<<<<<<<<<<<<<
--- Implementa BJ2-004 (extensiÃ³n para Fase 6) â€” suscripciones Web Push y preferencias de notificaciÃ³n.
--- Estas tablas no estÃ¡n en la secciÃ³n 3 del prompt maestro pero son necesarias para BJ2-038..040.
+-- Implementa BJ2-004 (extensión para Fase 6) — suscripciones Web Push y preferencias de notificación.
+-- Estas tablas no están en la sección 3 del prompt maestro pero son necesarias para BJ2-038..040.
 
 create table if not exists push_suscripciones (
   id uuid primary key default gen_random_uuid(),
@@ -513,10 +501,9 @@ create trigger al_crear_perfil_preferencias
   for each row execute function crear_preferencias_notificacion();
 
 
-
 -- >>>>>>>>>>>>>>>>>>>>  20260101001300_rpc_mecanica.sql  <<<<<<<<<<<<<<<<<<<<
--- Implementa BJ2-015..022 (mecÃ¡nica de cartas), BJ2-023..029 (plot twists), BJ2-034..037 (reload)
--- Toda la mecÃ¡nica que necesita atomicidad vive en funciones de Postgres. Las Server Actions
+-- Implementa BJ2-015..022 (mecánica de cartas), BJ2-023..029 (plot twists), BJ2-034..037 (reload)
+-- Toda la mecánica que necesita atomicidad vive en funciones de Postgres. Las Server Actions
 -- de lib/actions/*.ts validan la entrada con zod y llaman a estas funciones.
 
 -- Constantes de negocio (deben coincidir con lib/reglas/constantes.ts)
@@ -525,7 +512,7 @@ create or replace function puntos_por_carta_cumplida() returns integer
 create or replace function puntos_para_desbloquear_plot_twist() returns integer
   language sql immutable as $$ select 3 $$;
 
--- NÃºmero de ciclo semanal de una pareja (secciÃ³n 4.1).
+-- Número de ciclo semanal de una pareja (sección 4.1).
 create or replace function ciclo_actual(p_pareja_id uuid)
 returns integer
 language sql
@@ -541,9 +528,9 @@ as $$
   where p.id = p_pareja_id;
 $$;
 
--- Asigna `p_cantidad` cartas estÃ¡ndar aleatorias a un jugador para un ciclo,
--- sin repetir cartas que ya tenga en ese ciclo (secciÃ³n 4.2). Si el catÃ¡logo no
--- alcanza, permite repeticiÃ³n y emite WARNING. Devuelve cuÃ¡ntas insertÃ³.
+-- Asigna `p_cantidad` cartas estándar aleatorias a un jugador para un ciclo,
+-- sin repetir cartas que ya tenga en ese ciclo (sección 4.2). Si el catálogo no
+-- alcanza, permite repetición y emite WARNING. Devuelve cuántas insertó.
 create or replace function asignar_cartas(
   p_usuario_id uuid,
   p_pareja_id uuid,
@@ -581,10 +568,10 @@ begin
 
   if array_length(v_disponibles, 1) is null
      or array_length(v_disponibles, 1) < p_cantidad then
-    raise warning 'CatÃ¡logo insuficiente para modalidad % (hay %, se piden %). Se permitirÃ¡ repeticiÃ³n.',
+    raise warning 'Catálogo insuficiente para modalidad % (hay %, se piden %). Se permitirá repetición.',
       v_modalidad, coalesce(array_length(v_disponibles, 1), 0), p_cantidad;
 
-    -- Rellena el pool con todas las cartas vÃ¡lidas de la modalidad (permitiendo repetir).
+    -- Rellena el pool con todas las cartas válidas de la modalidad (permitiendo repetir).
     select array_agg(c.id) into v_elegidas
     from catalogo_cartas c
     where c.tipo = 'estandar' and c.activo = true
@@ -592,7 +579,7 @@ begin
     v_elegidas := coalesce(v_elegidas, '{}'::uuid[]);
 
     if array_length(v_elegidas, 1) is null then
-      raise warning 'No hay ninguna carta estÃ¡ndar activa para la modalidad %.', v_modalidad;
+      raise warning 'No hay ninguna carta estándar activa para la modalidad %.', v_modalidad;
       return 0;
     end if;
 
@@ -605,7 +592,7 @@ begin
     return v_insertadas;
   end if;
 
-  -- Camino normal: muestreo aleatorio sin repeticiÃ³n.
+  -- Camino normal: muestreo aleatorio sin repetición.
   select array_agg(id order by random()) into v_elegidas
   from unnest(v_disponibles) as t(id);
 
@@ -619,7 +606,7 @@ begin
 end;
 $$;
 
--- EvalÃºa el umbral de puntos y desbloquea plot twists si corresponde (secciÃ³n 4.4).
+-- Evalúa el umbral de puntos y desbloquea plot twists si corresponde (sección 4.4).
 create or replace function evaluar_plot_twists(
   p_usuario_id uuid,
   p_pareja_id uuid,
@@ -688,7 +675,7 @@ begin
 end;
 $$;
 
--- Jugar una carta hacia la pareja (secciÃ³n 4.3).
+-- Jugar una carta hacia la pareja (sección 4.3).
 create or replace function jugar_carta(p_carta_asignada_id uuid)
 returns void
 language plpgsql
@@ -722,7 +709,7 @@ begin
 end;
 $$;
 
--- Confirmar que una carta jugada se cumpliÃ³ (secciÃ³n 4.3).
+-- Confirmar que una carta jugada se cumplió (sección 4.3).
 create or replace function confirmar_cumplida(p_carta_asignada_id uuid)
 returns void
 language plpgsql
@@ -747,7 +734,7 @@ begin
 
   v_ciclo := v_carta.ciclo_numero;
 
-  -- Los puntos los gana el dueÃ±o original de la carta (quien propuso el reto).
+  -- Los puntos los gana el dueño original de la carta (quien propuso el reto).
   insert into puntos_semanales (usuario_id, pareja_id, ciclo_numero, puntos)
   values (v_carta.usuario_id, v_carta.pareja_id, v_ciclo, v_puntos)
   on conflict (usuario_id, ciclo_numero)
@@ -768,7 +755,7 @@ begin
 end;
 $$;
 
--- Usar un plot twist para BLOQUEAR una carta de la pareja (secciÃ³n 4.4).
+-- Usar un plot twist para BLOQUEAR una carta de la pareja (sección 4.4).
 create or replace function usar_plot_twist_bloquear(
   p_ptd_id uuid,
   p_carta_objetivo_id uuid
@@ -811,7 +798,7 @@ begin
 end;
 $$;
 
--- Usar un plot twist para ROBAR una carta de la pareja (secciÃ³n 4.4).
+-- Usar un plot twist para ROBAR una carta de la pareja (sección 4.4).
 create or replace function usar_plot_twist_robar(
   p_ptd_id uuid,
   p_carta_objetivo_id uuid
@@ -845,7 +832,7 @@ begin
   -- El registro original queda marcado como robado.
   update cartas_asignadas set estado = 'robada' where id = p_carta_objetivo_id;
 
-  -- Se crea una nueva carta asignada disponible para el nuevo dueÃ±o.
+  -- Se crea una nueva carta asignada disponible para el nuevo dueño.
   insert into cartas_asignadas (usuario_id, pareja_id, carta_id, ciclo_numero, estado)
   values (v_uid, v_mi_pareja, v_objetivo.carta_id, v_objetivo.ciclo_numero, 'disponible')
   returning id into v_nueva;
@@ -864,7 +851,7 @@ begin
 end;
 $$;
 
--- BotÃ³n de reload: 1 por ciclo (secciÃ³n 4.8).
+-- Botón de reload: 1 por ciclo (sección 4.8).
 create or replace function recargar_cartas()
 returns integer
 language plpgsql
@@ -911,9 +898,8 @@ end;
 $$;
 
 
-
 -- >>>>>>>>>>>>>>>>>>>>  20260101001400_rpc_reinicio_semanal.sql  <<<<<<<<<<<<<<<<<<<<
--- Implementa BJ2-016 / BJ2-039 â€” reinicio semanal automÃ¡tico (secciÃ³n 4.1)
+-- Implementa BJ2-016 / BJ2-039 — reinicio semanal automático (sección 4.1)
 -- Lo invoca el cron diario: app/api/cron/reinicio-semanal/route.ts
 
 -- Reparte el ciclo `p_ciclo` a una pareja concreta (idempotente por ciclo).
@@ -946,7 +932,7 @@ begin
     values (v_usuario, p_pareja_id, p_ciclo, 0)
     on conflict (usuario_id, ciclo_numero) do nothing;
 
-    -- NotificaciÃ³n de reinicio (respeta preferencias del usuario).
+    -- Notificación de reinicio (respeta preferencias del usuario).
     if coalesce(
       (select reset_semanal from preferencias_notificacion where usuario_id = v_usuario),
       true
@@ -958,7 +944,7 @@ begin
 end;
 $$;
 
--- Recorre todas las parejas y reparte el ciclo que les toque. Devuelve cuÃ¡ntas se procesaron.
+-- Recorre todas las parejas y reparte el ciclo que les toque. Devuelve cuántas se procesaron.
 create or replace function reiniciar_ciclos_semanales()
 returns integer
 language plpgsql
@@ -993,7 +979,7 @@ begin
 end;
 $$;
 
--- Reparte el primer ciclo en el momento exacto de la vinculaciÃ³n (sin esperar al cron).
+-- Reparte el primer ciclo en el momento exacto de la vinculación (sin esperar al cron).
 create or replace function al_vincular_repartir()
 returns trigger
 language plpgsql
@@ -1013,7 +999,7 @@ create trigger al_vincular_pareja
   after update on parejas
   for each row execute function al_vincular_repartir();
 
--- Permisos de ejecuciÃ³n para clientes autenticados donde aplica.
+-- Permisos de ejecución para clientes autenticados donde aplica.
 grant execute on function jugar_carta(uuid) to authenticated;
 grant execute on function confirmar_cumplida(uuid) to authenticated;
 grant execute on function usar_plot_twist_bloquear(uuid, uuid) to authenticated;
@@ -1031,9 +1017,8 @@ revoke execute on function asignar_cartas(uuid, uuid, integer, integer, uuid[]) 
 revoke execute on function evaluar_plot_twists(uuid, uuid, integer) from public;
 
 
-
 -- >>>>>>>>>>>>>>>>>>>>  20260101001500_rpc_spicy.sql  <<<<<<<<<<<<<<<<<<<<
--- Implementa BJ2-032 â€” jugar una carta Spicy (fuera del ciclo de 5, supuesto S3)
+-- Implementa BJ2-032 — jugar una carta Spicy (fuera del ciclo de 5, supuesto S3)
 -- La carta Spicy se materializa en cartas_asignadas al jugarse; luego sigue el
 -- flujo normal de confirmar_cumplida (que otorga PUNTOS_POR_CARTA_CUMPLIDA).
 
@@ -1091,10 +1076,9 @@ $$;
 grant execute on function jugar_carta_spicy(uuid) to authenticated;
 
 
-
 -- >>>>>>>>>>>>>>>>>>>>  20260101001600_rpc_tienda.sql  <<<<<<<<<<<<<<<<<<<<
 -- Tienda de plot twists: gasta puntos del ciclo para desbloquear el plot twist que elijas.
--- FunciÃ³n nueva pedida por el usuario (no estÃ¡ en el prompt maestro original).
+-- Función nueva pedida por el usuario (no está en el prompt maestro original).
 
 create or replace function precio_plot_twist_tienda() returns integer
   language sql immutable as $$ select 3 $$;
@@ -1153,5 +1137,40 @@ $$;
 grant execute on function comprar_plot_twist(uuid) to authenticated;
 grant execute on function precio_plot_twist_tienda() to authenticated;
 
+
+-- >>>>>>>>>>>>>>>>>>>>  20260101001700_perfil_social.sql  <<<<<<<<<<<<<<<<<<<<
+-- Cuentas sociales (Google / Discord) y teléfono: el trigger que crea el perfil ahora
+-- toma el nombre de los metadatos del proveedor si no viene 'nombre' explícito.
+-- Función nueva pedida por el usuario (login con Google / Discord / teléfono).
+
+create or replace function crear_perfil_usuario()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_nombre text;
+begin
+  v_nombre := coalesce(
+    nullif(trim(new.raw_user_meta_data->>'nombre'), ''),
+    nullif(trim(new.raw_user_meta_data->>'full_name'), ''),
+    nullif(trim(new.raw_user_meta_data->>'name'), ''),
+    nullif(trim(new.raw_user_meta_data->>'preferred_username'), ''),
+    'Jugador'
+  );
+  -- Si el nombre trae apellidos, quedarse con el primero.
+  v_nombre := split_part(v_nombre, ' ', 1);
+
+  insert into public.usuarios (id, nombre, confirmo_mayor_edad)
+  values (
+    new.id,
+    left(v_nombre, 40),
+    coalesce((new.raw_user_meta_data->>'confirmo_mayor_edad')::boolean, false)
+  )
+  on conflict (id) do nothing;
+  return new;
+end;
+$$;
 
 

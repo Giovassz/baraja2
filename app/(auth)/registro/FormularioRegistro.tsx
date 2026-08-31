@@ -27,7 +27,7 @@ export function FormularioRegistro() {
   const [estado, accion] = useFormState(registrarse, null);
 
   return (
-    <form action={accion} className="mt-6 flex flex-col gap-4">
+    <form action={accion} className="flex flex-col gap-4">
       <CampoAuth
         etiqueta="Tu nombre"
         icono={Icono.usuario}

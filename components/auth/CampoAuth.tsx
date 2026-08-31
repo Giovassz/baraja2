@@ -31,7 +31,7 @@ export function CampoAuth({ etiqueta, icono: Ico, ayuda, type = 'text', ...props
         <input
           id={id}
           type={tipoReal}
-          className="h-12 w-full rounded-2xl border-2 border-white/12 bg-white pl-11 pr-11 font-body text-[15px] text-white outline-none transition placeholder:text-white/40 focus:border-rosa-acento focus:ring-4 focus:ring-rosa-acento/15"
+          className="h-12 w-full rounded-2xl border border-white/12 bg-white/[0.06] pl-11 pr-11 font-body text-[15px] text-white outline-none transition placeholder:text-white/35 focus:border-rosa-acento focus:bg-white/[0.1] focus:ring-4 focus:ring-rosa-acento/20"
           {...props}
         />
         {esPassword && (

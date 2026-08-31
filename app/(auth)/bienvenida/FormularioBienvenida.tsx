@@ -1,13 +1,13 @@
-// Formulario de inicio de sesión con Server Action
+// Formulario de "ya casi": nombre + mayoría de edad para cuentas sociales / teléfono
 // Implementa BJ2-008
 'use client';
 
 import { useFormState, useFormStatus } from 'react-dom';
-import { iniciarSesion } from '@/lib/actions/auth';
+import { completarPerfilInicial } from '@/lib/actions/auth';
 import { CampoAuth } from '@/components/auth/CampoAuth';
 import { Icono } from '@/components/ui/iconos';
 
-function BotonEntrar() {
+function BotonSeguir() {
   const { pending } = useFormStatus();
   return (
     <button type="submit" className="boton-primario mt-1 h-12 w-full text-[15px]" disabled={pending}>
@@ -15,7 +15,7 @@ function BotonEntrar() {
         <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
       ) : (
         <>
-          Entrar
+          Continuar
           <Icono.flecha className="h-4 w-4" strokeWidth={2.5} />
         </>
       )}
@@ -23,29 +23,30 @@ function BotonEntrar() {
   );
 }
 
-export function FormularioLogin() {
-  const [estado, accion] = useFormState(iniciarSesion, null);
+export function FormularioBienvenida({ nombrePrevio }: { nombrePrevio: string }) {
+  const [estado, accion] = useFormState(completarPerfilInicial, null);
 
   return (
-    <form action={accion} className="flex flex-col gap-4">
+    <form action={accion} className="mt-6 flex flex-col gap-4">
       <CampoAuth
-        etiqueta="Correo"
-        icono={Icono.sobre}
-        name="email"
-        type="email"
-        autoComplete="email"
-        placeholder="tucorreo@ejemplo.com"
+        etiqueta="Tu nombre"
+        icono={Icono.usuario}
+        name="nombre"
+        defaultValue={nombrePrevio}
+        placeholder="Cómo te dice tu pareja"
+        autoComplete="given-name"
         required
       />
-      <CampoAuth
-        etiqueta="Contraseña"
-        icono={Icono.candado}
-        name="password"
-        type="password"
-        autoComplete="current-password"
-        placeholder="Tu contraseña"
-        required
-      />
+
+      <label className="flex items-start gap-2.5 rounded-2xl bg-white/[0.06] px-3.5 py-3 text-[13px] text-white">
+        <input
+          name="confirmoMayorEdad"
+          type="checkbox"
+          className="mt-0.5 h-5 w-5 shrink-0 accent-rosa-acento"
+          required
+        />
+        <span>Confirmo que soy mayor de edad.</span>
+      </label>
 
       {estado?.error && (
         <p
@@ -57,7 +58,7 @@ export function FormularioLogin() {
         </p>
       )}
 
-      <BotonEntrar />
+      <BotonSeguir />
     </form>
   );
 }
