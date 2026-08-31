@@ -75,6 +75,8 @@ interface CartasAsignadasRow {
   fecha_asignacion: string;
   fecha_jugada: string | null;
   fecha_cumplida: string | null;
+  /** El receptor tocó "ya lo hice"; falta que quien la mandó la confirme. */
+  reclamada_en: string | null;
 }
 
 interface PlotTwistsDesbloqueadosRow {
@@ -188,6 +190,7 @@ export interface Database {
         | 'fecha_asignacion'
         | 'fecha_jugada'
         | 'fecha_cumplida'
+        | 'reclamada_en'
       >;
       plot_twists_desbloqueados: TablaSimple<
         PlotTwistsDesbloqueadosRow,

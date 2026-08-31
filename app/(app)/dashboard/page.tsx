@@ -28,15 +28,23 @@ export default async function DashboardPage() {
       tipo: c.tipo,
       puntosOtorgados: c.puntosOtorgados,
       estado: c.estado,
+      reclamada: !!c.reclamada_en,
     }));
 
-  const retos: RetoRecibido[] = datos.cartasRecibidas.map((c) => ({
-    id: c.id,
-    texto: c.texto,
-    tipo: c.tipo,
-    puntosOtorgados: c.puntosOtorgados,
-    estado: c.estado,
-  }));
+  // Retos que tu pareja te jugó: los que aún no avisas ("toca el corazón cuando lo
+  // cumplas") van a la pila; los que ya avisaste solo se muestran, esperando a que
+  // ella confirme desde su mano.
+  const retos: RetoRecibido[] = datos.cartasRecibidas
+    .filter((c) => !c.reclamada_en)
+    .map((c) => ({
+      id: c.id,
+      texto: c.texto,
+      tipo: c.tipo,
+      puntosOtorgados: c.puntosOtorgados,
+      estado: c.estado,
+    }));
+
+  const retosEsperandoConfirmacion = datos.cartasRecibidas.filter((c) => c.reclamada_en);
 
   const plotTwists: PlotTwistLane[] = datos.misPlotTwists
     .filter((pt) => !pt.usado)
@@ -72,6 +80,20 @@ export default async function DashboardPage() {
           <BannerSeccion icono={Icono.sobre}>Retos de {nombre ?? 'tu pareja'}</BannerSeccion>
           <PilaRetos retos={retos} nombreCompanero={nombre} />
         </>
+      )}
+
+      {retosEsperandoConfirmacion.length > 0 && (
+        <section className="lane flex flex-col gap-2">
+          <p className="flex items-center gap-1.5 text-xs font-bold text-white/60">
+            <Icono.reloj className="h-3.5 w-3.5" strokeWidth={2.5} />
+            Ya avisaste que cumpliste — esperando que {nombre ?? 'tu pareja'} confirme
+          </p>
+          {retosEsperandoConfirmacion.map((c) => (
+            <p key={c.id} className="truncate text-sm text-white/80">
+              {c.texto}
+            </p>
+          ))}
+        </section>
       )}
 
       <BannerSeccion icono={Icono.mano}>Tu mano</BannerSeccion>

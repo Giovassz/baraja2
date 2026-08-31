@@ -13,6 +13,8 @@ export interface CartaEnJuego {
   receptorId: string | null;
   cicloNumero: number;
   estado: EstadoCarta;
+  /** El receptor tocó el corazón para avisar "ya lo hice"; falta que el dueño lo confirme. */
+  reclamada?: boolean;
 }
 
 export type ResultadoMecanica<T> =
@@ -51,9 +53,24 @@ export interface ResultadoCumplir {
 }
 
 /**
+ * reclamarCumplida: el receptor toca el corazón para avisar que ya cumplió el
+ * reto en la vida real. Todavía no otorga el punto — solo deja la carta lista
+ * para que quien la mandó la confirme.
+ */
+export function reclamarCumplida(
+  carta: CartaEnJuego,
+  actorId: string,
+): ResultadoMecanica<CartaEnJuego> {
+  if (carta.receptorId !== actorId) return { ok: false, error: 'NO_ERES_RECEPTOR' };
+  if (carta.estado !== 'jugada') return { ok: false, error: 'CARTA_NO_JUGADA' };
+  if (carta.reclamada) return { ok: false, error: 'YA_RECLAMADA' };
+  return { ok: true, valor: { ...carta, reclamada: true } };
+}
+
+/**
  * confirmarCumplida: quien mandó la carta (el dueño original) confirma que su
- * pareja cumplió el reto en la vida real. Suma PUNTOS_POR_CARTA_CUMPLIDA a quien
- * lo cumplió (el RECEPTOR, no quien lo mandó) y evalúa el umbral de plot twists.
+ * pareja avisó que lo cumplió. Suma PUNTOS_POR_CARTA_CUMPLIDA a quien lo cumplió
+ * (el RECEPTOR, no quien lo mandó) y evalúa el umbral de plot twists.
  */
 export function confirmarCumplida(
   carta: CartaEnJuego,
@@ -62,6 +79,7 @@ export function confirmarCumplida(
 ): ResultadoMecanica<ResultadoCumplir> {
   if (carta.duenoId !== actorId) return { ok: false, error: 'NO_ERES_QUIEN_LA_MANDO' };
   if (carta.estado !== 'jugada') return { ok: false, error: 'CARTA_NO_JUGADA' };
+  if (!carta.reclamada) return { ok: false, error: 'AUN_NO_RECLAMADA' };
 
   const ganador = carta.receptorId;
   if (!ganador) return { ok: false, error: 'PAREJA_INCOMPLETA' };

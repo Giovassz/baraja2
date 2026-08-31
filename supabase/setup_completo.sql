@@ -241,7 +241,8 @@ create table if not exists cartas_asignadas (
   jugada_hacia_usuario_id uuid references usuarios(id),
   fecha_asignacion timestamptz not null default now(),
   fecha_jugada timestamptz,
-  fecha_cumplida timestamptz
+  fecha_cumplida timestamptz,
+  reclamada_en timestamptz
 );
 
 create index if not exists idx_cartas_asignadas_usuario_ciclo
@@ -709,7 +710,30 @@ begin
 end;
 $$;
 
--- Confirmar que una carta jugada se cumplió (sección 4.3).
+-- Paso 1: el receptor avisa que ya cumplió el reto en la vida real (sección 4.3).
+create or replace function reclamar_cumplida(p_carta_asignada_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_uid uuid := auth.uid();
+  v_carta cartas_asignadas%rowtype;
+begin
+  select * into v_carta from cartas_asignadas where id = p_carta_asignada_id for update;
+  if not found then raise exception 'CARTA_NO_ENCONTRADA'; end if;
+  if v_carta.jugada_hacia_usuario_id <> v_uid then raise exception 'NO_ERES_RECEPTOR'; end if;
+  if v_carta.estado <> 'jugada' then raise exception 'CARTA_NO_JUGADA'; end if;
+  if v_carta.reclamada_en is not null then raise exception 'YA_RECLAMADA'; end if;
+
+  update cartas_asignadas set reclamada_en = now() where id = p_carta_asignada_id;
+end;
+$$;
+
+grant execute on function reclamar_cumplida(uuid) to authenticated;
+
+-- Paso 2: quien mandó la carta confirma que sí se cumplió (sección 4.3).
 create or replace function confirmar_cumplida(p_carta_asignada_id uuid)
 returns void
 language plpgsql
@@ -727,6 +751,7 @@ begin
   if not found then raise exception 'CARTA_NO_ENCONTRADA'; end if;
   if v_carta.usuario_id <> v_uid then raise exception 'NO_ERES_QUIEN_LA_MANDO'; end if;
   if v_carta.estado <> 'jugada' then raise exception 'CARTA_NO_JUGADA'; end if;
+  if v_carta.reclamada_en is null then raise exception 'AUN_NO_RECLAMADA'; end if;
   if v_carta.jugada_hacia_usuario_id is null then raise exception 'PAREJA_INCOMPLETA'; end if;
 
   update cartas_asignadas

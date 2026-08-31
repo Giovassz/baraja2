@@ -40,6 +40,40 @@ export async function jugarCarta(cartaAsignadaId: string): Promise<ResultadoAcci
   return exito('Carta jugada. Le avisamos a tu pareja.');
 }
 
+/** Paso 1: el receptor avisa "ya lo hice". Todavía no otorga el punto. */
+export async function reclamarCumplida(
+  cartaAsignadaId: string,
+): Promise<ResultadoAccion> {
+  const parsed = esquemaCartaId.safeParse({ cartaAsignadaId });
+  if (!parsed.success) return fallo('DATOS_INVALIDOS');
+
+  const supabase = crearClienteServidor();
+  const { error } = await supabase.rpc('reclamar_cumplida', {
+    p_carta_asignada_id: parsed.data.cartaAsignadaId,
+  });
+  if (error) return fallo(codigoDesdeError(error));
+
+  // Aviso push a quien mandó la carta: le toca confirmar (best-effort).
+  try {
+    const pareja = await obtenerParejaActual();
+    if (pareja?.companero) {
+      await enviarPushAUsuario(pareja.companero.id, {
+        titulo: 'Te dicen que ya lo hizo',
+        cuerpo: `${pareja.yo.nombre} avisó que ya cumplió tu reto. Confírmalo para darle el punto.`,
+        url: '/dashboard',
+        tag: 'carta-recibida',
+        preferencia: 'carta_recibida',
+      });
+    }
+  } catch (e) {
+    console.warn('No se pudo enviar el push de "ya lo hice":', e);
+  }
+
+  revalidatePath('/dashboard');
+  return exito('Le avisamos a tu pareja — cuando confirme, ganas el punto.');
+}
+
+/** Paso 2: quien mandó la carta confirma; el punto es para quien la cumplió. */
 export async function confirmarCumplida(
   cartaAsignadaId: string,
 ): Promise<ResultadoAccion> {
@@ -55,7 +89,7 @@ export async function confirmarCumplida(
   revalidatePath('/dashboard');
   revalidatePath('/tienda');
   revalidatePath('/historial');
-  return exito('¡Reto cumplido! Sumaste puntos para tu pareja.');
+  return exito('¡Confirmado! Le dimos el punto a tu pareja.');
 }
 
 export async function recargarCartas(): Promise<ResultadoAccion> {

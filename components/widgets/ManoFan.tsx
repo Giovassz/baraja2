@@ -1,9 +1,10 @@
 // La mano del jugador: cartas agarradas en abanico, como si las sostuvieras.
 // 1 toque = ver preview de la carta. 2 toques (otra vez sobre la misma):
 // - si está disponible, la lanza hacia tu pareja.
-// - si ya está en juego (la lanzaste y tu pareja ya la hizo en la vida real), la
+// - si ya está en juego Y tu pareja ya avisó "ya lo hice" (reclamada), la
 //   confirma como cumplida — quien manda el reto es quien confirma, y el punto
 //   se lo lleva quien lo cumplió (tu pareja), no quien lo mandó.
+// - si está en juego pero tu pareja aún no avisa, solo se puede esperar.
 // Implementa BJ2-017, BJ2-018, BJ2-020
 'use client';
 
@@ -22,6 +23,8 @@ export interface CartaMano {
   tipo: 'estandar' | 'spicy';
   puntosOtorgados: number;
   estado: EstadoCarta;
+  /** Tu pareja ya avisó "ya lo hice" — falta que tú lo confirmes. */
+  reclamada: boolean;
 }
 
 const ETIQUETA: Partial<Record<EstadoCarta, string>> = {
@@ -72,7 +75,7 @@ export function ManoFan({
       });
       return;
     }
-    if (carta.estado === 'jugada') {
+    if (carta.estado === 'jugada' && carta.reclamada) {
       iniciar(async () => {
         const r = await confirmarCumplida(carta.id);
         if (!r.ok) {
@@ -87,6 +90,10 @@ export function ManoFan({
           router.refresh();
         }, 620);
       });
+      return;
+    }
+    if (carta.estado === 'jugada') {
+      setError('Tu pareja todavía no avisa que lo cumplió.');
       return;
     }
     setError('Esta carta ya no se puede jugar.');
@@ -200,7 +207,7 @@ export function ManoFan({
                       ? `Lanzar a ${nombreCompanero}`
                       : 'Lanzar carta'}
                 </button>
-              ) : cartaPreview.estado === 'jugada' ? (
+              ) : cartaPreview.estado === 'jugada' && cartaPreview.reclamada ? (
                 <>
                   <button
                     className="boton-primario w-full py-3 text-sm"
@@ -211,9 +218,13 @@ export function ManoFan({
                     {pendiente ? 'Confirmando…' : '¿Ya la cumplió? Confirmar'}
                   </button>
                   <p className="text-center text-[11px] text-white/50">
-                    {nombreCompanero ?? 'Tu pareja'} gana el punto al confirmar.
+                    {nombreCompanero ?? 'Tu pareja'} avisó que ya la cumplió — al confirmar, gana el punto.
                   </p>
                 </>
+              ) : cartaPreview.estado === 'jugada' ? (
+                <p className="text-center text-xs text-white/70">
+                  En juego · esperando a que {nombreCompanero ?? 'tu pareja'} avise que la cumplió
+                </p>
               ) : (
                 <p className="text-center text-xs text-white/70">
                   {ETIQUETA[cartaPreview.estado]}
