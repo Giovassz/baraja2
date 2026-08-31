@@ -139,6 +139,7 @@ export function ManoFan({
                 tipo={carta.tipo}
                 puntosOtorgados={carta.puntosOtorgados}
                 estado={carta.estado}
+                reclamada={carta.reclamada}
                 compacta
               />
             </motion.button>
@@ -187,6 +188,7 @@ export function ManoFan({
                 tipo={cartaPreview.tipo}
                 puntosOtorgados={cartaPreview.puntosOtorgados}
                 estado={cartaPreview.estado}
+                reclamada={cartaPreview.reclamada}
               />
             </motion.div>
 

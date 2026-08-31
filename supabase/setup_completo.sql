@@ -962,12 +962,16 @@ begin
   select array_agg(id) into v_reemplazables
   from cartas_asignadas
   where usuario_id = v_uid and ciclo_numero = v_ciclo
-    and estado in ('disponible', 'cumplida');
+    and estado in ('disponible', 'cumplida', 'bloqueada', 'robada');
 
   v_cuantas := coalesce(array_length(v_reemplazables, 1), 0);
   if v_cuantas = 0 then
     raise exception 'SIN_CARTAS_DISPONIBLES';
   end if;
+
+  update plot_twists_desbloqueados
+    set carta_objetivo_id = null
+  where carta_objetivo_id = any(v_reemplazables);
 
   delete from cartas_asignadas where id = any(v_reemplazables);
 

@@ -37,6 +37,8 @@ interface CartaJuegoProps {
   tipo: 'estandar' | 'spicy';
   puntosOtorgados?: number;
   estado?: EstadoCarta;
+  /** Tu pareja ya avisó "ya lo hice" — la carta está lista para que la confirmes. */
+  reclamada?: boolean;
   compacta?: boolean;
   className?: string;
 }
@@ -47,6 +49,7 @@ export function CartaJuego({
   tipo,
   puntosOtorgados = 1,
   estado,
+  reclamada = false,
   compacta = false,
   className = '',
 }: CartaJuegoProps) {
@@ -59,6 +62,7 @@ export function CartaJuego({
       nombreNivel={p.nombreNivel}
       texto={texto}
       estado={estado}
+      reclamada={reclamada}
       compacta={compacta}
       className={className}
     />
@@ -72,6 +76,7 @@ export function CaraCarta({
   nombreNivel,
   texto,
   estado,
+  reclamada = false,
   compacta = false,
   className = '',
 }: {
@@ -81,14 +86,20 @@ export function CaraCarta({
   nombreNivel?: string;
   texto: string;
   estado?: EstadoCarta;
+  reclamada?: boolean;
   compacta?: boolean;
   className?: string;
 }) {
   const Ico = Icono[icono];
   const atenuado = estado === 'bloqueada' || estado === 'robada';
+  const listaParaConfirmar = estado === 'jugada' && reclamada;
 
   return (
-    <div className={`carta ${MARCO[acento]} ${atenuado ? 'opacity-60 saturate-50' : ''} ${className}`}>
+    <div
+      className={`carta ${MARCO[acento]} ${atenuado ? 'opacity-60 saturate-50' : ''} ${
+        listaParaConfirmar ? 'ring-2 ring-rosa-acento shadow-[0_0_22px_rgba(232,93,138,0.65)]' : ''
+      } ${className}`}
+    >
       <div className={`carta-inner ${compacta ? 'gap-1 p-1.5' : 'gap-2 p-2.5'}`}>
         {/* Cabecera: tipo + nivel */}
         <div className="flex items-center justify-between px-0.5">
@@ -128,11 +139,16 @@ export function CaraCarta({
           </motion.span>
           {estado && ETIQUETA_ESTADO[estado] && (
             <span
-              className={`absolute right-1 top-1 rounded-full bg-noche-2/90 text-white ring-1 ring-white/20 ${
-                compacta ? 'p-0.5' : 'p-1'
-              }`}
+              className={`absolute right-1 top-1 rounded-full ring-1 ${
+                listaParaConfirmar
+                  ? 'bg-rosa-acento text-white ring-white/40'
+                  : 'bg-noche-2/90 text-white ring-white/20'
+              } ${compacta ? 'p-0.5' : 'p-1'}`}
+              title={listaParaConfirmar ? 'Lista para confirmar' : undefined}
             >
-              {estado === 'cumplida' ? (
+              {listaParaConfirmar ? (
+                <Icono.campana className={compacta ? 'h-2 w-2' : 'h-3 w-3'} strokeWidth={3} />
+              ) : estado === 'cumplida' ? (
                 <Icono.check className={compacta ? 'h-2 w-2' : 'h-3 w-3'} strokeWidth={3.5} />
               ) : estado === 'jugada' ? (
                 <Icono.reloj className={compacta ? 'h-2 w-2' : 'h-3 w-3'} strokeWidth={3} />

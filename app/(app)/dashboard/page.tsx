@@ -60,6 +60,7 @@ export default async function DashboardPage() {
     .filter((c) => c.estado === 'disponible')
     .map((c) => ({ id: c.id, texto: c.texto }));
 
+  const cartasParaConfirmar = mano.filter((c) => c.estado === 'jugada' && c.reclamada).length;
   const cartasDisponibles = datos.misCartas.filter((c) => c.estado === 'disponible').length;
   const dias = diasParaProximoReinicio(datos.pareja.fecha_vinculacion);
   const nombre = datos.pareja.companero?.nombre;
@@ -117,6 +118,21 @@ export default async function DashboardPage() {
       )}
 
       <BannerSeccion icono={Icono.mano}>Tu mano</BannerSeccion>
+
+      {cartasParaConfirmar > 0 && (
+        <div className="flex items-center gap-2.5 rounded-2xl border border-rosa-acento/40 bg-rosa-acento/10 px-3.5 py-2.5">
+          <span className="rounded-full bg-rosa-acento p-1.5 text-white">
+            <Icono.campana className="h-3.5 w-3.5" strokeWidth={2.5} />
+          </span>
+          <p className="text-xs font-semibold text-white">
+            {cartasParaConfirmar === 1
+              ? `${nombre ?? 'Tu pareja'} ya avisó que cumplió una carta`
+              : `${nombre ?? 'Tu pareja'} ya avisó que cumplió ${cartasParaConfirmar} cartas`}{' '}
+            — tócala abajo (tiene el borde rosa) para confirmarle el punto.
+          </p>
+        </div>
+      )}
+
       <section className="lane">
         <ManoFan cartas={mano} nombreCompanero={nombre} />
       </section>
