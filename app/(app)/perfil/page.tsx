@@ -42,6 +42,12 @@ export default async function PerfilPage() {
                 <Icono.nivel className="h-3 w-3" strokeWidth={2.5} />
                 Nivel {datos.nivel.nivel}
               </span>
+              {datos.usuario.modo_tester && (
+                <span className="chip bg-lavanda/20 text-lavanda">
+                  <Icono.escudo className="h-3 w-3" strokeWidth={2.5} />
+                  Tester
+                </span>
+              )}
             </div>
             <p className="mt-0.5 text-xs text-white/60">
               {datos.nivel.enNivel}/{datos.nivel.paraSubir} para subir de nivel

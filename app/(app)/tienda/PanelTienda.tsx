@@ -22,10 +22,13 @@ export function PanelTienda({
   puntos,
   precio,
   opciones,
+  modoTester = false,
 }: {
   puntos: number;
   precio: number;
   opciones: OpcionTienda[];
+  /** Cuenta de prueba: comprar no gasta puntos ni exige tenerlos. */
+  modoTester?: boolean;
 }) {
   const router = useRouter();
   const [pendiente, iniciar] = useTransition();
@@ -70,7 +73,7 @@ export function PanelTienda({
       <div className="grid grid-cols-3 gap-2.5">
         {opciones.map((o, i) => {
           const pr = presentacionPlotTwist(o.efecto);
-          const alcanza = puntos >= precio;
+          const alcanza = modoTester || puntos >= precio;
           return (
             <motion.button
               key={o.id}
@@ -91,7 +94,7 @@ export function PanelTienda({
               </div>
               <span className={`precio-badge ${!alcanza ? 'precio-badge--rojo' : ''}`}>
                 <Icono.moneda className="h-3.5 w-3.5" strokeWidth={2.5} />
-                {precio}
+                {modoTester ? '∞' : precio}
               </span>
             </motion.button>
           );
@@ -125,7 +128,7 @@ export function PanelTienda({
                 <p className="text-center text-xs text-white/80">{detalle.descripcion}</p>
                 <button
                   className="boton-primario w-full py-2.5 text-sm"
-                  disabled={puntos < precio || pendiente}
+                  disabled={(!modoTester && puntos < precio) || pendiente}
                   onClick={() => comprar(detalle.id)}
                 >
                   {comprando === detalle.id ? (
@@ -133,7 +136,11 @@ export function PanelTienda({
                   ) : (
                     <>
                       <Icono.moneda className="h-4 w-4" strokeWidth={2.5} />
-                      {puntos >= precio ? `Comprar · ${precio}` : `Te faltan ${precio - puntos}`}
+                      {modoTester
+                        ? 'Comprar · gratis (tester)'
+                        : puntos >= precio
+                          ? `Comprar · ${precio}`
+                          : `Te faltan ${precio - puntos}`}
                     </>
                   )}
                 </button>

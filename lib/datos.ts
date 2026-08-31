@@ -245,6 +245,8 @@ export interface DatosTienda {
   precio: number;
   opciones: OpcionTienda[];
   compradosEsteCiclo: number;
+  /** Cuenta de prueba: comprar no gasta puntos. */
+  modoTester: boolean;
 }
 
 export async function obtenerDatosTienda(): Promise<DatosTienda> {
@@ -281,6 +283,7 @@ export async function obtenerDatosTienda(): Promise<DatosTienda> {
     precio: PRECIO_PLOT_TWIST_TIENDA,
     opciones: (catalogo ?? []) as OpcionTienda[],
     compradosEsteCiclo: (comprados ?? []).length,
+    modoTester: usuario.modo_tester,
   };
 }
 

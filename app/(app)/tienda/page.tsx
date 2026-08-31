@@ -22,12 +22,19 @@ export default async function TiendaPage() {
         </div>
         <span className="precio-badge !text-base">
           <Icono.moneda className="h-4 w-4" strokeWidth={2.5} />
-          {datos.puntos}
+          {datos.modoTester ? '∞' : datos.puntos}
         </span>
       </div>
 
       {/* Sección plot twists */}
-      <BannerSeccion icono={Icono.chispa} info={`Cada plot twist cuesta ${datos.precio} puntos`}>
+      <BannerSeccion
+        icono={Icono.chispa}
+        info={
+          datos.modoTester
+            ? 'Cuenta de prueba: comprar no gasta puntos'
+            : `Cada plot twist cuesta ${datos.precio} puntos`
+        }
+      >
         Plot Twists
       </BannerSeccion>
 
@@ -35,6 +42,7 @@ export default async function TiendaPage() {
         puntos={datos.puntos}
         precio={datos.precio}
         opciones={datos.opciones}
+        modoTester={datos.modoTester}
       />
 
       {/* Sección cómo ganar puntos */}
