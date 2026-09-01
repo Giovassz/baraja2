@@ -18,7 +18,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         nivel={chrome.nivel.nivel}
         puntos={chrome.puntos}
       />
-      <main className="area-segura-inferior flex-1 p-4">{children}</main>
+      <main className="area-segura-superior area-segura-inferior flex-1 p-4">
+        {children}
+      </main>
       <BarraInferior />
     </div>
   );

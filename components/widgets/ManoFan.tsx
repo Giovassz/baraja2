@@ -116,7 +116,7 @@ export function ManoFan({
       <AnimatePresence>
         {cartaPreview && (
           <motion.div
-            className="fixed inset-0 z-[65] flex flex-col items-center justify-center gap-4 bg-noche/90 p-6 backdrop-blur-md"
+            className="fixed inset-0 z-[65] flex flex-col items-center justify-center gap-9 bg-noche/90 p-6 backdrop-blur-md"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -160,26 +160,28 @@ export function ManoFan({
             </motion.div>
 
             <div
-              className="flex w-full max-w-[240px] flex-col gap-2"
+              className="flex w-full max-w-[240px] flex-col items-center gap-1.5"
               onClick={(e) => e.stopPropagation()}
             >
-              <p className="flex items-center justify-center gap-1 text-[11px] font-semibold text-white/45">
-                <Icono.flecha className="h-3 w-3 -rotate-90" strokeWidth={2.5} />
-                Desliza la carta hacia arriba para lanzarla
-              </p>
               <button
-                className="boton-primario w-full py-3 text-sm"
+                type="button"
                 disabled={pendiente || lanzando}
                 onClick={() => tocar(cartaPreview)}
+                className="flex flex-col items-center gap-1 text-white/85 transition hover:text-rosa-acento disabled:opacity-40"
               >
-                <Icono.jugar className="h-4 w-4" strokeWidth={2.5} />
-                {pendiente
-                  ? 'Lanzando…'
-                  : nombreCompanero
-                    ? `Lanzar a ${nombreCompanero}`
-                    : 'Lanzar carta'}
+                <Icono.flecha className="h-4 w-4 -rotate-90" strokeWidth={2.5} />
+                <span className="font-heading text-lg font-bold">
+                  {pendiente
+                    ? 'Lanzando…'
+                    : nombreCompanero
+                      ? `Lanzar a ${nombreCompanero}`
+                      : 'Lanzar carta'}
+                </span>
               </button>
-              {error && <p className="text-center text-xs text-rosa-acento">{error}</p>}
+              <p className="text-[11px] font-semibold text-white/35">
+                o desliza la carta hacia arriba
+              </p>
+              {error && <p className="mt-1 text-center text-xs text-rosa-acento">{error}</p>}
             </div>
           </motion.div>
         )}

@@ -12,6 +12,7 @@
   --linea: rgba(255, 255, 255, 0.09);
   --texto: rgba(255, 249, 251, 0.95);
   --nav-alto: 66px;
+  --topbar-alto: 72px;
   color-scheme: dark;
 }
 
@@ -398,6 +399,9 @@ body::before {
   }
   .area-segura-inferior {
     padding-bottom: calc(var(--nav-alto) + 22px + env(safe-area-inset-bottom));
+  }
+  .area-segura-superior {
+    padding-top: calc(var(--topbar-alto) + env(safe-area-inset-top));
   }
 }
 
