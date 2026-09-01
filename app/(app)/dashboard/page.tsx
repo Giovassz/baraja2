@@ -6,6 +6,7 @@ import { WidgetVSComparativo } from '@/components/widgets/WidgetVSComparativo';
 import { WidgetReload } from '@/components/widgets/WidgetReload';
 import { PilaRetos, type RetoRecibido } from '@/components/widgets/PilaRetos';
 import { ManoFan, type CartaMano } from '@/components/widgets/ManoFan';
+import { CampoBatalla, type CartaEnCampo } from '@/components/widgets/CampoBatalla';
 import {
   PlotTwistsLane,
   type PlotTwistLane,
@@ -21,14 +22,26 @@ export const metadata = { title: 'Casa' };
 export default async function DashboardPage() {
   const datos = await obtenerDatosDashboard();
 
+  // Tu mano: solo las que todavía puedes jugar. En cuanto lanzas una, sale de aquí
+  // (el mazo se hace más chico) y pasa al campo de batalla de abajo.
   const mano: CartaMano[] = datos.misCartas
-    .filter((c) => ['disponible', 'jugada', 'cumplida', 'bloqueada'].includes(c.estado))
+    .filter((c) => c.estado === 'disponible')
     .map((c) => ({
       id: c.id,
       texto: c.texto,
       tipo: c.tipo,
       puntosOtorgados: c.puntosOtorgados,
-      estado: c.estado,
+    }));
+
+  // Campo de batalla: las que ya lanzaste y siguen en juego, esperando que tu pareja
+  // las cumpla (o que ya avisó y te toca confirmar).
+  const cartasEnCampo: CartaEnCampo[] = datos.misCartas
+    .filter((c) => c.estado === 'jugada')
+    .map((c) => ({
+      id: c.id,
+      texto: c.texto,
+      tipo: c.tipo,
+      puntosOtorgados: c.puntosOtorgados,
       reclamada: !!c.reclamada_en,
     }));
 
@@ -60,8 +73,7 @@ export default async function DashboardPage() {
     .filter((c) => c.estado === 'disponible')
     .map((c) => ({ id: c.id, texto: c.texto }));
 
-  const cartasParaConfirmar = mano.filter((c) => c.estado === 'jugada' && c.reclamada).length;
-  const cartasDisponibles = datos.misCartas.filter((c) => c.estado === 'disponible').length;
+  const cartasDisponibles = mano.length;
   const dias = diasParaProximoReinicio(datos.pareja.fecha_vinculacion);
   const nombre = datos.pareja.companero?.nombre;
 
@@ -117,22 +129,10 @@ export default async function DashboardPage() {
         </section>
       )}
 
+      <BannerSeccion icono={Icono.espadas}>Campo de batalla</BannerSeccion>
+      <CampoBatalla cartas={cartasEnCampo} nombreCompanero={nombre} />
+
       <BannerSeccion icono={Icono.mano}>Tu mano</BannerSeccion>
-
-      {cartasParaConfirmar > 0 && (
-        <div className="flex items-center gap-2.5 rounded-2xl border border-rosa-acento/40 bg-rosa-acento/10 px-3.5 py-2.5">
-          <span className="rounded-full bg-rosa-acento p-1.5 text-white">
-            <Icono.campana className="h-3.5 w-3.5" strokeWidth={2.5} />
-          </span>
-          <p className="text-xs font-semibold text-white">
-            {cartasParaConfirmar === 1
-              ? `${nombre ?? 'Tu pareja'} ya avisó que cumplió una carta`
-              : `${nombre ?? 'Tu pareja'} ya avisó que cumplió ${cartasParaConfirmar} cartas`}{' '}
-            — tócala abajo (tiene el borde rosa) para confirmarle el punto.
-          </p>
-        </div>
-      )}
-
       <section className="lane">
         <ManoFan cartas={mano} nombreCompanero={nombre} />
       </section>
@@ -144,7 +144,7 @@ export default async function DashboardPage() {
         </>
       )}
 
-      <BannerSeccion icono={Icono.espadas}>Marcador</BannerSeccion>
+      <BannerSeccion icono={Icono.corona}>Marcador</BannerSeccion>
       <WidgetVSComparativo
         yo={{
           nombre: datos.pareja.yo.nombre,

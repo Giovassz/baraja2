@@ -1,11 +1,9 @@
 // La mano del jugador: cartas agarradas en abanico, como si las sostuvieras.
-// 1 toque = ver preview de la carta. 2 toques (otra vez sobre la misma):
-// - si está disponible, la lanza hacia tu pareja.
-// - si ya está en juego Y tu pareja ya avisó "ya lo hice" (reclamada), la
-//   confirma como cumplida — quien manda el reto es quien confirma, y el punto
-//   se lo lleva quien lo cumplió (tu pareja), no quien lo mandó.
-// - si está en juego pero tu pareja aún no avisa, solo se puede esperar.
-// Implementa BJ2-017, BJ2-018, BJ2-020
+// Solo cartas disponibles — en cuanto la lanzas, sale de aquí (el mazo se hace más
+// chico) y pasa al Campo de batalla, donde se confirma cuando tu pareja avisa que
+// la cumplió.
+// 1 toque = ver preview de la carta. 2 toques (otra vez sobre la misma) = lanzarla.
+// Implementa BJ2-017, BJ2-018
 'use client';
 
 import { useState, useTransition } from 'react';
@@ -14,25 +12,14 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { CartaJuego } from '@/components/ui/CartaJuego';
 import { Icono } from '@/components/ui/iconos';
 import { useCelebracion } from '@/components/ui/Celebracion';
-import { jugarCarta, confirmarCumplida } from '@/lib/actions/cartas';
-import type { EstadoCarta } from '@/lib/supabase/tipos';
+import { jugarCarta } from '@/lib/actions/cartas';
 
 export interface CartaMano {
   id: string;
   texto: string;
   tipo: 'estandar' | 'spicy';
   puntosOtorgados: number;
-  estado: EstadoCarta;
-  /** Tu pareja ya avisó "ya lo hice" — falta que tú lo confirmes. */
-  reclamada: boolean;
 }
-
-const ETIQUETA: Partial<Record<EstadoCarta, string>> = {
-  jugada: 'En juego',
-  cumplida: 'Cumplida',
-  bloqueada: 'Bloqueada',
-  robada: 'Robada',
-};
 
 export function ManoFan({
   cartas,
@@ -58,51 +45,26 @@ export function ManoFan({
       setPreview(carta.id);
       return;
     }
-    if (carta.estado === 'disponible') {
-      iniciar(async () => {
-        const r = await jugarCarta(carta.id);
-        if (!r.ok) {
-          setError(r.mensaje ?? 'No se pudo jugar la carta.');
-          return;
-        }
-        setLanzando(true);
-        celebrar();
-        setTimeout(() => {
-          setPreview(null);
-          setLanzando(false);
-          router.refresh();
-        }, 620);
-      });
-      return;
-    }
-    if (carta.estado === 'jugada' && carta.reclamada) {
-      iniciar(async () => {
-        const r = await confirmarCumplida(carta.id);
-        if (!r.ok) {
-          setError(r.mensaje ?? 'No se pudo confirmar.');
-          return;
-        }
-        setLanzando(true);
-        celebrar();
-        setTimeout(() => {
-          setPreview(null);
-          setLanzando(false);
-          router.refresh();
-        }, 620);
-      });
-      return;
-    }
-    if (carta.estado === 'jugada') {
-      setError('Tu pareja todavía no avisa que lo cumplió.');
-      return;
-    }
-    setError('Esta carta ya no se puede jugar.');
+    iniciar(async () => {
+      const r = await jugarCarta(carta.id);
+      if (!r.ok) {
+        setError(r.mensaje ?? 'No se pudo jugar la carta.');
+        return;
+      }
+      setLanzando(true);
+      celebrar();
+      setTimeout(() => {
+        setPreview(null);
+        setLanzando(false);
+        router.refresh();
+      }, 620);
+    });
   }
 
   if (n === 0) {
     return (
       <p className="py-6 text-center text-sm text-white/50">
-        Sin cartas esta semana. Vuelve pronto.
+        Ya jugaste todas tus cartas de la semana. Vuelve pronto.
       </p>
     );
   }
@@ -138,8 +100,7 @@ export function ManoFan({
                 texto={carta.texto}
                 tipo={carta.tipo}
                 puntosOtorgados={carta.puntosOtorgados}
-                estado={carta.estado}
-                reclamada={carta.reclamada}
+                estado="disponible"
                 compacta
               />
             </motion.button>
@@ -148,7 +109,7 @@ export function ManoFan({
       </div>
 
       <p className="mt-3 text-center text-[11px] text-white/40">
-        Toca una carta para verla · tócala otra vez para lanzarla o confirmarla
+        Toca una carta para verla · tócala otra vez para lanzarla
       </p>
 
       <AnimatePresence>
@@ -187,8 +148,7 @@ export function ManoFan({
                 texto={cartaPreview.texto}
                 tipo={cartaPreview.tipo}
                 puntosOtorgados={cartaPreview.puntosOtorgados}
-                estado={cartaPreview.estado}
-                reclamada={cartaPreview.reclamada}
+                estado="disponible"
               />
             </motion.div>
 
@@ -196,42 +156,18 @@ export function ManoFan({
               className="flex w-full max-w-[240px] flex-col gap-2"
               onClick={(e) => e.stopPropagation()}
             >
-              {cartaPreview.estado === 'disponible' ? (
-                <button
-                  className="boton-primario w-full py-3 text-sm"
-                  disabled={pendiente || lanzando}
-                  onClick={() => tocar(cartaPreview)}
-                >
-                  <Icono.jugar className="h-4 w-4" strokeWidth={2.5} />
-                  {pendiente
-                    ? 'Lanzando…'
-                    : nombreCompanero
-                      ? `Lanzar a ${nombreCompanero}`
-                      : 'Lanzar carta'}
-                </button>
-              ) : cartaPreview.estado === 'jugada' && cartaPreview.reclamada ? (
-                <>
-                  <button
-                    className="boton-primario w-full py-3 text-sm"
-                    disabled={pendiente || lanzando}
-                    onClick={() => tocar(cartaPreview)}
-                  >
-                    <Icono.check className="h-4 w-4" strokeWidth={2.5} />
-                    {pendiente ? 'Confirmando…' : '¿Ya la cumplió? Confirmar'}
-                  </button>
-                  <p className="text-center text-[11px] text-white/50">
-                    {nombreCompanero ?? 'Tu pareja'} avisó que ya la cumplió — al confirmar, gana el punto.
-                  </p>
-                </>
-              ) : cartaPreview.estado === 'jugada' ? (
-                <p className="text-center text-xs text-white/70">
-                  En juego · esperando a que {nombreCompanero ?? 'tu pareja'} avise que la cumplió
-                </p>
-              ) : (
-                <p className="text-center text-xs text-white/70">
-                  {ETIQUETA[cartaPreview.estado]}
-                </p>
-              )}
+              <button
+                className="boton-primario w-full py-3 text-sm"
+                disabled={pendiente || lanzando}
+                onClick={() => tocar(cartaPreview)}
+              >
+                <Icono.jugar className="h-4 w-4" strokeWidth={2.5} />
+                {pendiente
+                  ? 'Lanzando…'
+                  : nombreCompanero
+                    ? `Lanzar a ${nombreCompanero}`
+                    : 'Lanzar carta'}
+              </button>
               {error && <p className="text-center text-xs text-rosa-acento">{error}</p>}
             </div>
           </motion.div>

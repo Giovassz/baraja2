@@ -37,5 +37,5 @@ export default async function CompletarPage() {
     .maybeSingle();
 
   if (!pareja?.usuario_2_id) redirect('/vincular');
-  redirect(perfil.avatar_id ? '/dashboard' : '/avatar');
+  redirect(perfil.avatar_id ? '/notificaciones' : '/avatar');
 }

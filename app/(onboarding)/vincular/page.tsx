@@ -12,8 +12,8 @@ export default async function VincularPage() {
   const pareja = await obtenerParejaActual();
 
   if (pareja?.usuario_2_id) {
-    // Ya están vinculados: falta avatar o directo al dashboard.
-    redirect(usuario.avatar_id ? '/dashboard' : '/avatar');
+    // Ya están vinculados: falta avatar, o activar notificaciones antes del dashboard.
+    redirect(usuario.avatar_id ? '/notificaciones' : '/avatar');
   }
 
   if (pareja && pareja.usuario_1_id === usuario.id) {

@@ -123,7 +123,7 @@ export async function guardarAvatar(
   if (pareja && !pareja.usuario_2_id) {
     redirect('/vincular?esperando=1');
   }
-  redirect('/dashboard');
+  redirect('/notificaciones');
 }
 
 /** Renombra el espacio compartido desde ajustes. */
