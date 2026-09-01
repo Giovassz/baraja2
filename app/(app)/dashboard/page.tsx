@@ -100,6 +100,9 @@ export default async function DashboardPage() {
         />
       )}
 
+      {/* Lo que acabas de lanzar se queda viéndose aquí arriba, como en la mesa. */}
+      <CampoBatalla cartas={cartasEnCampo} nombreCompanero={nombre} />
+
       <div className="text-center">
         <h1 className="text-2xl">Semana {datos.cicloNumero}</h1>
         <p className="mt-0.5 flex items-center justify-center gap-1.5 text-[13px] font-bold text-menta">
@@ -128,9 +131,6 @@ export default async function DashboardPage() {
           ))}
         </section>
       )}
-
-      <BannerSeccion icono={Icono.espadas}>Campo de batalla</BannerSeccion>
-      <CampoBatalla cartas={cartasEnCampo} nombreCompanero={nombre} />
 
       <BannerSeccion icono={Icono.mano}>Tu mano</BannerSeccion>
       <section className="lane">

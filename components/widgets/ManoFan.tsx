@@ -1,8 +1,9 @@
 // La mano del jugador: cartas agarradas en abanico, como si las sostuvieras.
 // Solo cartas disponibles — en cuanto la lanzas, sale de aquí (el mazo se hace más
-// chico) y pasa al Campo de batalla, donde se confirma cuando tu pareja avisa que
-// la cumplió.
-// 1 toque = ver preview de la carta. 2 toques (otra vez sobre la misma) = lanzarla.
+// chico) y aparece arriba en "En juego", donde se confirma cuando tu pareja avisa
+// que la cumplió.
+// Toca una carta para verla en grande, y desliza hacia arriba (o toca el botón) para
+// lanzarla — estilo Tinder.
 // Implementa BJ2-017, BJ2-018
 'use client';
 
@@ -109,7 +110,7 @@ export function ManoFan({
       </div>
 
       <p className="mt-3 text-center text-[11px] text-white/40">
-        Toca una carta para verla · tócala otra vez para lanzarla
+        Toca una carta para verla · deslízala hacia arriba para lanzarla
       </p>
 
       <AnimatePresence>
@@ -130,11 +131,17 @@ export function ManoFan({
             </button>
 
             <motion.div
-              className="w-full max-w-[240px]"
+              className="w-full max-w-[240px] cursor-grab touch-none active:cursor-grabbing"
+              drag={pendiente || lanzando ? false : 'y'}
+              dragConstraints={{ top: -220, bottom: 0 }}
+              dragElastic={{ top: 0.4, bottom: 0.15 }}
+              onDragEnd={(_e, info) => {
+                if (info.offset.y < -90) tocar(cartaPreview);
+              }}
               initial={{ scale: 0.8, y: 50, rotate: -6 }}
               animate={
                 lanzando
-                  ? { scale: 1.15, y: -170, rotate: 16, opacity: 0 }
+                  ? { scale: 1.15, y: -220, rotate: 16, opacity: 0 }
                   : { scale: 1, y: 0, rotate: 0, opacity: 1 }
               }
               transition={{ type: 'spring', stiffness: 240, damping: 22 }}
@@ -156,6 +163,10 @@ export function ManoFan({
               className="flex w-full max-w-[240px] flex-col gap-2"
               onClick={(e) => e.stopPropagation()}
             >
+              <p className="flex items-center justify-center gap-1 text-[11px] font-semibold text-white/45">
+                <Icono.flecha className="h-3 w-3 -rotate-90" strokeWidth={2.5} />
+                Desliza la carta hacia arriba para lanzarla
+              </p>
               <button
                 className="boton-primario w-full py-3 text-sm"
                 disabled={pendiente || lanzando}

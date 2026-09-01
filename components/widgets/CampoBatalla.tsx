@@ -55,18 +55,15 @@ export function CampoBatalla({
     });
   }
 
-  if (cartas.length === 0) {
-    return (
-      <section className="lane flex items-center justify-center py-8">
-        <p className="text-center text-sm text-white/40">
-          Lanza una carta desde tu mano para verla aquí.
-        </p>
-      </section>
-    );
-  }
+  // Nada en juego todavía: no ocupamos espacio, aparece en cuanto lanzas algo.
+  if (cartas.length === 0) return null;
 
   return (
-    <section className="lane">
+    <section className="flex flex-col gap-2">
+      <p className="flex items-center gap-1.5 px-1 text-[11px] font-bold uppercase tracking-wider text-white/50">
+        <Icono.jugar className="h-3 w-3 text-rosa-acento" strokeWidth={2.5} />
+        En juego
+      </p>
       <Corazones />
       <div className="flex gap-2.5 overflow-x-auto pb-1">
         {cartas.map((carta) => (
