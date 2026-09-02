@@ -17,11 +17,16 @@ function leerTemaDelDom(): string {
 }
 
 export function useTemaActivo(): string {
-  const [tema, setTema] = useState(leerTemaDelDom);
+  // Ojo: el estado inicial SIEMPRE debe ser el tema por defecto, igual que en el
+  // servidor (que no tiene acceso a localStorage/data-tema). Si el inicializador
+  // leyera el DOM aquí, el primer render en el cliente ya vería el tema guardado
+  // (el script anti-parpadeo del <head> corre antes de que React hidrate) mientras
+  // el servidor renderizó el de por defecto — eso es justo lo que generaba el
+  // "Warning: Prop did not match" en íconos como el de FondoCorazones/PilaRetos.
+  // El valor real se corrige acá abajo, en el efecto, que corre después de hidratar.
+  const [tema, setTema] = useState(TEMA_POR_DEFECTO);
 
   useEffect(() => {
-    // Por si cambió entre el render del servidor y este efecto (o mientras el
-    // componente estaba desmontado).
     setTema(leerTemaDelDom());
 
     function alCambiar(evento: Event) {

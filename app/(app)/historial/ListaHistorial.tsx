@@ -1,4 +1,6 @@
 // Lista de eventos con filtro por tipo (Fase 8)
+// Rediseño: selector de filtro tipo pastilla conectada (referencia: ranking de
+// Preguntados) + filas mejor estructuradas en WidgetHistorialEvento.
 // Implementa BJ2-047
 'use client';
 
@@ -12,6 +14,8 @@ export interface EventoHistorial {
   tipoEvento: TipoEventoHistorial;
   descripcion: string;
   autor: string;
+  avatarId: string | null;
+  fotoUrl: string | null;
   fecha: string;
 }
 
@@ -19,7 +23,7 @@ type Filtro = 'todos' | TipoEventoHistorial;
 
 const FILTROS: { valor: Filtro; etiqueta: string; icono?: typeof Icono.check }[] = [
   { valor: 'todos', etiqueta: 'Todo' },
-  { valor: 'carta_cumplida', etiqueta: 'Cartas cumplidas', icono: Icono.cumplida },
+  { valor: 'carta_cumplida', etiqueta: 'Cumplidas', icono: Icono.cumplida },
   { valor: 'plot_twist_usado', etiqueta: 'Plot twists', icono: Icono.chispa },
 ];
 
@@ -31,17 +35,18 @@ export function ListaHistorial({ eventos }: { eventos: EventoHistorial[] }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap gap-2">
+      <div className="flex gap-1 rounded-full bg-white/[0.06] p-1">
         {FILTROS.map((f) => {
           const Ico = f.icono;
+          const activo = filtro === f.valor;
           return (
             <button
               key={f.valor}
               onClick={() => setFiltro(f.valor)}
-              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold transition ${
-                filtro === f.valor
-                  ? 'bg-rosa-acento text-white'
-                  : 'bg-white/10 text-white/70'
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-full py-2 text-xs font-bold transition sm:text-sm ${
+                activo
+                  ? 'bg-rosa-acento text-white shadow-[0_6px_16px_-6px_rgb(var(--c-acento)/0.7)]'
+                  : 'text-white/55 hover:text-white'
               }`}
             >
               {Ico && <Ico className="h-3.5 w-3.5" strokeWidth={2.5} />}
@@ -52,19 +57,13 @@ export function ListaHistorial({ eventos }: { eventos: EventoHistorial[] }) {
       </div>
 
       {visibles.length === 0 ? (
-        <p className="text-sm text-white/60">
+        <p className="py-8 text-center text-sm text-white/50">
           Todavía no hay eventos aquí. Cumplan retos para empezar su historia.
         </p>
       ) : (
-        <div className="flex flex-col gap-3">
-          {visibles.map((e) => (
-            <WidgetHistorialEvento
-              key={e.id}
-              tipoEvento={e.tipoEvento}
-              descripcion={e.descripcion}
-              autor={e.autor}
-              fecha={e.fecha}
-            />
+        <div className="overflow-hidden rounded-widget border border-white/10">
+          {visibles.map((e, i) => (
+            <WidgetHistorialEvento key={e.id} evento={e} ultimo={i === visibles.length - 1} />
           ))}
         </div>
       )}
