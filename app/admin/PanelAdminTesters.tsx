@@ -1,7 +1,7 @@
 // Lista de cuentas con un switch de "modo tester" cada una
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useMemo, useState } from 'react';
 import { alternarModoTester } from '@/lib/actions/admin';
 import { Icono } from '@/components/ui/iconos';
 
@@ -14,26 +14,55 @@ export interface FilaTester {
 }
 
 export function PanelAdminTesters({ filas }: { filas: FilaTester[] }) {
+  const [busqueda, setBusqueda] = useState('');
+
+  const filasFiltradas = useMemo(() => {
+    const q = busqueda.trim().toLowerCase();
+    if (!q) return filas;
+    return filas.filter(
+      (f) =>
+        f.nombre.toLowerCase().includes(q) ||
+        f.email.toLowerCase().includes(q) ||
+        f.nombreEspacio?.toLowerCase().includes(q),
+    );
+  }, [filas, busqueda]);
+
   return (
     <div className="flex flex-col gap-2.5">
-      {filas.map((fila) => (
-        <FilaAdmin key={fila.id} fila={fila} />
-      ))}
+      {filas.length > 5 && (
+        <input
+          type="search"
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          placeholder="Buscar por nombre, correo o espacio…"
+          className="campo-texto !py-2 text-sm"
+        />
+      )}
+      {filasFiltradas.length === 0 ? (
+        <p className="py-4 text-center text-sm text-white/50">Nadie coincide con esa búsqueda.</p>
+      ) : (
+        filasFiltradas.map((fila) => <FilaAdmin key={fila.id} fila={fila} />)
+      )}
     </div>
   );
 }
 
 function FilaAdmin({ fila }: { fila: FilaTester }) {
   const [activo, setActivo] = useState(fila.modoTester);
-  const [pendiente, iniciar] = useTransition();
+  // Ojo: NO usar useTransition con una función async — en React 18 "pendiente" se
+  // resuelve casi al instante (no espera a que alternarModoTester() responda),
+  // dejando una ventana donde se puede volver a tocar antes de tiempo.
+  const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   function alternar() {
+    if (enviando) return;
     const nuevo = !activo;
     setError(null);
     setActivo(nuevo); // optimista
-    iniciar(async () => {
-      const r = await alternarModoTester(fila.id, nuevo);
+    setEnviando(true);
+    alternarModoTester(fila.id, nuevo).then((r) => {
+      setEnviando(false);
       if (!r.ok) {
         setActivo(!nuevo); // revierte
         setError(r.mensaje ?? 'No se pudo guardar.');
@@ -59,7 +88,7 @@ function FilaAdmin({ fila }: { fila: FilaTester }) {
         role="switch"
         aria-checked={activo}
         aria-label={`Modo tester para ${fila.nombre}`}
-        disabled={pendiente}
+        disabled={enviando}
         onClick={alternar}
         className={`relative h-8 w-14 shrink-0 rounded-full border transition disabled:opacity-50 ${
           activo ? 'border-rosa-acento bg-rosa-acento/30' : 'border-white/20 bg-white/10'
