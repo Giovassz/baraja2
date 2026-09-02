@@ -4,7 +4,7 @@
 // Implementa BJ2-020
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CartaJuego } from '@/components/ui/CartaJuego';
@@ -31,17 +31,24 @@ export function CampoBatalla({
   const router = useRouter();
   const [activaId, setActivaId] = useState<string | null>(null);
   const [confirmando, setConfirmando] = useState(false);
-  const [pendiente, iniciar] = useTransition();
+  // Ojo: NO usar useTransition con una función async — en React 18 "pendiente" se
+  // resuelve casi al instante (no espera a que confirmarCumplida() responda), dejando
+  // una ventana donde se puede volver a tocar antes de tiempo. Un booleano manual sí
+  // cubre exactamente mientras sigue en el aire.
+  const [enviando, setEnviando] = useState(false);
+  const pendiente = enviando;
   const [error, setError] = useState<string | null>(null);
   const { celebrar, Corazones } = useCelebracion();
 
   const activa = cartas.find((c) => c.id === activaId) ?? null;
 
   function confirmar(carta: CartaEnCampo) {
+    if (enviando) return;
     setError(null);
-    iniciar(async () => {
-      const r = await confirmarCumplida(carta.id);
+    setEnviando(true);
+    confirmarCumplida(carta.id).then((r) => {
       if (!r.ok) {
+        setEnviando(false);
         setError(r.mensaje ?? 'No se pudo confirmar.');
         return;
       }
@@ -50,6 +57,7 @@ export function CampoBatalla({
       setTimeout(() => {
         setActivaId(null);
         setConfirmando(false);
+        setEnviando(false);
         router.refresh();
       }, 620);
     });

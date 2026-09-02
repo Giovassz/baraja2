@@ -7,7 +7,7 @@
 // Implementa BJ2-017, BJ2-018
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CartaJuego } from '@/components/ui/CartaJuego';
@@ -32,7 +32,12 @@ export function ManoFan({
   const router = useRouter();
   const [preview, setPreview] = useState<string | null>(null);
   const [lanzando, setLanzando] = useState(false);
-  const [pendiente, iniciar] = useTransition();
+  // Ojo: NO usar useTransition con una función async — en React 18 "pendiente" se
+  // resuelve casi al instante (no espera a que jugarCarta() responda), dejando una
+  // ventana donde se puede volver a tocar antes de tiempo y trababa la selección de
+  // otras cartas. Un booleano manual sí cubre exactamente mientras sigue en el aire.
+  const [enviando, setEnviando] = useState(false);
+  const pendiente = enviando;
   const [error, setError] = useState<string | null>(null);
   const { celebrar, Corazones } = useCelebracion();
 
@@ -41,14 +46,16 @@ export function ManoFan({
   const centro = (n - 1) / 2;
 
   function tocar(carta: CartaMano) {
+    if (enviando) return;
     setError(null);
     if (preview !== carta.id) {
       setPreview(carta.id);
       return;
     }
-    iniciar(async () => {
-      const r = await jugarCarta(carta.id);
+    setEnviando(true);
+    jugarCarta(carta.id).then((r) => {
       if (!r.ok) {
+        setEnviando(false);
         setError(r.mensaje ?? 'No se pudo jugar la carta.');
         return;
       }
@@ -57,6 +64,7 @@ export function ManoFan({
       setTimeout(() => {
         setPreview(null);
         setLanzando(false);
+        setEnviando(false);
         router.refresh();
       }, 620);
     });
