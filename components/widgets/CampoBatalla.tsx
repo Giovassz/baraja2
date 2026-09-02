@@ -4,7 +4,7 @@
 // Implementa BJ2-020
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CartaJuego } from '@/components/ui/CartaJuego';
@@ -41,9 +41,21 @@ export function CampoBatalla({
   const { celebrar, Corazones } = useCelebracion();
 
   const activa = cartas.find((c) => c.id === activaId) ?? null;
+  // Ya mostradas automáticamente en este montaje, para no reabrir la misma en
+  // cuanto la cierras a mano (el efecto de abajo se dispararía de nuevo si no).
+  const yaMostradas = useRef(new Set<string>());
+
   // Antes esto solo se notaba tocando una por una las cartas del carrusel — ahora
-  // sale grande arriba en cuanto tu pareja avisa que cumplió algo que le lanzaste.
-  const reclamadas = cartas.filter((c) => c.reclamada);
+  // la carta se abre sola, grande, con el botón de confirmar — igual que cuando te
+  // lanzan un reto o abres el preview de tu mano.
+  useEffect(() => {
+    if (activaId) return;
+    const siguiente = cartas.find((c) => c.reclamada && !yaMostradas.current.has(c.id));
+    if (siguiente) {
+      yaMostradas.current.add(siguiente.id);
+      setActivaId(siguiente.id);
+    }
+  }, [cartas, activaId]);
 
   function confirmar(carta: CartaEnCampo) {
     if (enviando) return;
@@ -77,24 +89,6 @@ export function CampoBatalla({
       </p>
       <Corazones />
 
-      {reclamadas.length > 0 && (
-        <button
-          type="button"
-          onClick={() => setActivaId(reclamadas[0]!.id)}
-          className="destello flex items-center gap-3 overflow-hidden rounded-widget bg-gradient-to-r from-rosa-acento to-coral p-4 text-left shadow-[0_16px_36px_-14px_rgb(var(--c-acento)/0.8)] transition active:scale-[0.98]"
-        >
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/20">
-            <Icono.check className="h-5 w-5 text-white" strokeWidth={2.5} />
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block font-heading text-base font-bold text-white">
-              {nombreCompanero ?? 'Tu pareja'} dice que ya cumplió
-              {reclamadas.length > 1 ? ` ${reclamadas.length} cartas` : ''}
-            </span>
-            <span className="block text-xs text-white/85">Toca para confirmar y dar el punto</span>
-          </span>
-        </button>
-      )}
       <div className="flex gap-2.5 overflow-x-auto pb-1">
         {cartas.map((carta) => (
           <button
