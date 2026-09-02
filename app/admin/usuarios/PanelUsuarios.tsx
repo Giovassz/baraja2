@@ -58,7 +58,7 @@ export function PanelUsuarios({
 
   return (
     <div className="flex flex-col gap-2.5">
-      <div className="relative">
+      <div className="relative max-w-md">
         <Icono.buscar
           className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--adm-text-mute)]"
           strokeWidth={2.5}
@@ -79,7 +79,11 @@ export function PanelUsuarios({
           Nadie coincide con esa búsqueda.
         </p>
       ) : (
-        filasFiltradas.map((fila) => <FilaUsuarioAdmin key={fila.id} fila={fila} />)
+        <div className="grid items-start gap-2.5 lg:grid-cols-2 xl:grid-cols-3">
+          {filasFiltradas.map((fila) => (
+            <FilaUsuarioAdmin key={fila.id} fila={fila} />
+          ))}
+        </div>
       )}
     </div>
   );
@@ -264,7 +268,7 @@ function FilaUsuarioAdmin({ fila }: { fila: FilaUsuario }) {
       </div>
 
       {perfilAbierto && (
-        <div className="mt-3 grid grid-cols-2 gap-2 rounded-xl bg-[var(--adm-surface-2)] p-3 sm:grid-cols-4">
+        <div className="mt-3 grid grid-cols-2 gap-2 rounded-xl bg-[var(--adm-surface-2)] p-3">
           <DatoPerfil etiqueta="Registrado" valor={fechaRegistro} />
           <DatoPerfil
             etiqueta="Modalidad"

@@ -12,11 +12,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!esCorreoAdmin(usuario.email)) notFound();
 
   return (
-    <div className="admin-shell flex min-h-dvh flex-col">
+    // En pantallas >= sm se fija a la altura del viewport y cada columna (sidebar,
+    // contenido) hace su propio scroll — igual que un dashboard de escritorio. En
+    // celular se deja el scroll normal de la página (más simple y ya funcionaba).
+    <div className="admin-shell flex min-h-dvh flex-col sm:h-dvh sm:overflow-hidden">
       <BarraSuperiorAdmin email={usuario.email} />
-      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col sm:flex-row">
+      <div className="mx-auto flex w-full max-w-[1600px] flex-1 flex-col sm:flex-row sm:overflow-hidden">
         <SidebarAdmin email={usuario.email} />
-        <main className="min-w-0 flex-1 p-4 sm:p-6">{children}</main>
+        <main className="min-w-0 flex-1 p-4 sm:overflow-y-auto sm:p-6 lg:p-8">{children}</main>
       </div>
     </div>
   );

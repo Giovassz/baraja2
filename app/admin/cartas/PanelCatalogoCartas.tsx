@@ -97,7 +97,7 @@ export function PanelCatalogoCartas({ filas }: { filas: FilaCarta[] }) {
             No hay cartas con ese filtro.
           </p>
         ) : (
-          <div className="flex flex-col gap-2">
+          <div className="grid items-start gap-2 lg:grid-cols-2 xl:grid-cols-3">
             {filasFiltradas.map((f) => (
               <FilaCartaCatalogo key={f.id} fila={f} />
             ))}

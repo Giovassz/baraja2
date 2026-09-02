@@ -86,7 +86,7 @@ export function PanelPlotTwists({ filas }: { filas: FilaPlotTwist[] }) {
             No hay plot twists con ese filtro.
           </p>
         ) : (
-          <div className="flex flex-col gap-2">
+          <div className="grid items-start gap-2 lg:grid-cols-2 xl:grid-cols-3">
             {filasFiltradas.map((f) => (
               <FilaPlotTwistCatalogo key={f.id} fila={f} />
             ))}

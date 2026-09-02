@@ -43,7 +43,7 @@ export function SidebarAdmin({ email }: { email?: string }) {
   return (
     <nav
       className="admin-shell flex shrink-0 gap-1 overflow-x-auto border-b border-[var(--adm-border)] bg-[var(--adm-surface)] p-3
-        sm:w-56 sm:flex-col sm:justify-between sm:overflow-visible sm:border-b-0 sm:border-r sm:p-4"
+        sm:h-full sm:w-56 sm:flex-col sm:justify-between sm:overflow-y-auto sm:overflow-x-visible sm:border-b-0 sm:border-r sm:p-4 lg:w-64"
     >
       <div className="flex gap-1 sm:flex-col sm:gap-1">
         <div className="mb-2 hidden items-center gap-2 px-1 sm:flex">

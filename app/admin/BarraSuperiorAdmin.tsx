@@ -22,7 +22,7 @@ export function BarraSuperiorAdmin({ email }: { email: string | undefined }) {
   const inicial = (email ?? '?').trim().charAt(0).toUpperCase();
 
   return (
-    <header className="flex items-center gap-3 border-b border-[var(--adm-border)] bg-[var(--adm-surface)] px-4 py-3 sm:px-6">
+    <header className="flex shrink-0 items-center gap-3 border-b border-[var(--adm-border)] bg-[var(--adm-surface)] px-4 py-3 sm:px-6">
       <form onSubmit={buscar} className="hidden min-w-0 flex-1 items-center sm:flex">
         <div className="relative w-full max-w-sm">
           <Icono.buscar
