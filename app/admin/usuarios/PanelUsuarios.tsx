@@ -79,7 +79,7 @@ export function PanelUsuarios({
           Nadie coincide con esa búsqueda.
         </p>
       ) : (
-        <div className="grid items-start gap-2.5 lg:grid-cols-2 xl:grid-cols-3">
+        <div className="grid items-start gap-2.5 sm:grid-cols-[repeat(auto-fit,minmax(320px,1fr))]">
           {filasFiltradas.map((fila) => (
             <FilaUsuarioAdmin key={fila.id} fila={fila} />
           ))}

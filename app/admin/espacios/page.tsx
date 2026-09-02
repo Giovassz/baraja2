@@ -56,7 +56,7 @@ export default async function AdminEspaciosPage() {
       {total === 0 ? (
         <p className="text-sm text-[var(--adm-text-dim)]">Todavía no hay espacios creados.</p>
       ) : (
-        <div className="grid gap-2 lg:grid-cols-2 xl:grid-cols-3">
+        <div className="grid items-start gap-2 sm:grid-cols-[repeat(auto-fit,minmax(300px,1fr))]">
           {(parejas ?? []).map((p) => {
             const vinculada = !!p.usuario_2_id;
             const ciclo = calcularCicloNumero(p.fecha_vinculacion);

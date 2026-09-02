@@ -17,7 +17,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     // celular se deja el scroll normal de la página (más simple y ya funcionaba).
     <div className="admin-shell flex min-h-dvh flex-col sm:h-dvh sm:overflow-hidden">
       <BarraSuperiorAdmin email={usuario.email} />
-      <div className="mx-auto flex w-full max-w-[1600px] flex-1 flex-col sm:flex-row sm:overflow-hidden">
+      {/* Sin mx-auto/max-width aquí: el sidebar queda pegado a la izquierda y el
+          contenido ocupa el 100% del ancho restante en CUALQUIER pantalla — nada de
+          franjas vacías. Cada página limita el ancho de sus propias tarjetas con
+          grillas fluidas (auto-fit), no esta fila. */}
+      <div className="flex w-full flex-1 flex-col sm:flex-row sm:overflow-hidden">
         <SidebarAdmin email={usuario.email} />
         <main className="min-w-0 flex-1 p-4 sm:overflow-y-auto sm:p-6 lg:p-8">{children}</main>
       </div>

@@ -65,7 +65,7 @@ export default async function AdminPage() {
         </p>
       </header>
 
-      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
         <Estadistica icono={Icono.usuario} etiqueta="Usuarios" valor={totalUsuarios ?? 0} />
         <Estadistica
           icono={Icono.candado}
