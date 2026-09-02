@@ -52,6 +52,9 @@ export function mensajePorCodigo(codigo: string): string {
     PLOT_TWIST_FUERA_DE_MODALIDAD: 'Ese plot twist no es de su modalidad.',
     MODO_SPICY_INACTIVO: 'Activa el modo Spicy para conseguir plot twists Spicy.',
     MODO_TESTER_INACTIVO: 'Esta cuenta no tiene modo tester activo.',
+    FOTO_INVALIDA: 'Usa una foto en formato JPG, PNG o WEBP.',
+    FOTO_MUY_GRANDE: 'La foto no puede pesar más de 4 MB.',
+    ERROR_SUBIENDO_FOTO: 'No pudimos subir tu foto. Inténtalo de nuevo.',
     ERROR_INESPERADO: 'Algo salió mal. Inténtalo de nuevo en un momento.',
   };
   return mapa[codigo] ?? mapa.ERROR_INESPERADO;

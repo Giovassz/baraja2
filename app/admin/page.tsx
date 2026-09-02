@@ -2,6 +2,7 @@
 // 404 normal, sin pista de que la ruta existe). Deja activar "modo tester" por cuenta
 // para cuentas de prueba (por ahora: recargas ilimitadas; más adelante puede saltarse
 // otros límites sin tocar la base de datos otra vez).
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { obtenerUsuarioActual } from '@/lib/datos';
 import { esCorreoAdmin } from '@/lib/admin';
@@ -71,6 +72,22 @@ export default async function AdminPage() {
           </p>
         </div>
       </header>
+
+      <Link
+        href="/admin/cartas"
+        className="widget widget-acento flex items-center justify-between"
+      >
+        <div className="flex items-center gap-3">
+          <span className="rounded-full bg-rosa-acento/20 p-2 text-rosa-acento">
+            <Icono.mano className="h-4 w-4" strokeWidth={2.5} />
+          </span>
+          <div>
+            <p className="font-heading text-base">Catálogo de cartas</p>
+            <p className="text-xs text-white/60">Agregar o quitar cartas del juego</p>
+          </div>
+        </div>
+        <Icono.siguiente className="h-5 w-5 text-white/45" strokeWidth={2.5} />
+      </Link>
 
       {filas.length === 0 ? (
         <p className="text-sm text-white/60">Todavía no hay cuentas registradas.</p>

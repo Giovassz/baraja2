@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { crearClienteServidor } from '@/lib/supabase/server';
 import { crearClienteAdmin } from '@/lib/supabase/admin';
+import { esCorreoAdmin } from '@/lib/admin';
 import {
   esquemaRegistro,
   esquemaLogin,
@@ -92,7 +93,9 @@ export async function iniciarSesion(
   }
 
   revalidatePath('/', 'layout');
-  redirect('/dashboard');
+  // Solo el/los correo(s) de ADMIN_EMAILS caen directo al panel oculto — cualquier
+  // otra cuenta sigue el flujo normal, aunque conozca la URL /admin.
+  redirect(esCorreoAdmin(parsed.data.email) ? '/admin' : '/dashboard');
 }
 
 /** Manda el correo de "olvidé mi contraseña" (sección 2 — recuperación de cuenta). */
