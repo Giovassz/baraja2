@@ -12,7 +12,9 @@
   --linea: rgba(255, 255, 255, 0.09);
   --texto: rgba(255, 249, 251, 0.95);
   --nav-alto: 66px;
-  --topbar-alto: 72px;
+  /* Ahora la barra flota con margen arriba y es más alta (nombre + nivel + barrita
+     de progreso), así que reserva más espacio que antes (72px). */
+  --topbar-alto: 96px;
   color-scheme: dark;
 
   /* Tema de color (Perfil > Tema): tríos RGB "r g b" para poder usarlos como

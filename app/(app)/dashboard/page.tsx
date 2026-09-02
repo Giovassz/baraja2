@@ -1,7 +1,8 @@
 // Casa: UX estilo Tinder + estructura Clash Royale — pila de retos, mano en abanico y plot twists
 // Implementa BJ2-017, BJ2-022, BJ2-026, BJ2-029, BJ2-033, BJ2-037
-import { obtenerDatosDashboard } from '@/lib/datos';
+import { obtenerDatosDashboard, obtenerResumenChrome } from '@/lib/datos';
 import { diasParaProximoReinicio } from '@/lib/reglas/ciclos';
+import { BarraSuperior } from '@/components/nav/BarraSuperior';
 import { WidgetVSComparativo } from '@/components/widgets/WidgetVSComparativo';
 import { WidgetReload } from '@/components/widgets/WidgetReload';
 import { PilaRetos, type RetoRecibido } from '@/components/widgets/PilaRetos';
@@ -20,7 +21,10 @@ import { Icono } from '@/components/ui/iconos';
 export const metadata = { title: 'Casa' };
 
 export default async function DashboardPage() {
-  const datos = await obtenerDatosDashboard();
+  const [datos, chrome] = await Promise.all([
+    obtenerDatosDashboard(),
+    obtenerResumenChrome(),
+  ]);
 
   // Tu mano: solo las que todavía puedes jugar. En cuanto lanzas una, sale de aquí
   // (el mazo se hace más chico) y pasa al campo de batalla de abajo.
@@ -85,8 +89,15 @@ export default async function DashboardPage() {
   );
 
   return (
-    <div className="flex flex-col gap-4">
-      <AutoRefresh segundos={12} />
+    <>
+      <BarraSuperior
+        nombreEspacio={chrome.nombreEspacio}
+        nivel={chrome.nivel.nivel}
+        progreso={chrome.nivel.progreso}
+        puntos={chrome.puntos}
+      />
+      <div className="area-segura-superior -m-4 flex flex-col gap-4 p-4">
+        <AutoRefresh segundos={12} />
 
       {plotTwistSinVer && (
         <RevelacionPlotTwist
@@ -170,6 +181,7 @@ export default async function DashboardPage() {
         cartasDisponibles={cartasDisponibles}
         modoTester={datos.pareja.yo.modo_tester}
       />
-    </div>
+      </div>
+    </>
   );
 }
