@@ -3,7 +3,12 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useFormState } from 'react-dom';
-import { alternarModoTester, editarNombreUsuario, eliminarUsuario } from '@/lib/actions/admin';
+import {
+  alternarModoTester,
+  alternarCuentaActiva,
+  editarNombreUsuario,
+  eliminarUsuario,
+} from '@/lib/actions/admin';
 import { Boton, BotonEnviar } from '@/components/ui/Boton';
 import { Icono } from '@/components/ui/iconos';
 
@@ -12,6 +17,7 @@ export interface FilaUsuario {
   nombre: string;
   email: string;
   modoTester: boolean;
+  cuentaActiva: boolean;
   nombreEspacio: string | null;
 }
 
@@ -49,12 +55,48 @@ export function PanelUsuarios({ filas }: { filas: FilaUsuario[] }) {
   );
 }
 
+function Interruptor({
+  activo,
+  enviando,
+  etiqueta,
+  onClick,
+}: {
+  activo: boolean;
+  enviando: boolean;
+  etiqueta: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={activo}
+      aria-label={etiqueta}
+      disabled={enviando}
+      onClick={onClick}
+      className={`relative h-7 w-[52px] shrink-0 rounded-full border transition disabled:opacity-50 ${
+        activo ? 'border-rosa-acento bg-rosa-acento/30' : 'border-white/20 bg-white/10'
+      }`}
+    >
+      <span
+        className={`absolute top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full bg-white transition-transform ${
+          activo ? 'translate-x-[23px]' : 'translate-x-1'
+        }`}
+      >
+        {activo && <Icono.check className="h-3 w-3 text-rosa-acento" strokeWidth={3} />}
+      </span>
+    </button>
+  );
+}
+
 function FilaUsuarioAdmin({ fila }: { fila: FilaUsuario }) {
-  const [activo, setActivo] = useState(fila.modoTester);
-  // Ojo: NO usar useTransition con una función async — en React 18 "pendiente" se
-  // resuelve casi al instante (no espera a que alternarModoTester() responda).
+  const [tester, setTester] = useState(fila.modoTester);
   const [enviandoTester, setEnviandoTester] = useState(false);
   const [errorTester, setErrorTester] = useState<string | null>(null);
+
+  const [cuentaActiva, setCuentaActiva] = useState(fila.cuentaActiva);
+  const [enviandoCuenta, setEnviandoCuenta] = useState(false);
+  const [errorCuenta, setErrorCuenta] = useState<string | null>(null);
 
   const [editando, setEditando] = useState(false);
   const [confirmandoEliminar, setConfirmandoEliminar] = useState(false);
@@ -62,17 +104,34 @@ function FilaUsuarioAdmin({ fila }: { fila: FilaUsuario }) {
   const [estadoNombre, accionNombre] = useFormState(editarNombreUsuario, null);
   const [estadoEliminar, accionEliminar] = useFormState(eliminarUsuario, null);
 
-  function alternar() {
+  // Ojo: NO usar useTransition con una función async — en React 18 "pendiente" se
+  // resuelve casi al instante (no espera la respuesta real del servidor).
+  function alternarTester() {
     if (enviandoTester) return;
-    const nuevo = !activo;
+    const nuevo = !tester;
     setErrorTester(null);
-    setActivo(nuevo); // optimista
+    setTester(nuevo); // optimista
     setEnviandoTester(true);
     alternarModoTester(fila.id, nuevo).then((r) => {
       setEnviandoTester(false);
       if (!r.ok) {
-        setActivo(!nuevo); // revierte
+        setTester(!nuevo); // revierte
         setErrorTester(r.mensaje ?? 'No se pudo guardar.');
+      }
+    });
+  }
+
+  function alternarCuenta() {
+    if (enviandoCuenta) return;
+    const nuevo = !cuentaActiva;
+    setErrorCuenta(null);
+    setCuentaActiva(nuevo); // optimista
+    setEnviandoCuenta(true);
+    alternarCuentaActiva(fila.id, nuevo).then((r) => {
+      setEnviandoCuenta(false);
+      if (!r.ok) {
+        setCuentaActiva(!nuevo); // revierte
+        setErrorCuenta(r.mensaje ?? 'No se pudo guardar.');
       }
     });
   }
@@ -85,7 +144,7 @@ function FilaUsuarioAdmin({ fila }: { fila: FilaUsuario }) {
   }, [estadoNombre]);
 
   return (
-    <div className="widget flex flex-col gap-2 !p-4">
+    <div className={`widget flex flex-col gap-2 !p-4 ${cuentaActiva ? '' : 'opacity-60'}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           {editando ? (
@@ -122,6 +181,9 @@ function FilaUsuarioAdmin({ fila }: { fila: FilaUsuario }) {
               >
                 <Icono.lapiz className="h-3 w-3" strokeWidth={2.5} />
               </button>
+              {!cuentaActiva && (
+                <span className="chip !bg-rosa-acento/15 !text-rosa-acento">Desactivada</span>
+              )}
             </div>
           )}
           <p className="truncate text-xs text-white/50">{fila.email}</p>
@@ -131,6 +193,7 @@ function FilaUsuarioAdmin({ fila }: { fila: FilaUsuario }) {
             </p>
           )}
           {errorTester && <p className="mt-1 text-xs text-rosa-acento">{errorTester}</p>}
+          {errorCuenta && <p className="mt-1 text-xs text-rosa-acento">{errorCuenta}</p>}
           {estadoNombre?.error && (
             <p className="mt-1 text-xs text-rosa-acento">{estadoNombre.mensaje}</p>
           )}
@@ -138,26 +201,27 @@ function FilaUsuarioAdmin({ fila }: { fila: FilaUsuario }) {
             <p className="mt-1 text-xs text-rosa-acento">{estadoEliminar.mensaje}</p>
           )}
         </div>
+      </div>
 
-        <button
-          type="button"
-          role="switch"
-          aria-checked={activo}
-          aria-label={`Modo tester para ${fila.nombre}`}
-          disabled={enviandoTester}
-          onClick={alternar}
-          className={`relative h-8 w-14 shrink-0 rounded-full border transition disabled:opacity-50 ${
-            activo ? 'border-rosa-acento bg-rosa-acento/30' : 'border-white/20 bg-white/10'
-          }`}
-        >
-          <span
-            className={`absolute top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-white transition-transform ${
-              activo ? 'translate-x-[26px]' : 'translate-x-1'
-            }`}
-          >
-            {activo && <Icono.check className="h-3.5 w-3.5 text-rosa-acento" strokeWidth={3} />}
-          </span>
-        </button>
+      <div className="flex flex-col gap-1.5 border-t border-white/10 pt-2">
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-white/70">Cuenta activa</span>
+          <Interruptor
+            activo={cuentaActiva}
+            enviando={enviandoCuenta}
+            etiqueta={`Cuenta activa de ${fila.nombre}`}
+            onClick={alternarCuenta}
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-white/70">Modo tester</span>
+          <Interruptor
+            activo={tester}
+            enviando={enviandoTester}
+            etiqueta={`Modo tester de ${fila.nombre}`}
+            onClick={alternarTester}
+          />
+        </div>
       </div>
 
       <div className="flex justify-end border-t border-white/10 pt-2">

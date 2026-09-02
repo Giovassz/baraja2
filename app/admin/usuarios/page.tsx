@@ -14,7 +14,7 @@ export default async function AdminUsuariosPage() {
     await Promise.all([
       admin
         .from('usuarios')
-        .select('id, nombre, pareja_id, modo_tester')
+        .select('id, nombre, pareja_id, modo_tester, cuenta_activa')
         .order('created_at', { ascending: false }),
       admin.from('parejas').select('id, nombre_espacio'),
       admin.auth.admin.listUsers({ perPage: 200 }),
@@ -32,6 +32,14 @@ export default async function AdminUsuariosPage() {
             Editor de Supabase.
           </>
         )}
+        {errorUsuarios.message.includes('cuenta_activa') && (
+          <>
+            {' '}
+            — falta correr la migración{' '}
+            <code className="font-mono">20260101002600_cuenta_activa.sql</code> en el SQL
+            Editor de Supabase.
+          </>
+        )}
       </p>
     );
   }
@@ -44,6 +52,7 @@ export default async function AdminUsuariosPage() {
     nombre: u.nombre,
     email: emailPorId.get(u.id) ?? '—',
     modoTester: u.modo_tester,
+    cuentaActiva: u.cuenta_activa,
     nombreEspacio: u.pareja_id ? (espacioPorId.get(u.pareja_id) ?? null) : null,
   }));
 
@@ -56,7 +65,7 @@ export default async function AdminUsuariosPage() {
         <div>
           <h1 className="text-2xl">Usuarios</h1>
           <p className="text-sm text-white/60">
-            Modo tester, cambiar nombre y eliminar cuentas.
+            Activar/desactivar acceso, modo tester, cambiar nombre y eliminar cuentas.
           </p>
         </div>
       </header>

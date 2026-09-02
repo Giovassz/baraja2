@@ -32,6 +32,8 @@ interface UsuariosRow {
   modo_spicy_activo: boolean;
   /** Salta límites de juego (recargas, etc.). Solo se activa desde /admin. */
   modo_tester: boolean;
+  /** Si es false, obtenerUsuarioActual la manda a /cuenta-suspendida. Solo /admin la cambia. */
+  cuenta_activa: boolean;
   created_at: string;
 }
 
@@ -175,6 +177,7 @@ export interface Database {
         | 'pareja_id'
         | 'modo_spicy_activo'
         | 'modo_tester'
+        | 'cuenta_activa'
         | 'created_at'
       >;
       parejas: TablaSimple<

@@ -10,6 +10,8 @@ const ITEMS: { href: string; etiqueta: string; icono: LucideIcon }[] = [
   { href: '/admin', etiqueta: 'Resumen', icono: Icono.estrella },
   { href: '/admin/usuarios', etiqueta: 'Usuarios', icono: Icono.usuario },
   { href: '/admin/cartas', etiqueta: 'Cartas', icono: Icono.mano },
+  { href: '/admin/plot-twists', etiqueta: 'Plot twists', icono: Icono.chispa },
+  { href: '/admin/espacios', etiqueta: 'Espacios', icono: Icono.corazones },
 ];
 
 export function SidebarAdmin() {

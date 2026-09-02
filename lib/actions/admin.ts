@@ -10,11 +10,15 @@ import { esCorreoAdmin } from '@/lib/admin';
 import { crearClienteAdmin } from '@/lib/supabase/admin';
 import {
   esquemaAlternarTester,
+  esquemaAlternarCuentaActiva,
   esquemaAgregarCartasCatalogo,
   esquemaDesactivarCartaCatalogo,
   esquemaEditarCartaCatalogo,
   esquemaEditarUsuario,
   esquemaEliminarUsuario,
+  esquemaAgregarPlotTwists,
+  esquemaEditarPlotTwist,
+  esquemaDesactivarPlotTwist,
 } from '@/lib/validaciones/admin';
 import { exito, fallo, type ResultadoAccion } from './_resultado';
 
@@ -39,6 +43,33 @@ export async function alternarModoTester(
   revalidatePath('/admin');
   revalidatePath('/dashboard');
   return exito(parsed.data.activo ? 'Modo tester activado.' : 'Modo tester desactivado.');
+}
+
+/** Activa o desactiva el acceso de una cuenta (ver obtenerUsuarioActual en lib/datos.ts). */
+export async function alternarCuentaActiva(
+  usuarioId: string,
+  activo: boolean,
+): Promise<ResultadoAccion> {
+  const usuario = await obtenerUsuarioActual();
+  if (!esCorreoAdmin(usuario.email)) return fallo('NO_AUTENTICADO');
+
+  const parsed = esquemaAlternarCuentaActiva.safeParse({ usuarioId, activo });
+  if (!parsed.success) return fallo('DATOS_INVALIDOS');
+
+  if (parsed.data.usuarioId === usuario.id && !parsed.data.activo) {
+    return fallo('DATOS_INVALIDOS', 'No puedes desactivar tu propia cuenta.');
+  }
+
+  const admin = crearClienteAdmin();
+  const { error } = await admin
+    .from('usuarios')
+    .update({ cuenta_activa: parsed.data.activo })
+    .eq('id', parsed.data.usuarioId);
+
+  if (error) return fallo('ERROR_INESPERADO');
+
+  revalidatePath('/admin/usuarios');
+  return exito(parsed.data.activo ? 'Cuenta reactivada.' : 'Cuenta desactivada.');
 }
 
 /**
@@ -222,4 +253,132 @@ export async function eliminarUsuario(
   revalidatePath('/admin/usuarios');
   revalidatePath('/admin');
   return exito('Cuenta eliminada.');
+}
+
+/**
+ * Agrega plot twists al catálogo. Cada línea es "Nombre: Descripción" — se separa
+ * en el primer ":" para no depender de comas ni otro delimitador que pueda aparecer
+ * dentro de la descripción. Salta duplicados por nombre (igual criterio que cartas).
+ */
+export async function agregarPlotTwists(
+  _prev: ResultadoAccion | null,
+  formData: FormData,
+): Promise<ResultadoAccion> {
+  const usuario = await obtenerUsuarioActual();
+  if (!esCorreoAdmin(usuario.email)) return fallo('NO_AUTENTICADO');
+
+  const parsed = esquemaAgregarPlotTwists.safeParse({
+    tipo: formData.get('tipo'),
+    modalidad: formData.get('modalidad'),
+    efecto: formData.get('efecto'),
+    lineas: formData.get('lineas'),
+  });
+  if (!parsed.success) return fallo('DATOS_INVALIDOS', parsed.error.issues[0]?.message);
+
+  const filas = parsed.data.lineas
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .map((linea) => {
+      const i = linea.indexOf(':');
+      if (i === -1) return { nombre: linea, descripcion: linea };
+      return { nombre: linea.slice(0, i).trim(), descripcion: linea.slice(i + 1).trim() };
+    })
+    .filter((f) => f.nombre.length > 0);
+
+  if (filas.length === 0) {
+    return fallo('DATOS_INVALIDOS', 'Escribe al menos un plot twist.');
+  }
+
+  const admin = crearClienteAdmin();
+  const { data: existentes, error: errorLectura } = await admin
+    .from('catalogo_plot_twists')
+    .select('nombre')
+    .eq('activo', true);
+  if (errorLectura) return fallo('ERROR_INESPERADO');
+
+  const yaExisten = new Set((existentes ?? []).map((p) => p.nombre.trim().toLowerCase()));
+  const nuevos = filas.filter((f) => !yaExisten.has(f.nombre.toLowerCase()));
+  const duplicados = filas.length - nuevos.length;
+
+  if (nuevos.length === 0) {
+    return fallo('DATOS_INVALIDOS', 'Esos plot twists ya están en el catálogo.');
+  }
+
+  const { error } = await admin.from('catalogo_plot_twists').insert(
+    nuevos.map((f) => ({
+      nombre: f.nombre,
+      descripcion: f.descripcion,
+      tipo: parsed.data.tipo,
+      modalidad: parsed.data.modalidad,
+      efecto: parsed.data.efecto,
+    })),
+  );
+  if (error) return fallo('ERROR_INESPERADO');
+
+  revalidatePath('/admin/plot-twists');
+  const mensaje =
+    duplicados > 0
+      ? `${nuevos.length} plot twist(s) agregado(s), ${duplicados} ya existían y se omitieron.`
+      : `${nuevos.length} plot twist(s) agregado(s).`;
+  return exito(mensaje);
+}
+
+/** Cambia nombre/descripción/tipo/modalidad/efecto de un plot twist existente. */
+export async function editarPlotTwist(
+  _prev: ResultadoAccion | null,
+  formData: FormData,
+): Promise<ResultadoAccion> {
+  const usuario = await obtenerUsuarioActual();
+  if (!esCorreoAdmin(usuario.email)) return fallo('NO_AUTENTICADO');
+
+  const parsed = esquemaEditarPlotTwist.safeParse({
+    id: formData.get('id'),
+    nombre: formData.get('nombre'),
+    descripcion: formData.get('descripcion'),
+    tipo: formData.get('tipo'),
+    modalidad: formData.get('modalidad'),
+    efecto: formData.get('efecto'),
+  });
+  if (!parsed.success) return fallo('DATOS_INVALIDOS', parsed.error.issues[0]?.message);
+
+  const admin = crearClienteAdmin();
+  const { error } = await admin
+    .from('catalogo_plot_twists')
+    .update({
+      nombre: parsed.data.nombre,
+      descripcion: parsed.data.descripcion,
+      tipo: parsed.data.tipo,
+      modalidad: parsed.data.modalidad,
+      efecto: parsed.data.efecto,
+    })
+    .eq('id', parsed.data.id);
+  if (error) return fallo('ERROR_INESPERADO');
+
+  revalidatePath('/admin/plot-twists');
+  return exito('Plot twist actualizado.');
+}
+
+/** "Quitar" un plot twist en realidad lo desactiva — mismo motivo que las cartas:
+ * plot_twists_desbloqueados referencia su id sin cascada de borrado. */
+export async function desactivarPlotTwist(
+  _prev: ResultadoAccion | null,
+  formData: FormData,
+): Promise<ResultadoAccion> {
+  const usuario = await obtenerUsuarioActual();
+  if (!esCorreoAdmin(usuario.email)) return fallo('NO_AUTENTICADO');
+
+  const parsed = esquemaDesactivarPlotTwist.safeParse({ id: formData.get('id') });
+  if (!parsed.success) return fallo('DATOS_INVALIDOS');
+
+  const admin = crearClienteAdmin();
+  const { error } = await admin
+    .from('catalogo_plot_twists')
+    .update({ activo: false })
+    .eq('id', parsed.data.id);
+  if (error) return fallo('ERROR_INESPERADO');
+
+  revalidatePath('/admin/plot-twists');
+  revalidatePath('/admin');
+  return exito('Plot twist quitado del catálogo.');
 }

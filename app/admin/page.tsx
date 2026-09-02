@@ -11,20 +11,35 @@ export default async function AdminPage() {
 
   const [
     { count: totalUsuarios },
+    { count: totalDesactivadas },
     { count: totalVinculadas },
     { count: totalCartasCatalogo },
+    { count: totalPlotTwistsCatalogo },
     { count: totalCumplidas },
+    { count: totalPlotTwistsUsados },
   ] = await Promise.all([
     admin.from('usuarios').select('*', { count: 'exact', head: true }),
+    admin
+      .from('usuarios')
+      .select('*', { count: 'exact', head: true })
+      .eq('cuenta_activa', false),
     admin
       .from('parejas')
       .select('*', { count: 'exact', head: true })
       .not('usuario_2_id', 'is', null),
     admin.from('catalogo_cartas').select('*', { count: 'exact', head: true }).eq('activo', true),
     admin
+      .from('catalogo_plot_twists')
+      .select('*', { count: 'exact', head: true })
+      .eq('activo', true),
+    admin
       .from('cartas_asignadas')
       .select('*', { count: 'exact', head: true })
       .eq('estado', 'cumplida'),
+    admin
+      .from('historial_eventos')
+      .select('*', { count: 'exact', head: true })
+      .eq('tipo_evento', 'plot_twist_usado'),
   ]);
 
   return (
@@ -42,6 +57,11 @@ export default async function AdminPage() {
       <section className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
         <Estadistica icono={Icono.usuario} etiqueta="Usuarios" valor={totalUsuarios ?? 0} />
         <Estadistica
+          icono={Icono.candado}
+          etiqueta="Cuentas desactivadas"
+          valor={totalDesactivadas ?? 0}
+        />
+        <Estadistica
           icono={Icono.corazones}
           etiqueta="Parejas vinculadas"
           valor={totalVinculadas ?? 0}
@@ -52,9 +72,19 @@ export default async function AdminPage() {
           valor={totalCartasCatalogo ?? 0}
         />
         <Estadistica
+          icono={Icono.chispa}
+          etiqueta="Plot twists en catálogo"
+          valor={totalPlotTwistsCatalogo ?? 0}
+        />
+        <Estadistica
           icono={Icono.cumplida}
           etiqueta="Retos cumplidos"
           valor={totalCumplidas ?? 0}
+        />
+        <Estadistica
+          icono={Icono.chispa}
+          etiqueta="Plot twists usados"
+          valor={totalPlotTwistsUsados ?? 0}
         />
       </section>
     </div>

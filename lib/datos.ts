@@ -27,6 +27,11 @@ export const obtenerUsuarioActual = cache(async (): Promise<UsuarioActual> => {
     .single();
 
   if (!perfil) redirect('/login');
+  // === false (no !perfil.cuenta_activa) a propósito: si la migración todavía no
+  // corrió en este entorno, la columna no existe y perfil.cuenta_activa llega
+  // undefined — con !perfil.cuenta_activa eso bloquearía a TODA la app hasta correr
+  // el SQL. Así, solo bloquea cuando de verdad hay un false explícito guardado.
+  if (perfil.cuenta_activa === false) redirect('/cuenta-suspendida');
 
   return { ...perfil, email: user.email };
 });
