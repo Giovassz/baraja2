@@ -1,5 +1,5 @@
 // UI del catálogo de cartas para /admin/cartas: agregar en bloque (una carta por
-// línea) y quitar cartas existentes una por una.
+// línea) y quitar cartas existentes una por una. Paleta neutra del panel admin.
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -32,6 +32,9 @@ const MODALIDADES: { valor: FilaCarta['modalidad']; etiqueta: string }[] = [
   { valor: 'todas', etiqueta: 'Cualquier modalidad' },
 ];
 
+const CAMPO =
+  'rounded-lg border border-[var(--adm-border)] bg-[var(--adm-bg)] px-3 py-2 text-sm text-[var(--adm-text)] outline-none focus:border-[var(--adm-accent)]';
+
 function etiquetaModalidad(m: FilaCarta['modalidad']): string {
   return MODALIDADES.find((x) => x.valor === m)?.etiqueta ?? m;
 }
@@ -56,8 +59,9 @@ export function PanelCatalogoCartas({ filas }: { filas: FilaCarta[] }) {
 
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-2">
-          <h2 className="text-lg">
-            En el catálogo <span className="text-white/40">({filasFiltradas.length})</span>
+          <h2 className="font-heading text-lg text-[var(--adm-text)]">
+            En el catálogo{' '}
+            <span className="text-[var(--adm-text-mute)]">({filasFiltradas.length})</span>
           </h2>
         </div>
 
@@ -65,7 +69,7 @@ export function PanelCatalogoCartas({ filas }: { filas: FilaCarta[] }) {
           <select
             value={filtroTipo}
             onChange={(e) => setFiltroTipo(e.target.value as typeof filtroTipo)}
-            className="campo-texto !py-2 text-sm"
+            className={`${CAMPO} !py-2`}
           >
             <option value="">Todos los tipos</option>
             {TIPOS.map((t) => (
@@ -77,7 +81,7 @@ export function PanelCatalogoCartas({ filas }: { filas: FilaCarta[] }) {
           <select
             value={filtroModalidad}
             onChange={(e) => setFiltroModalidad(e.target.value as typeof filtroModalidad)}
-            className="campo-texto !py-2 text-sm"
+            className={`${CAMPO} !py-2`}
           >
             <option value="">Todas las modalidades</option>
             {MODALIDADES.map((m) => (
@@ -89,7 +93,9 @@ export function PanelCatalogoCartas({ filas }: { filas: FilaCarta[] }) {
         </div>
 
         {filasFiltradas.length === 0 ? (
-          <p className="py-6 text-center text-sm text-white/50">No hay cartas con ese filtro.</p>
+          <p className="py-6 text-center text-sm text-[var(--adm-text-mute)]">
+            No hay cartas con ese filtro.
+          </p>
         ) : (
           <div className="flex flex-col gap-2">
             {filasFiltradas.map((f) => (
@@ -106,21 +112,24 @@ function FormularioAgregar() {
   const [estado, accion] = useFormState(agregarCartasCatalogo, null);
 
   return (
-    <form action={accion} className="widget flex flex-col gap-3">
-      <h2 className="flex items-center gap-2 text-lg">
-        <Icono.regalo className="h-4 w-4 text-rosa-acento" strokeWidth={2.5} />
+    <form
+      action={accion}
+      className="flex flex-col gap-3 rounded-2xl border border-[var(--adm-border)] bg-[var(--adm-surface)] p-4"
+    >
+      <h2 className="flex items-center gap-2 font-heading text-lg text-[var(--adm-text)]">
+        <Icono.regalo className="h-4 w-4 text-[var(--adm-accent)]" strokeWidth={2.5} />
         Agregar cartas
       </h2>
 
       <div className="flex gap-2">
-        <select name="tipo" defaultValue="estandar" className="campo-texto !py-2 text-sm">
+        <select name="tipo" defaultValue="estandar" className={`${CAMPO} !py-2`}>
           {TIPOS.map((t) => (
             <option key={t.valor} value={t.valor}>
               {t.etiqueta}
             </option>
           ))}
         </select>
-        <select name="modalidad" defaultValue="todas" className="campo-texto !py-2 text-sm">
+        <select name="modalidad" defaultValue="todas" className={`${CAMPO} !py-2`}>
           {MODALIDADES.map((m) => (
             <option key={m.valor} value={m.valor}>
               {m.etiqueta}
@@ -133,7 +142,7 @@ function FormularioAgregar() {
           defaultValue={1}
           min={1}
           max={10}
-          className="campo-texto !w-20 !py-2 text-sm"
+          className={`${CAMPO} !w-20 !py-2`}
           aria-label="Puntos"
         />
       </div>
@@ -142,11 +151,11 @@ function FormularioAgregar() {
         name="lineas"
         rows={6}
         placeholder={'Una carta por línea, por ejemplo:\nEscríbanse una carta de amor.\nCocinen algo nuevo juntos.'}
-        className="campo-texto resize-y text-sm"
+        className={`${CAMPO} resize-y`}
       />
 
-      {estado?.error && <p className="text-sm text-rosa-acento">{estado.mensaje}</p>}
-      {estado?.ok && <p className="text-sm text-white/70">{estado.mensaje}</p>}
+      {estado?.error && <p className="text-sm text-[var(--adm-bad)]">{estado.mensaje}</p>}
+      {estado?.ok && <p className="text-sm text-[var(--adm-text-dim)]">{estado.mensaje}</p>}
 
       <BotonEnviar className="w-full">Agregar al catálogo</BotonEnviar>
     </form>
@@ -168,27 +177,26 @@ function FilaCartaCatalogo({ fila }: { fila: FilaCarta }) {
 
   if (editando) {
     return (
-      <form action={accionEditar} className="widget flex flex-col gap-2 !p-3">
+      <form
+        action={accionEditar}
+        className="flex flex-col gap-2 rounded-2xl border border-[var(--adm-border)] bg-[var(--adm-surface)] p-3"
+      >
         <input type="hidden" name="id" value={fila.id} />
         <textarea
           name="texto"
           defaultValue={fila.texto}
           rows={2}
-          className="campo-texto resize-y text-sm"
+          className={`${CAMPO} resize-y`}
         />
         <div className="flex gap-2">
-          <select name="tipo" defaultValue={fila.tipo} className="campo-texto !py-2 text-sm">
+          <select name="tipo" defaultValue={fila.tipo} className={`${CAMPO} !py-2`}>
             {TIPOS.map((t) => (
               <option key={t.valor} value={t.valor}>
                 {t.etiqueta}
               </option>
             ))}
           </select>
-          <select
-            name="modalidad"
-            defaultValue={fila.modalidad}
-            className="campo-texto !py-2 text-sm"
-          >
+          <select name="modalidad" defaultValue={fila.modalidad} className={`${CAMPO} !py-2`}>
             {MODALIDADES.map((m) => (
               <option key={m.valor} value={m.valor}>
                 {m.etiqueta}
@@ -201,12 +209,12 @@ function FilaCartaCatalogo({ fila }: { fila: FilaCarta }) {
             defaultValue={fila.puntos}
             min={1}
             max={10}
-            className="campo-texto !w-16 !py-2 text-sm"
+            className={`${CAMPO} !w-16 !py-2`}
             aria-label="Puntos"
           />
         </div>
         {estadoEditar?.error && (
-          <p className="text-xs text-rosa-acento">{estadoEditar.mensaje}</p>
+          <p className="text-xs text-[var(--adm-bad)]">{estadoEditar.mensaje}</p>
         )}
         <div className="flex justify-end gap-1.5">
           <Boton
@@ -224,18 +232,22 @@ function FilaCartaCatalogo({ fila }: { fila: FilaCarta }) {
   }
 
   return (
-    <div className="widget !p-3">
+    <div className="rounded-2xl border border-[var(--adm-border)] bg-[var(--adm-surface)] p-3">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <p className="text-sm text-white/90">{fila.texto}</p>
+          <p className="text-sm text-[var(--adm-text)]">{fila.texto}</p>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
-            <span className="chip">{fila.tipo === 'spicy' ? 'Spicy' : 'Estándar'}</span>
-            <span className="chip">{etiquetaModalidad(fila.modalidad)}</span>
-            <span className="chip !bg-rosa-acento/15 !text-rosa-acento">
+            <span className="rounded-full bg-[var(--adm-surface-2)] px-2 py-0.5 text-[11px] font-semibold text-[var(--adm-text-dim)]">
+              {fila.tipo === 'spicy' ? 'Spicy' : 'Estándar'}
+            </span>
+            <span className="rounded-full bg-[var(--adm-surface-2)] px-2 py-0.5 text-[11px] font-semibold text-[var(--adm-text-dim)]">
+              {etiquetaModalidad(fila.modalidad)}
+            </span>
+            <span className="rounded-full bg-[var(--adm-accent)]/15 px-2 py-0.5 text-[11px] font-semibold text-[var(--adm-accent)]">
               {fila.puntos} pt{fila.puntos === 1 ? '' : 's'}
             </span>
           </div>
-          {estado?.error && <p className="mt-1 text-xs text-rosa-acento">{estado.mensaje}</p>}
+          {estado?.error && <p className="mt-1 text-xs text-[var(--adm-bad)]">{estado.mensaje}</p>}
         </div>
 
         {confirmando ? (
@@ -257,7 +269,7 @@ function FilaCartaCatalogo({ fila }: { fila: FilaCarta }) {
               type="button"
               onClick={() => setEditando(true)}
               aria-label="Editar carta"
-              className="rounded-full bg-white/10 p-2 text-white/60 transition hover:bg-white/20 hover:text-white"
+              className="rounded-full bg-[var(--adm-surface-2)] p-2 text-[var(--adm-text-dim)] transition hover:bg-[var(--adm-accent)]/15 hover:text-[var(--adm-accent)]"
             >
               <Icono.lapiz className="h-4 w-4" strokeWidth={2.5} />
             </button>
@@ -265,7 +277,7 @@ function FilaCartaCatalogo({ fila }: { fila: FilaCarta }) {
               type="button"
               onClick={() => setConfirmando(true)}
               aria-label="Quitar carta del catálogo"
-              className="rounded-full bg-white/10 p-2 text-white/60 transition hover:bg-rosa-acento/20 hover:text-rosa-acento"
+              className="rounded-full bg-[var(--adm-surface-2)] p-2 text-[var(--adm-text-dim)] transition hover:bg-[var(--adm-bad)]/15 hover:text-[var(--adm-bad)]"
             >
               <Icono.papelera className="h-4 w-4" strokeWidth={2.5} />
             </button>

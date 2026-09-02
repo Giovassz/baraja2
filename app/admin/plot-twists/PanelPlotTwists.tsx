@@ -1,6 +1,6 @@
 // UI del catálogo de plot twists para /admin/plot-twists — mismo patrón que
 // PanelCatalogoCartas: agregar en bloque (una línea "Nombre: Descripción" por plot
-// twist), editar y quitar (desactivar) los existentes.
+// twist), editar y quitar (desactivar) los existentes. Paleta neutra del panel admin.
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -40,6 +40,9 @@ const EFECTOS: { valor: EfectoPlotTwist; etiqueta: string }[] = [
   { valor: 'otro', etiqueta: 'Otro' },
 ];
 
+const CAMPO =
+  'rounded-lg border border-[var(--adm-border)] bg-[var(--adm-bg)] px-3 py-2 text-sm text-[var(--adm-text)] outline-none focus:border-[var(--adm-accent)]';
+
 function etiquetaModalidad(m: Modalidad): string {
   return MODALIDADES.find((x) => x.valor === m)?.etiqueta ?? m;
 }
@@ -60,14 +63,15 @@ export function PanelPlotTwists({ filas }: { filas: FilaPlotTwist[] }) {
       <FormularioAgregar />
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-lg">
-          En el catálogo <span className="text-white/40">({filasFiltradas.length})</span>
+        <h2 className="font-heading text-lg text-[var(--adm-text)]">
+          En el catálogo{' '}
+          <span className="text-[var(--adm-text-mute)]">({filasFiltradas.length})</span>
         </h2>
 
         <select
           value={filtroModalidad}
           onChange={(e) => setFiltroModalidad(e.target.value as typeof filtroModalidad)}
-          className="campo-texto !py-2 text-sm"
+          className={`${CAMPO} !py-2`}
         >
           <option value="">Todas las modalidades</option>
           {MODALIDADES.map((m) => (
@@ -78,7 +82,9 @@ export function PanelPlotTwists({ filas }: { filas: FilaPlotTwist[] }) {
         </select>
 
         {filasFiltradas.length === 0 ? (
-          <p className="py-6 text-center text-sm text-white/50">No hay plot twists con ese filtro.</p>
+          <p className="py-6 text-center text-sm text-[var(--adm-text-mute)]">
+            No hay plot twists con ese filtro.
+          </p>
         ) : (
           <div className="flex flex-col gap-2">
             {filasFiltradas.map((f) => (
@@ -95,28 +101,31 @@ function FormularioAgregar() {
   const [estado, accion] = useFormState(agregarPlotTwists, null);
 
   return (
-    <form action={accion} className="widget flex flex-col gap-3">
-      <h2 className="flex items-center gap-2 text-lg">
-        <Icono.chispa className="h-4 w-4 text-rosa-acento" strokeWidth={2.5} />
+    <form
+      action={accion}
+      className="flex flex-col gap-3 rounded-2xl border border-[var(--adm-border)] bg-[var(--adm-surface)] p-4"
+    >
+      <h2 className="flex items-center gap-2 font-heading text-lg text-[var(--adm-text)]">
+        <Icono.chispa className="h-4 w-4 text-[var(--adm-accent)]" strokeWidth={2.5} />
         Agregar plot twists
       </h2>
 
       <div className="flex flex-wrap gap-2">
-        <select name="tipo" defaultValue="estandar" className="campo-texto !py-2 text-sm">
+        <select name="tipo" defaultValue="estandar" className={`${CAMPO} !py-2`}>
           {TIPOS.map((t) => (
             <option key={t.valor} value={t.valor}>
               {t.etiqueta}
             </option>
           ))}
         </select>
-        <select name="modalidad" defaultValue="distancia" className="campo-texto !py-2 text-sm">
+        <select name="modalidad" defaultValue="distancia" className={`${CAMPO} !py-2`}>
           {MODALIDADES.map((m) => (
             <option key={m.valor} value={m.valor}>
               {m.etiqueta}
             </option>
           ))}
         </select>
-        <select name="efecto" defaultValue="bloquear_carta" className="campo-texto !py-2 text-sm">
+        <select name="efecto" defaultValue="bloquear_carta" className={`${CAMPO} !py-2`}>
           {EFECTOS.map((e) => (
             <option key={e.valor} value={e.valor}>
               {e.etiqueta}
@@ -129,11 +138,11 @@ function FormularioAgregar() {
         name="lineas"
         rows={5}
         placeholder={'Uno por línea, formato "Nombre: Descripción":\nCambio de planes: Bloquea una carta de tu pareja por esta semana.'}
-        className="campo-texto resize-y text-sm"
+        className={`${CAMPO} resize-y`}
       />
 
-      {estado?.error && <p className="text-sm text-rosa-acento">{estado.mensaje}</p>}
-      {estado?.ok && <p className="text-sm text-white/70">{estado.mensaje}</p>}
+      {estado?.error && <p className="text-sm text-[var(--adm-bad)]">{estado.mensaje}</p>}
+      {estado?.ok && <p className="text-sm text-[var(--adm-text-dim)]">{estado.mensaje}</p>}
 
       <BotonEnviar className="w-full">Agregar al catálogo</BotonEnviar>
     </form>
@@ -152,42 +161,41 @@ function FilaPlotTwistCatalogo({ fila }: { fila: FilaPlotTwist }) {
 
   if (editando) {
     return (
-      <form action={accionEditar} className="widget flex flex-col gap-2 !p-3">
+      <form
+        action={accionEditar}
+        className="flex flex-col gap-2 rounded-2xl border border-[var(--adm-border)] bg-[var(--adm-surface)] p-3"
+      >
         <input type="hidden" name="id" value={fila.id} />
         <input
           type="text"
           name="nombre"
           defaultValue={fila.nombre}
-          className="campo-texto !py-2 text-sm"
+          className={`${CAMPO} !py-2`}
           placeholder="Nombre"
         />
         <textarea
           name="descripcion"
           defaultValue={fila.descripcion}
           rows={2}
-          className="campo-texto resize-y text-sm"
+          className={`${CAMPO} resize-y`}
           placeholder="Descripción"
         />
         <div className="flex flex-wrap gap-2">
-          <select name="tipo" defaultValue={fila.tipo} className="campo-texto !py-2 text-sm">
+          <select name="tipo" defaultValue={fila.tipo} className={`${CAMPO} !py-2`}>
             {TIPOS.map((t) => (
               <option key={t.valor} value={t.valor}>
                 {t.etiqueta}
               </option>
             ))}
           </select>
-          <select
-            name="modalidad"
-            defaultValue={fila.modalidad}
-            className="campo-texto !py-2 text-sm"
-          >
+          <select name="modalidad" defaultValue={fila.modalidad} className={`${CAMPO} !py-2`}>
             {MODALIDADES.map((m) => (
               <option key={m.valor} value={m.valor}>
                 {m.etiqueta}
               </option>
             ))}
           </select>
-          <select name="efecto" defaultValue={fila.efecto} className="campo-texto !py-2 text-sm">
+          <select name="efecto" defaultValue={fila.efecto} className={`${CAMPO} !py-2`}>
             {EFECTOS.map((e) => (
               <option key={e.valor} value={e.valor}>
                 {e.etiqueta}
@@ -196,7 +204,7 @@ function FilaPlotTwistCatalogo({ fila }: { fila: FilaPlotTwist }) {
           </select>
         </div>
         {estadoEditar?.error && (
-          <p className="text-xs text-rosa-acento">{estadoEditar.mensaje}</p>
+          <p className="text-xs text-[var(--adm-bad)]">{estadoEditar.mensaje}</p>
         )}
         <div className="flex justify-end gap-1.5">
           <Boton
@@ -214,19 +222,23 @@ function FilaPlotTwistCatalogo({ fila }: { fila: FilaPlotTwist }) {
   }
 
   return (
-    <div className="widget !p-3">
+    <div className="rounded-2xl border border-[var(--adm-border)] bg-[var(--adm-surface)] p-3">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-white/90">{fila.nombre}</p>
-          <p className="mt-0.5 text-xs text-white/60">{fila.descripcion}</p>
+          <p className="text-sm font-semibold text-[var(--adm-text)]">{fila.nombre}</p>
+          <p className="mt-0.5 text-xs text-[var(--adm-text-dim)]">{fila.descripcion}</p>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
-            <span className="chip">{fila.tipo === 'spicy' ? 'Spicy' : 'Estándar'}</span>
-            <span className="chip">{etiquetaModalidad(fila.modalidad)}</span>
-            <span className="chip !bg-rosa-acento/15 !text-rosa-acento">
+            <span className="rounded-full bg-[var(--adm-surface-2)] px-2 py-0.5 text-[11px] font-semibold text-[var(--adm-text-dim)]">
+              {fila.tipo === 'spicy' ? 'Spicy' : 'Estándar'}
+            </span>
+            <span className="rounded-full bg-[var(--adm-surface-2)] px-2 py-0.5 text-[11px] font-semibold text-[var(--adm-text-dim)]">
+              {etiquetaModalidad(fila.modalidad)}
+            </span>
+            <span className="rounded-full bg-[var(--adm-accent)]/15 px-2 py-0.5 text-[11px] font-semibold text-[var(--adm-accent)]">
               {etiquetaEfecto(fila.efecto)}
             </span>
           </div>
-          {estado?.error && <p className="mt-1 text-xs text-rosa-acento">{estado.mensaje}</p>}
+          {estado?.error && <p className="mt-1 text-xs text-[var(--adm-bad)]">{estado.mensaje}</p>}
         </div>
 
         {confirmando ? (
@@ -248,7 +260,7 @@ function FilaPlotTwistCatalogo({ fila }: { fila: FilaPlotTwist }) {
               type="button"
               onClick={() => setEditando(true)}
               aria-label="Editar plot twist"
-              className="rounded-full bg-white/10 p-2 text-white/60 transition hover:bg-white/20 hover:text-white"
+              className="rounded-full bg-[var(--adm-surface-2)] p-2 text-[var(--adm-text-dim)] transition hover:bg-[var(--adm-accent)]/15 hover:text-[var(--adm-accent)]"
             >
               <Icono.lapiz className="h-4 w-4" strokeWidth={2.5} />
             </button>
@@ -256,7 +268,7 @@ function FilaPlotTwistCatalogo({ fila }: { fila: FilaPlotTwist }) {
               type="button"
               onClick={() => setConfirmando(true)}
               aria-label="Quitar plot twist del catálogo"
-              className="rounded-full bg-white/10 p-2 text-white/60 transition hover:bg-rosa-acento/20 hover:text-rosa-acento"
+              className="rounded-full bg-[var(--adm-surface-2)] p-2 text-[var(--adm-text-dim)] transition hover:bg-[var(--adm-bad)]/15 hover:text-[var(--adm-bad)]"
             >
               <Icono.papelera className="h-4 w-4" strokeWidth={2.5} />
             </button>

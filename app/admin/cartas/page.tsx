@@ -19,7 +19,7 @@ export default async function AdminCartasPage() {
 
   if (error) {
     return (
-      <p className="widget !border-rosa-acento/40 text-sm text-rosa-acento">
+      <p className="rounded-2xl border border-[var(--adm-bad)]/40 bg-[var(--adm-surface)] p-4 text-sm text-[var(--adm-bad)]">
         No se pudo leer el catálogo: {error.message}
       </p>
     );
@@ -35,13 +35,13 @@ export default async function AdminCartasPage() {
 
   return (
     <div className="flex flex-col gap-5">
-      <header className="flex items-center gap-3 pt-2 sm:pt-0">
-        <span className="rounded-full bg-rosa-acento/15 p-2.5 text-rosa-acento sm:hidden">
+      <header className="flex items-center gap-3">
+        <span className="rounded-full bg-[var(--adm-accent)]/15 p-2.5 text-[var(--adm-accent)]">
           <Icono.mano className="h-5 w-5" strokeWidth={2.5} />
         </span>
         <div>
-          <h1 className="text-2xl">Cartas</h1>
-          <p className="text-sm text-white/60">
+          <h1 className="font-heading text-2xl text-[var(--adm-text)]">Cartas</h1>
+          <p className="text-sm text-[var(--adm-text-dim)]">
             Agrega, edita o quita las cartas que se reparten en el juego.
           </p>
         </div>

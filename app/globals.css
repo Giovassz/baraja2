@@ -145,6 +145,27 @@ body::before {
 }
 
 @layer components {
+  /* --- Panel /admin: paleta propia, neutra, deliberadamente separada del tema
+     rosa/morado/etc. de la app de parejas — es una herramienta de control, no la
+     app romántica, así que no debe cambiar de color con el tema del dispositivo. */
+  .admin-shell {
+    --adm-bg: #0a0a0d;
+    --adm-surface: #16161a;
+    --adm-surface-2: #1d1d22;
+    --adm-border: rgba(255, 255, 255, 0.08);
+    --adm-text: #f4f4f5;
+    --adm-text-dim: rgba(244, 244, 245, 0.62);
+    --adm-text-mute: rgba(244, 244, 245, 0.4);
+    --adm-accent: #38bdf8;
+    --adm-accent-2: #0ea5e9;
+    --adm-good: #34d399;
+    --adm-warn: #fbbf24;
+    --adm-bad: #f87171;
+    background: var(--adm-bg);
+    color: var(--adm-text);
+    min-height: 100dvh;
+  }
+
   /* --- Superficies --- */
   .widget {
     @apply relative overflow-hidden rounded-widget border p-5;

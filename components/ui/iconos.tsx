@@ -60,6 +60,10 @@ import {
   Pencil,
   Trash2,
   Palette,
+  Search,
+  LayoutGrid,
+  ChevronDown,
+  BarChart3,
   Cat,
   Dog,
   Rabbit,
@@ -134,6 +138,10 @@ export const Icono = {
   lapiz: Pencil,
   papelera: Trash2,
   paleta: Palette,
+  buscar: Search,
+  apps: LayoutGrid,
+  flechaAbajo: ChevronDown,
+  grafico: BarChart3,
 } satisfies Record<string, LucideIcon>;
 
 export type NombreIcono = keyof typeof Icono;
