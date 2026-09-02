@@ -56,7 +56,7 @@ export function BarraSuperior({
           className="flex shrink-0 items-center gap-1.5 rounded-full bg-gradient-to-r from-rosa-acento to-coral px-3.5 py-1.5 font-heading text-sm font-bold text-white shadow-[0_6px_18px_-6px_rgb(var(--c-acento)/0.8)] transition active:scale-95"
           title="Tus puntos"
         >
-          <Icono.moneda className="h-4 w-4" strokeWidth={2.5} />
+          <Icono.estrella className="h-4 w-4" strokeWidth={2.5} fill="currentColor" />
           {puntos}
         </Link>
       </div>

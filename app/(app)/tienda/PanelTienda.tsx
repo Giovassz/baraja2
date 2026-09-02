@@ -2,11 +2,12 @@
 // Función nueva pedida por el usuario.
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CaraCarta } from '@/components/ui/CartaJuego';
 import { Icono } from '@/components/ui/iconos';
+import { IconoPrecio } from '@/components/ui/IconoPrecio';
 import { useCelebracion } from '@/components/ui/Celebracion';
 import { presentacionPlotTwist } from '@/lib/reglas/carta';
 import { comprarPlotTwist } from '@/lib/actions/tienda';
@@ -31,18 +32,23 @@ export function PanelTienda({
   modoTester?: boolean;
 }) {
   const router = useRouter();
-  const [pendiente, iniciar] = useTransition();
+  // Ojo: NO usar useTransition con una función async — en React 18 "pendiente" se
+  // resuelve casi al instante (no espera la respuesta real del servidor), dejando una
+  // ventana donde se puede volver a comprar antes de tiempo.
+  const [enviando, setEnviando] = useState(false);
   const [comprando, setComprando] = useState<string | null>(null);
   const [detalle, setDetalle] = useState<OpcionTienda | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { celebrar, Corazones } = useCelebracion();
 
   function comprar(id: string) {
+    if (enviando) return;
     setError(null);
     setComprando(id);
-    iniciar(async () => {
-      const r = await comprarPlotTwist(id);
+    setEnviando(true);
+    comprarPlotTwist(id).then((r) => {
       setComprando(null);
+      setEnviando(false);
       if (!r.ok) {
         setError(r.mensaje ?? 'No se pudo comprar.');
         return;
@@ -70,7 +76,10 @@ export function PanelTienda({
         </p>
       )}
 
-      <div className="grid grid-cols-3 gap-2.5">
+      {/* flex-wrap centrado en vez de grid-cols-3 fijo: con 1 o 2 opciones (como
+          cuenta de prueba con pocos plot twists cargados) se ven centradas, no
+          pegadas a la izquierda con un hueco vacío al lado. */}
+      <div className="flex flex-wrap justify-center gap-2.5">
         {opciones.map((o, i) => {
           const pr = presentacionPlotTwist(o.efecto);
           const alcanza = modoTester || puntos >= precio;
@@ -84,16 +93,31 @@ export function PanelTienda({
               transition={{ delay: i * 0.04 }}
               whileHover={{ y: -4, scale: 1.03 }}
               whileTap={{ scale: 0.96 }}
-              className={`item-tienda ${alcanza ? 'ring-1 ring-menta/30' : ''}`}
+              className={`item-tienda w-[30%] min-w-[104px] max-w-[130px] ${alcanza ? 'ring-1 ring-menta/30' : ''}`}
+              style={{
+                borderTopColor: pr.color,
+                borderTopWidth: 2,
+                boxShadow: `inset 0 1px 0 rgba(255,255,255,0.12), 0 12px 26px -14px rgba(0,0,0,0.8), 0 -8px 20px -16px ${pr.color}`,
+              }}
             >
-              <span className="text-[9px] font-extrabold uppercase tracking-wider text-[#c9b4ec]">
+              <span
+                className="text-[9px] font-extrabold uppercase tracking-wider"
+                style={{ color: pr.color }}
+              >
                 {NOMBRE_EFECTO[o.efecto] ?? 'Plot twist'}
               </span>
               <div className="w-full">
                 <CaraCarta icono={pr.icono} acento="plot" texto={o.nombre} compacta />
               </div>
-              <span className={`precio-badge ${!alcanza ? 'precio-badge--rojo' : ''}`}>
-                <Icono.moneda className="h-3.5 w-3.5" strokeWidth={2.5} />
+              <p className="px-0.5 text-center text-[9px] leading-tight text-white/50">
+                {pr.hint}
+              </p>
+              <span
+                className={`precio-badge ${!alcanza ? 'precio-badge--rojo' : ''} ${
+                  modoTester ? 'animate-pulso-glow' : ''
+                }`}
+              >
+                <IconoPrecio tamano={15} />
                 {modoTester ? '∞' : precio}
               </span>
             </motion.button>
@@ -109,7 +133,7 @@ export function PanelTienda({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => !pendiente && setDetalle(null)}
+            onClick={() => !enviando && setDetalle(null)}
           >
             <motion.div
               className="w-full max-w-[260px]"
@@ -128,14 +152,14 @@ export function PanelTienda({
                 <p className="text-center text-xs text-white/80">{detalle.descripcion}</p>
                 <button
                   className="boton-primario w-full py-2.5 text-sm"
-                  disabled={(!modoTester && puntos < precio) || pendiente}
+                  disabled={(!modoTester && puntos < precio) || enviando}
                   onClick={() => comprar(detalle.id)}
                 >
                   {comprando === detalle.id ? (
                     'Comprando…'
                   ) : (
                     <>
-                      <Icono.moneda className="h-4 w-4" strokeWidth={2.5} />
+                      <Icono.estrella className="h-4 w-4" strokeWidth={2.5} fill="currentColor" />
                       {modoTester
                         ? 'Comprar · gratis (tester)'
                         : puntos >= precio

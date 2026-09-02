@@ -75,11 +75,25 @@ export function presentacionCarta(
 }
 
 /** Presentación de un plot twist según su efecto. */
-export function presentacionPlotTwist(
-  efecto: 'bloquear_carta' | 'robar_carta' | 'otro',
-): { icono: NombreIconoCarta; acento: AcentoCarta } {
-  return {
-    icono: efecto === 'robar_carta' ? 'mano' : efecto === 'bloquear_carta' ? 'candado' : 'chispa',
-    acento: 'plot',
-  };
+export function presentacionPlotTwist(efecto: 'bloquear_carta' | 'robar_carta' | 'otro'): {
+  icono: NombreIconoCarta;
+  acento: AcentoCarta;
+  /** Color propio del efecto (frío para bloqueo, cálido para robo), para distinguirlos
+   * de un vistazo en la Tienda sin depender solo del texto. */
+  color: string;
+  /** Explicación de una línea, para no tener que abrir el detalle para saber qué hace. */
+  hint: string;
+} {
+  if (efecto === 'robar_carta') {
+    return { icono: 'mano', acento: 'plot', color: '#ffb37a', hint: 'Le roba una carta a tu pareja' };
+  }
+  if (efecto === 'bloquear_carta') {
+    return {
+      icono: 'candado',
+      acento: 'plot',
+      color: '#7dd3fc',
+      hint: 'Bloquea una carta de tu pareja',
+    };
+  }
+  return { icono: 'chispa', acento: 'plot', color: '#c9b4ec', hint: 'Efecto especial' };
 }

@@ -245,11 +245,19 @@ export interface OpcionTienda {
   tipo: 'estandar' | 'spicy';
 }
 
+export interface PlotTwistDisponible {
+  id: string;
+  nombre: string;
+  efecto: 'bloquear_carta' | 'robar_carta' | 'otro';
+}
+
 export interface DatosTienda {
   puntos: number;
   precio: number;
   opciones: OpcionTienda[];
   compradosEsteCiclo: number;
+  /** Los que ya compraste este ciclo y todavía no usas — para verlos sin ir a Casa. */
+  misPlotTwistsDisponibles: PlotTwistDisponible[];
   /** Cuenta de prueba: comprar no gasta puntos. */
   modoTester: boolean;
 }
@@ -263,7 +271,7 @@ export async function obtenerDatosTienda(): Promise<DatosTienda> {
     ? ['estandar', 'spicy']
     : ['estandar'];
 
-  const [{ data: catalogo }, { data: puntos }, { data: comprados }] = await Promise.all([
+  const [{ data: catalogo }, { data: puntos }, { data: desbloqueados }] = await Promise.all([
     supabase
       .from('catalogo_plot_twists')
       .select('id, nombre, descripcion, efecto, tipo')
@@ -278,16 +286,36 @@ export async function obtenerDatosTienda(): Promise<DatosTienda> {
       .maybeSingle(),
     supabase
       .from('plot_twists_desbloqueados')
-      .select('id')
+      .select('id, plot_twist_id, usado')
       .eq('usuario_id', usuario.id)
       .eq('ciclo_numero', pareja.cicloNumero),
   ]);
+
+  const sinUsar = (desbloqueados ?? []).filter((d) => !d.usado);
+  const idsPlotTwist = Array.from(new Set(sinUsar.map((d) => d.plot_twist_id)));
+  const { data: infoPlotTwists } = idsPlotTwist.length
+    ? await supabase
+        .from('catalogo_plot_twists')
+        .select('id, nombre, efecto')
+        .in('id', idsPlotTwist)
+    : { data: [] as { id: string; nombre: string; efecto: string }[] };
+
+  const infoPorId = new Map((infoPlotTwists ?? []).map((p) => [p.id, p]));
+  const misPlotTwistsDisponibles: PlotTwistDisponible[] = sinUsar
+    .map((d) => {
+      const info = infoPorId.get(d.plot_twist_id);
+      return info
+        ? { id: d.id, nombre: info.nombre, efecto: info.efecto as PlotTwistDisponible['efecto'] }
+        : null;
+    })
+    .filter((x): x is PlotTwistDisponible => x !== null);
 
   return {
     puntos: puntos?.puntos ?? 0,
     precio: PRECIO_PLOT_TWIST_TIENDA,
     opciones: (catalogo ?? []) as OpcionTienda[],
-    compradosEsteCiclo: (comprados ?? []).length,
+    compradosEsteCiclo: (desbloqueados ?? []).length,
+    misPlotTwistsDisponibles,
     modoTester: usuario.modo_tester,
   };
 }

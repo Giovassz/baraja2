@@ -280,33 +280,38 @@ body::before {
       font-heading text-[11px] font-bold uppercase tracking-widest text-white;
   }
 
-  /* --- Banner de sección estilo Clash Royale --- */
-  .banner-seccion {
-    @apply relative flex items-center justify-center gap-2 rounded-full px-4 py-2
-      text-center font-heading text-sm font-extrabold uppercase tracking-wider text-white;
-    background: linear-gradient(180deg, #ff5c8a, #d63a6b);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.35),
-      inset 0 -3px 0 rgba(0, 0, 0, 0.28),
-      0 10px 24px -10px rgba(214, 58, 107, 0.7);
+  /* --- Encabezado de sección: ícono + título + línea, con separación clara del
+     contenido de abajo. Antes era una píldora centrada con remaches — se veía
+     genérica, como plantilla. Cada variante trae su propio trío de colores. */
+  .banner-seccion-icono {
+    background: rgb(var(--c-acento) / 0.15);
+    color: rgb(var(--c-acento));
   }
-  .banner-seccion::before,
-  .banner-seccion::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    width: 14px;
-    height: 3px;
-    border-radius: 3px;
-    background: rgba(255, 255, 255, 0.55);
+  .banner-seccion-titulo {
+    color: rgb(var(--c-acento));
   }
-  .banner-seccion::before {
-    left: 10px;
-    transform: translateY(-50%);
+  .banner-seccion-linea {
+    background: linear-gradient(90deg, rgb(var(--c-acento) / 0.5), transparent);
   }
-  .banner-seccion::after {
-    right: 10px;
-    transform: translateY(-50%);
+  .banner-seccion--morado .banner-seccion-icono {
+    background: rgba(179, 157, 219, 0.18);
+    color: #cbb6ea;
+  }
+  .banner-seccion--morado .banner-seccion-titulo {
+    color: #cbb6ea;
+  }
+  .banner-seccion--morado .banner-seccion-linea {
+    background: linear-gradient(90deg, rgba(179, 157, 219, 0.5), transparent);
+  }
+  .banner-seccion--oro .banner-seccion-icono {
+    background: rgba(255, 207, 74, 0.18);
+    color: #ffcf4a;
+  }
+  .banner-seccion--oro .banner-seccion-titulo {
+    color: #ffcf4a;
+  }
+  .banner-seccion--oro .banner-seccion-linea {
+    background: linear-gradient(90deg, rgba(255, 207, 74, 0.5), transparent);
   }
 
   /* Ítem de tienda estilo Clash Royale */
@@ -320,16 +325,21 @@ body::before {
   }
 
   /* Badge de precio (moneda) */
+  /* Antes era una píldora toda dorada con el ícono de moneda (también dorado)
+     adentro — se perdía, mismo color sobre mismo color. Ahora es una ficha oscura
+     con borde, para que la moneda (ver IconoPrecio) resalte de verdad encima. */
   .precio-badge {
-    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-heading
-      text-[13px] font-extrabold text-white;
-    background: linear-gradient(180deg, #ffcf4a, #e0a21f);
-    color: #4a2d05;
-    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+    @apply inline-flex items-center gap-1.5 rounded-full border py-1 pl-1 pr-2.5
+      font-heading text-[13px] font-extrabold text-white;
+    background: rgba(10, 6, 12, 0.55);
+    border-color: rgb(var(--c-acento) / 0.4);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 4px 12px -6px rgba(0, 0, 0, 0.6);
   }
   .precio-badge--rojo {
-    background: linear-gradient(180deg, #ff6b6b, #d63a3a);
-    color: #fff;
+    background: rgba(50, 8, 8, 0.55);
+    border-color: rgba(255, 107, 107, 0.5);
   }
 
   /* --- Autenticación --- */

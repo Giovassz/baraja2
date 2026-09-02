@@ -1,8 +1,10 @@
 // Tienda de plot twists — estructura estilo Clash Royale
 // Función nueva pedida por el usuario.
 import { obtenerDatosTienda } from '@/lib/datos';
+import { presentacionPlotTwist } from '@/lib/reglas/carta';
 import { Icono } from '@/components/ui/iconos';
 import { BannerSeccion } from '@/components/ui/BannerSeccion';
+import { IconoPrecio } from '@/components/ui/IconoPrecio';
 import { PanelTienda } from './PanelTienda';
 import { BotonBarajaNueva } from './BotonBarajaNueva';
 
@@ -14,7 +16,7 @@ export default async function TiendaPage() {
   return (
     <div className="flex flex-col gap-4">
       {datos.modoTester && (
-        <div className="widget !border-lavanda/40 flex flex-col gap-3 !bg-[linear-gradient(160deg,#2a2340,#1c0e18)]">
+        <div className="widget widget-acento !border-lavanda/40 flex flex-col gap-3">
           <div className="flex items-center gap-3">
             <span className="rounded-full bg-lavanda/20 p-2 text-lavanda">
               <Icono.escudo className="h-4 w-4" strokeWidth={2.5} />
@@ -38,15 +40,16 @@ export default async function TiendaPage() {
           </span>
           <h1 className="text-xl">Tienda</h1>
         </div>
-        <span className="precio-badge !text-base">
-          <Icono.moneda className="h-4 w-4" strokeWidth={2.5} />
+        <span className={`precio-badge !text-base ${datos.modoTester ? 'animate-pulso-glow' : ''}`}>
+          <IconoPrecio tamano={18} />
           {datos.modoTester ? '∞' : datos.puntos}
         </span>
       </div>
 
       {/* Sección plot twists */}
       <BannerSeccion
-        icono={Icono.chispa}
+        icono={Icono.barajar}
+        variante="morado"
         info={
           datos.modoTester
             ? 'Cuenta de prueba: comprar no gasta puntos'
@@ -63,8 +66,43 @@ export default async function TiendaPage() {
         modoTester={datos.modoTester}
       />
 
+      {/* Los que ya compraste este ciclo y todavía no usas — antes solo se veían en
+          Casa, así que era fácil olvidar que ya tenías uno listo. */}
+      {datos.misPlotTwistsDisponibles.length > 0 && (
+        <>
+          <BannerSeccion icono={Icono.gema} variante="morado">
+            Tus plot twists
+          </BannerSeccion>
+          <div className="flex flex-col gap-2">
+            {datos.misPlotTwistsDisponibles.map((pt) => {
+              const pr = presentacionPlotTwist(pt.efecto);
+              const Ico = Icono[pr.icono];
+              return (
+                <div
+                  key={pt.id}
+                  className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-3"
+                >
+                  <span
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                    style={{ backgroundColor: `${pr.color}26`, color: pr.color }}
+                  >
+                    <Ico className="h-4 w-4" strokeWidth={2.5} />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-white">{pt.nombre}</p>
+                    <p className="text-xs text-white/50">{pr.hint} · úsalo desde Casa</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+
       {/* Sección cómo ganar puntos */}
-      <BannerSeccion icono={Icono.moneda}>Cómo conseguir puntos</BannerSeccion>
+      <BannerSeccion icono={Icono.estrella} variante="oro">
+        Cómo conseguir puntos
+      </BannerSeccion>
       <div className="grid grid-cols-1 gap-2.5">
         <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
           <span className="rounded-full bg-menta/15 p-2 text-menta">
