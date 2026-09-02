@@ -17,6 +17,14 @@ export interface EventoHistorial {
   avatarId: string | null;
   fotoUrl: string | null;
   fecha: string;
+  /** La carta que el evento afectó — la cumplida, o la que un plot twist bloqueó/robó. */
+  cartaAfectada: {
+    texto: string;
+    tipo: 'estandar' | 'spicy';
+    puntosOtorgados: number;
+    /** De quién era la carta (solo aplica a plot twists). */
+    propietario: string | null;
+  } | null;
 }
 
 type Filtro = 'todos' | TipoEventoHistorial;

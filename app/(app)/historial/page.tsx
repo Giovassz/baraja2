@@ -33,6 +33,78 @@ export default async function HistorialPage() {
     });
   }
 
+  // Para mostrar la carta de verdad (no solo el texto suelto) hay que reconstruirla:
+  // - carta_cumplida: referencia_id ES el id en cartas_asignadas.
+  // - plot_twist_usado: referencia_id es el id en plot_twists_desbloqueados, cuyo
+  //   carta_objetivo_id apunta a la carta que el plot twist afectó (la bloqueada o
+  //   robada) — no la carta del propio plot twist, que no tiene "cara" de carta. Esa
+  //   fila ORIGINAL conserva su usuario_id de siempre (a quién se le bloqueó/robó),
+  //   aunque su estado ya diga 'bloqueada'/'robada' — de ahí sacamos "de quién era".
+  const idsCartaCumplida = (eventos ?? [])
+    .filter((e) => e.tipo_evento === 'carta_cumplida')
+    .map((e) => e.referencia_id);
+  const idsPlotTwistUsado = (eventos ?? [])
+    .filter((e) => e.tipo_evento === 'plot_twist_usado')
+    .map((e) => e.referencia_id);
+
+  const { data: ptds } = idsPlotTwistUsado.length
+    ? await supabase
+        .from('plot_twists_desbloqueados')
+        .select('id, carta_objetivo_id')
+        .in('id', idsPlotTwistUsado)
+    : { data: [] as { id: string; carta_objetivo_id: string | null }[] };
+
+  const idsCartasAsignadas = Array.from(
+    new Set([
+      ...idsCartaCumplida,
+      ...(ptds ?? []).map((p) => p.carta_objetivo_id).filter((id): id is string => !!id),
+    ]),
+  );
+
+  const { data: asignadas } = idsCartasAsignadas.length
+    ? await supabase
+        .from('cartas_asignadas')
+        .select('id, carta_id, usuario_id')
+        .in('id', idsCartasAsignadas)
+    : { data: [] as { id: string; carta_id: string; usuario_id: string }[] };
+
+  const asignadaPorId = new Map((asignadas ?? []).map((a) => [a.id, a]));
+  const idsCatalogo = Array.from(new Set((asignadas ?? []).map((a) => a.carta_id)));
+
+  const { data: catalogo } = idsCatalogo.length
+    ? await supabase
+        .from('catalogo_cartas')
+        .select('id, texto, tipo, puntos_otorgados')
+        .in('id', idsCatalogo)
+    : { data: [] as { id: string; texto: string; tipo: 'estandar' | 'spicy'; puntos_otorgados: number }[] };
+
+  const cartaPorId = new Map((catalogo ?? []).map((c) => [c.id, c]));
+  const objetivoPorPtd = new Map((ptds ?? []).map((p) => [p.id, p.carta_objetivo_id]));
+
+  function cartaAfectadaDe(e: NonNullable<typeof eventos>[number]) {
+    const idAsignada =
+      e.tipo_evento === 'carta_cumplida'
+        ? e.referencia_id
+        : (objetivoPorPtd.get(e.referencia_id) ?? null);
+    if (!idAsignada) return null;
+
+    const asignada = asignadaPorId.get(idAsignada);
+    const carta = asignada ? cartaPorId.get(asignada.carta_id) : undefined;
+    if (!asignada || !carta) return null;
+
+    return {
+      texto: carta.texto,
+      tipo: carta.tipo,
+      puntosOtorgados: carta.puntos_otorgados,
+      // Solo tiene sentido para plot twists: de quién era la carta bloqueada/robada.
+      // En carta_cumplida el dueño ya es el "autor" del evento.
+      propietario:
+        e.tipo_evento === 'plot_twist_usado'
+          ? (autores.get(asignada.usuario_id)?.nombre ?? null)
+          : null,
+    };
+  }
+
   const items: EventoHistorial[] = (eventos ?? []).map((e) => {
     const autor = autores.get(e.usuario_id);
     return {
@@ -43,6 +115,7 @@ export default async function HistorialPage() {
       avatarId: autor?.avatarId ?? null,
       fotoUrl: autor?.fotoUrl ?? null,
       fecha: e.created_at,
+      cartaAfectada: cartaAfectadaDe(e),
     };
   });
 

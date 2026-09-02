@@ -9,6 +9,7 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Avatar } from '@/components/ui/Avatar';
+import { CartaJuego } from '@/components/ui/CartaJuego';
 import { Icono, type LucideIcon } from '@/components/ui/iconos';
 import { PUNTOS_POR_CARTA_CUMPLIDA } from '@/lib/reglas/constantes';
 import type { TipoEventoHistorial } from '@/lib/supabase/tipos';
@@ -20,6 +21,14 @@ export interface EventoHistorialFila {
   avatarId: string | null;
   fotoUrl: string | null;
   fecha: string;
+  /** La carta que el evento afectó — la cumplida, o la que un plot twist bloqueó/robó. */
+  cartaAfectada: {
+    texto: string;
+    tipo: 'estandar' | 'spicy';
+    puntosOtorgados: number;
+    /** De quién era la carta (solo aplica a plot twists). */
+    propietario: string | null;
+  } | null;
 }
 
 const CONFIG: Record<
@@ -130,18 +139,51 @@ export function WidgetHistorialEvento({
                 <Icono.cerrar className="h-4 w-4" strokeWidth={2.5} />
               </button>
 
-              <span className={`flex h-14 w-14 items-center justify-center rounded-full ${cfg.clase}`}>
-                <Ico className="h-6 w-6" strokeWidth={2.5} />
+              <span
+                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${cfg.clase}`}
+              >
+                <Ico className="h-3 w-3" strokeWidth={2.5} />
+                {cfg.etiqueta}
               </span>
 
-              <div>
-                <span
-                  className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${cfg.clase}`}
-                >
-                  {cfg.etiqueta}
-                </span>
-                <p className="mt-2 font-heading text-lg text-white">{evento.descripcion}</p>
-              </div>
+              {evento.cartaAfectada ? (
+                <>
+                  {evento.tipoEvento === 'plot_twist_usado' && (
+                    <p className="font-heading text-base text-white">
+                      {evento.descripcion.split(':')[0]}
+                    </p>
+                  )}
+
+                  <div className="w-full max-w-[200px]">
+                    <CartaJuego
+                      id="preview"
+                      texto={evento.cartaAfectada.texto}
+                      tipo={evento.cartaAfectada.tipo}
+                      puntosOtorgados={evento.cartaAfectada.puntosOtorgados}
+                      estado={
+                        evento.tipoEvento === 'carta_cumplida'
+                          ? 'cumplida'
+                          : evento.descripcion.includes('robada')
+                            ? 'robada'
+                            : 'bloqueada'
+                      }
+                    />
+                  </div>
+
+                  {evento.tipoEvento === 'plot_twist_usado' && evento.cartaAfectada.propietario && (
+                    <p className="text-sm text-white/70">
+                      <span className="font-semibold text-white">{evento.autor}</span> le{' '}
+                      {evento.descripcion.includes('robada') ? 'robó' : 'bloqueó'} esta carta a{' '}
+                      <span className="font-semibold text-white">
+                        {evento.cartaAfectada.propietario}
+                      </span>
+                      .
+                    </p>
+                  )}
+                </>
+              ) : (
+                <p className="font-heading text-lg text-white">{evento.descripcion}</p>
+              )}
 
               <div className="flex w-full items-center gap-3 rounded-widget border border-white/10 bg-white/[0.03] p-3">
                 <Avatar
