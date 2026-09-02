@@ -85,6 +85,8 @@ interface CartasAsignadasRow {
   reclamada_en: string | null;
   /** Si un plot twist la bloqueó/robó, cuándo el dueño ya vio el aviso en pantalla. */
   notificado_en: string | null;
+  /** Respuesta escrita del receptor, solo para retos-pregunta (texto termina en "?"). */
+  respuesta_texto: string | null;
 }
 
 interface PlotTwistsDesbloqueadosRow {
@@ -207,6 +209,7 @@ export interface Database {
         | 'fecha_cumplida'
         | 'reclamada_en'
         | 'notificado_en'
+        | 'respuesta_texto'
       >;
       plot_twists_desbloqueados: TablaSimple<
         PlotTwistsDesbloqueadosRow,

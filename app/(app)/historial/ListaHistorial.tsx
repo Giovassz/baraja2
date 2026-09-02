@@ -24,6 +24,8 @@ export interface EventoHistorial {
     puntosOtorgados: number;
     /** De quién era la carta (solo aplica a plot twists). */
     propietario: string | null;
+    /** Si era una carta-pregunta, lo que se respondió por escrito. */
+    respuestaTexto: string | null;
   } | null;
 }
 

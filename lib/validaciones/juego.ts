@@ -7,6 +7,13 @@ const uuid = z.string().uuid('Identificador no válido.');
 export const esquemaCartaId = z.object({ cartaAsignadaId: uuid });
 export type DatosCartaId = z.infer<typeof esquemaCartaId>;
 
+export const esquemaReclamarCumplida = z.object({
+  cartaAsignadaId: uuid,
+  /** Solo para retos-pregunta (el texto termina en "?"): tu respuesta escrita. */
+  respuesta: z.string().trim().max(500, 'Máximo 500 caracteres.').optional(),
+});
+export type DatosReclamarCumplida = z.infer<typeof esquemaReclamarCumplida>;
+
 export const esquemaUsoPlotTwist = z.object({
   plotTwistDesbloqueadoId: uuid,
   cartaObjetivoId: uuid,

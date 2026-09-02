@@ -19,6 +19,8 @@ export interface CartaEnCampo {
   puntosOtorgados: number;
   /** Tu pareja ya avisó "ya lo hice" — falta que tú lo confirmes. */
   reclamada: boolean;
+  /** Si era un reto-pregunta, lo que tu pareja escribió — para leerlo antes de confirmar. */
+  respuestaTexto?: string | null;
 }
 
 export function CampoBatalla({
@@ -155,6 +157,15 @@ export function CampoBatalla({
             >
               {activa.reclamada ? (
                 <>
+                  {activa.respuestaTexto && (
+                    <div className="widget !border-rosa-acento/30 !p-3 text-left">
+                      <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-rosa-acento">
+                        <Icono.mensaje className="h-3 w-3" strokeWidth={2.5} />
+                        {nombreCompanero ?? 'Tu pareja'} respondió
+                      </p>
+                      <p className="mt-1 text-sm text-white/90">{activa.respuestaTexto}</p>
+                    </div>
+                  )}
                   <button
                     className="boton-primario w-full py-3 text-sm"
                     disabled={pendiente || confirmando}

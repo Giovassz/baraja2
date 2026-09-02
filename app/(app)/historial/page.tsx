@@ -64,9 +64,16 @@ export default async function HistorialPage() {
   const { data: asignadas } = idsCartasAsignadas.length
     ? await supabase
         .from('cartas_asignadas')
-        .select('id, carta_id, usuario_id')
+        .select('id, carta_id, usuario_id, respuesta_texto')
         .in('id', idsCartasAsignadas)
-    : { data: [] as { id: string; carta_id: string; usuario_id: string }[] };
+    : {
+        data: [] as {
+          id: string;
+          carta_id: string;
+          usuario_id: string;
+          respuesta_texto: string | null;
+        }[],
+      };
 
   const asignadaPorId = new Map((asignadas ?? []).map((a) => [a.id, a]));
   const idsCatalogo = Array.from(new Set((asignadas ?? []).map((a) => a.carta_id)));
@@ -102,6 +109,10 @@ export default async function HistorialPage() {
         e.tipo_evento === 'plot_twist_usado'
           ? (autores.get(asignada.usuario_id)?.nombre ?? null)
           : null,
+      // Si era una carta-pregunta, lo que se respondió por escrito (solo aplica a
+      // carta_cumplida — un plot twist nunca apunta a una carta ya respondida,
+      // porque solo puede afectar cartas todavía disponibles).
+      respuestaTexto: asignada.respuesta_texto,
     };
   }
 

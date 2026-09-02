@@ -47,13 +47,19 @@ export function PilaRetos({
   const iconoTema = useIconoDeTema();
   const IconoAvisar = Icono[iconoTema as NombreIcono];
 
+  const [respuesta, setRespuesta] = useState('');
+
   const total = retos.length;
   const actual = retos[i % total];
   const pr = presentacionCarta(actual.id, actual.tipo, actual.puntosOtorgados);
   const Ico = Icono[pr.icono];
+  // Detección automática: si el reto termina en "?", es una pregunta para responder
+  // por escrito en vez de un reto para "hacer y avisar".
+  const esPregunta = actual.texto.trim().endsWith('?');
 
   function siguiente() {
     setAccion('skip');
+    setRespuesta('');
     setTimeout(() => {
       setAccion(null);
       setI((v) => (v + 1) % total);
@@ -62,9 +68,10 @@ export function PilaRetos({
 
   function avisar() {
     if (enviando) return;
+    if (esPregunta && !respuesta.trim()) return;
     setError(null);
     setEnviando(true);
-    reclamarCumplida(actual.id).then((r) => {
+    reclamarCumplida(actual.id, esPregunta ? respuesta.trim() : undefined).then((r) => {
       if (!r.ok) {
         setEnviando(false);
         setError(r.mensaje ?? 'No se pudo avisar.');
@@ -75,6 +82,7 @@ export function PilaRetos({
       setTimeout(() => {
         setAccion(null);
         setEnviando(false);
+        setRespuesta('');
         router.refresh();
       }, 520);
     });
@@ -134,37 +142,75 @@ export function PilaRetos({
                 {actual.texto}
               </p>
               <p className="text-xs text-white/45">
-                {nombreCompanero ?? 'Tu pareja'} te retó — cúmplelo y avísale.
+                {esPregunta
+                  ? `${nombreCompanero ?? 'Tu pareja'} te preguntó — respóndele por escrito.`
+                  : `${nombreCompanero ?? 'Tu pareja'} te retó — cúmplelo y avísale.`}
               </p>
             </div>
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Acciones flotantes estilo Tinder */}
-      <div className="relative z-20 mt-5 flex items-center justify-center gap-5">
-        {total > 1 && (
-          <button
-            onClick={siguiente}
+      {esPregunta ? (
+        <div className="relative z-20 mt-5 flex w-full max-w-[280px] flex-col gap-2">
+          <textarea
+            value={respuesta}
+            onChange={(e) => setRespuesta(e.target.value)}
+            placeholder="Escribe tu respuesta…"
+            rows={3}
+            maxLength={500}
             disabled={pendiente}
-            aria-label="Ver el siguiente reto"
-            className="flex h-14 w-14 items-center justify-center rounded-full border border-white/15 bg-noche-2 text-white/70 shadow-[0_10px_24px_-8px_rgba(0,0,0,0.7)] transition active:scale-90 disabled:opacity-40"
-          >
-            <Icono.cerrar className="h-6 w-6" strokeWidth={2.5} />
-          </button>
-        )}
-        <button
-          onClick={avisar}
-          disabled={pendiente}
-          aria-label="Avisar que ya lo cumpliste"
-          className="flex h-[74px] w-[74px] items-center justify-center rounded-full bg-gradient-to-br from-rosa-acento to-coral text-white shadow-[0_18px_44px_-8px_rgb(var(--c-acento)/0.85)] transition active:scale-90 disabled:opacity-50"
-        >
-          <IconoAvisar className="h-9 w-9" strokeWidth={2.5} fill="currentColor" />
-        </button>
-      </div>
-      <p className="mt-2 text-center text-[11px] text-white/45">
-        {pendiente ? 'Avisando…' : 'Toca el botón cuando ya lo hayas cumplido'}
-      </p>
+            className="campo-texto resize-none text-sm"
+          />
+          <div className="flex items-center gap-2">
+            {total > 1 && (
+              <button
+                onClick={siguiente}
+                disabled={pendiente}
+                aria-label="Ver el siguiente reto"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/15 bg-noche-2 text-white/70 transition active:scale-90 disabled:opacity-40"
+              >
+                <Icono.cerrar className="h-4 w-4" strokeWidth={2.5} />
+              </button>
+            )}
+            <button
+              onClick={avisar}
+              disabled={pendiente || !respuesta.trim()}
+              className="boton-primario flex-1 py-2.5 text-sm"
+            >
+              <Icono.mensaje className="h-4 w-4" strokeWidth={2.5} />
+              {pendiente ? 'Enviando…' : 'Enviar respuesta'}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Acciones flotantes estilo Tinder */}
+          <div className="relative z-20 mt-5 flex items-center justify-center gap-5">
+            {total > 1 && (
+              <button
+                onClick={siguiente}
+                disabled={pendiente}
+                aria-label="Ver el siguiente reto"
+                className="flex h-14 w-14 items-center justify-center rounded-full border border-white/15 bg-noche-2 text-white/70 shadow-[0_10px_24px_-8px_rgba(0,0,0,0.7)] transition active:scale-90 disabled:opacity-40"
+              >
+                <Icono.cerrar className="h-6 w-6" strokeWidth={2.5} />
+              </button>
+            )}
+            <button
+              onClick={avisar}
+              disabled={pendiente}
+              aria-label="Avisar que ya lo cumpliste"
+              className="flex h-[74px] w-[74px] items-center justify-center rounded-full bg-gradient-to-br from-rosa-acento to-coral text-white shadow-[0_18px_44px_-8px_rgb(var(--c-acento)/0.85)] transition active:scale-90 disabled:opacity-50"
+            >
+              <IconoAvisar className="h-9 w-9" strokeWidth={2.5} fill="currentColor" />
+            </button>
+          </div>
+          <p className="mt-2 text-center text-[11px] text-white/45">
+            {pendiente ? 'Avisando…' : 'Toca el botón cuando ya lo hayas cumplido'}
+          </p>
+        </>
+      )}
       <p className="mt-0.5 text-center text-[10px] text-white/35">
         Tu pareja confirma desde su mano y ahí ganas el punto.
       </p>

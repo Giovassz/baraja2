@@ -47,6 +47,7 @@ export default async function DashboardPage() {
       tipo: c.tipo,
       puntosOtorgados: c.puntosOtorgados,
       reclamada: !!c.reclamada_en,
+      respuestaTexto: c.respuesta_texto,
     }));
 
   // Retos que tu pareja te jugó: los que aún no avisas ("toca el corazón cuando lo

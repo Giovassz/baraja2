@@ -28,6 +28,8 @@ export interface EventoHistorialFila {
     puntosOtorgados: number;
     /** De quién era la carta (solo aplica a plot twists). */
     propietario: string | null;
+    /** Si era una carta-pregunta, lo que se respondió por escrito. */
+    respuestaTexto: string | null;
   } | null;
 }
 
@@ -179,6 +181,18 @@ export function WidgetHistorialEvento({
                       </span>
                       .
                     </p>
+                  )}
+
+                  {evento.cartaAfectada.respuestaTexto && (
+                    <div className="w-full rounded-widget border border-white/10 bg-white/[0.03] p-3 text-left">
+                      <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-rosa-acento">
+                        <Icono.mensaje className="h-3 w-3" strokeWidth={2.5} />
+                        {evento.autor} respondió
+                      </p>
+                      <p className="mt-1 text-sm text-white/90">
+                        {evento.cartaAfectada.respuestaTexto}
+                      </p>
+                    </div>
                   )}
                 </>
               ) : (

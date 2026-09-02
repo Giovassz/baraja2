@@ -4,9 +4,9 @@
 
 import { revalidatePath } from 'next/cache';
 import { crearClienteServidor } from '@/lib/supabase/server';
-import { esquemaCartaId } from '@/lib/validaciones/juego';
+import { esquemaCartaId, esquemaReclamarCumplida } from '@/lib/validaciones/juego';
 import { enviarPushAUsuario } from '@/lib/push';
-import { obtenerParejaActual } from '@/lib/datos';
+import { obtenerParejaActual, obtenerUsuarioActual } from '@/lib/datos';
 import { exito, fallo, codigoDesdeError, type ResultadoAccion } from './_resultado';
 
 export async function jugarCarta(cartaAsignadaId: string): Promise<ResultadoAccion> {
@@ -40,18 +40,35 @@ export async function jugarCarta(cartaAsignadaId: string): Promise<ResultadoAcci
   return exito('Carta jugada. Le avisamos a tu pareja.');
 }
 
-/** Paso 1: el receptor avisa "ya lo hice". Todavía no otorga el punto. */
+/**
+ * Paso 1: el receptor avisa "ya lo hice". Todavía no otorga el punto.
+ * Si la carta es un reto-pregunta (texto termina en "?"), `respuesta` trae lo que
+ * escribió — se guarda aparte del RPC (que no cambia) y se le muestra a quien mandó
+ * la carta cuando le toque confirmar.
+ */
 export async function reclamarCumplida(
   cartaAsignadaId: string,
+  respuesta?: string,
 ): Promise<ResultadoAccion> {
-  const parsed = esquemaCartaId.safeParse({ cartaAsignadaId });
-  if (!parsed.success) return fallo('DATOS_INVALIDOS');
+  const parsed = esquemaReclamarCumplida.safeParse({ cartaAsignadaId, respuesta });
+  if (!parsed.success) return fallo('DATOS_INVALIDOS', parsed.error.issues[0]?.message);
 
   const supabase = crearClienteServidor();
   const { error } = await supabase.rpc('reclamar_cumplida', {
     p_carta_asignada_id: parsed.data.cartaAsignadaId,
   });
   if (error) return fallo(codigoDesdeError(error));
+
+  if (parsed.data.respuesta) {
+    const usuario = await obtenerUsuarioActual();
+    // No es crítico si esto falla (la reclamación ya se guardó); se intenta aparte
+    // del RPC para no tener que tocar esa función de base de datos.
+    await supabase
+      .from('cartas_asignadas')
+      .update({ respuesta_texto: parsed.data.respuesta })
+      .eq('id', parsed.data.cartaAsignadaId)
+      .eq('jugada_hacia_usuario_id', usuario.id);
+  }
 
   // Aviso push a quien mandó la carta: le toca confirmar (best-effort).
   try {
