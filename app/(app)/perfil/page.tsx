@@ -10,6 +10,8 @@ import { TituloPagina } from '@/components/ui/EncabezadoPagina';
 import { Icono } from '@/components/ui/iconos';
 import { PanelNotificaciones } from '../ajustes/notificaciones/PanelNotificaciones';
 import { RenombrarEspacio } from './RenombrarEspacio';
+import { SelectorAvatarPerfil } from '@/components/perfil/SelectorAvatarPerfil';
+import { SelectorTema } from '@/components/perfil/SelectorTema';
 
 export const metadata = { title: 'Perfil' };
 
@@ -28,11 +30,11 @@ export default async function PerfilPage() {
       <section className="widget widget-lavanda flex flex-col gap-4">
         <div className="flex items-center gap-4">
           <AnilloProgreso progreso={datos.nivel.progreso} tamano={80}>
-            <Avatar
-              avatarId={datos.usuario.avatar_id}
+            <SelectorAvatarPerfil
               nombre={datos.usuario.nombre}
+              avatarId={datos.usuario.avatar_id}
+              fotoUrl={datos.usuario.avatar_foto_url}
               tamano={56}
-              anillo={false}
             />
           </AnilloProgreso>
           <div className="min-w-0 flex-1">
@@ -94,6 +96,7 @@ export default async function PerfilPage() {
           <div className="flex flex-col items-center gap-1.5">
             <Avatar
               avatarId={datos.pareja.yo.avatar_id}
+              fotoUrl={datos.pareja.yo.avatar_foto_url}
               nombre={datos.pareja.yo.nombre}
               tamano={52}
             />
@@ -107,6 +110,7 @@ export default async function PerfilPage() {
               <>
                 <Avatar
                   avatarId={datos.pareja.companero.avatar_id}
+                  fotoUrl={datos.pareja.companero.avatar_foto_url}
                   nombre={datos.pareja.companero.nombre}
                   tamano={52}
                 />
@@ -142,6 +146,8 @@ export default async function PerfilPage() {
         </h2>
 
         <div className="flex flex-col gap-3">
+          <SelectorTema />
+
           {/* Modo Spicy */}
           <Link
             href="/spicy"

@@ -149,6 +149,7 @@ export default async function DashboardPage() {
         yo={{
           nombre: datos.pareja.yo.nombre,
           avatarId: datos.pareja.yo.avatar_id,
+          fotoUrl: datos.pareja.yo.avatar_foto_url,
           puntos: datos.misPuntos,
         }}
         companero={
@@ -156,6 +157,7 @@ export default async function DashboardPage() {
             ? {
                 nombre: datos.pareja.companero.nombre,
                 avatarId: datos.pareja.companero.avatar_id,
+                fotoUrl: datos.pareja.companero.avatar_foto_url,
                 puntos: datos.puntosCompanero,
               }
             : null

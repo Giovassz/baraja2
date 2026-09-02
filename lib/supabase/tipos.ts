@@ -25,6 +25,8 @@ interface UsuariosRow {
   id: string;
   nombre: string;
   avatar_id: string | null;
+  /** Foto de perfil subida (Supabase Storage, bucket "avatares"). Si existe, gana sobre avatar_id. */
+  avatar_foto_url: string | null;
   confirmo_mayor_edad: boolean;
   pareja_id: string | null;
   modo_spicy_activo: boolean;
@@ -168,6 +170,7 @@ export interface Database {
       usuarios: TablaSimple<
         UsuariosRow,
         | 'avatar_id'
+        | 'avatar_foto_url'
         | 'confirmo_mayor_edad'
         | 'pareja_id'
         | 'modo_spicy_activo'

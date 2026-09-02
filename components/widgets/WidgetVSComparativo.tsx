@@ -13,6 +13,7 @@ import { PUNTOS_PARA_DESBLOQUEAR_PLOT_TWIST } from '@/lib/reglas/constantes';
 interface Jugador {
   nombre: string;
   avatarId: string | null;
+  fotoUrl?: string | null;
   puntos: number;
 }
 
@@ -53,7 +54,13 @@ function LadoJugador({ jugador, etiquetaLado }: { jugador: Jugador; etiquetaLado
   return (
     <div className="flex w-24 flex-col items-center gap-2 text-center">
       <AnilloProgreso progreso={progreso} tamano={82}>
-        <Avatar avatarId={jugador.avatarId} nombre={jugador.nombre} tamano={54} anillo={false} />
+        <Avatar
+          avatarId={jugador.avatarId}
+          fotoUrl={jugador.fotoUrl}
+          nombre={jugador.nombre}
+          tamano={54}
+          anillo={false}
+        />
       </AnilloProgreso>
       <p className="max-w-full truncate font-heading text-sm text-white">
         {etiquetaLado}
