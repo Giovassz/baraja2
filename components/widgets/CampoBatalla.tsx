@@ -41,6 +41,9 @@ export function CampoBatalla({
   const { celebrar, Corazones } = useCelebracion();
 
   const activa = cartas.find((c) => c.id === activaId) ?? null;
+  // Antes esto solo se notaba tocando una por una las cartas del carrusel — ahora
+  // sale grande arriba en cuanto tu pareja avisa que cumplió algo que le lanzaste.
+  const reclamadas = cartas.filter((c) => c.reclamada);
 
   function confirmar(carta: CartaEnCampo) {
     if (enviando) return;
@@ -73,6 +76,25 @@ export function CampoBatalla({
         En juego
       </p>
       <Corazones />
+
+      {reclamadas.length > 0 && (
+        <button
+          type="button"
+          onClick={() => setActivaId(reclamadas[0]!.id)}
+          className="destello flex items-center gap-3 overflow-hidden rounded-widget bg-gradient-to-r from-rosa-acento to-coral p-4 text-left shadow-[0_16px_36px_-14px_rgb(var(--c-acento)/0.8)] transition active:scale-[0.98]"
+        >
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/20">
+            <Icono.check className="h-5 w-5 text-white" strokeWidth={2.5} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-heading text-base font-bold text-white">
+              {nombreCompanero ?? 'Tu pareja'} dice que ya cumplió
+              {reclamadas.length > 1 ? ` ${reclamadas.length} cartas` : ''}
+            </span>
+            <span className="block text-xs text-white/85">Toca para confirmar y dar el punto</span>
+          </span>
+        </button>
+      )}
       <div className="flex gap-2.5 overflow-x-auto pb-1">
         {cartas.map((carta) => (
           <button
