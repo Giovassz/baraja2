@@ -14,6 +14,37 @@
   --nav-alto: 66px;
   --topbar-alto: 72px;
   color-scheme: dark;
+
+  /* Tema de color (Perfil > Tema): tríos RGB "r g b" para poder usarlos como
+     rgb(var(--c-x) / alpha) tanto en tailwind.config.ts como en este archivo.
+     "rosado" es el look de siempre y vive aquí, en :root, sin bloque propio. */
+  --c-acento: 232 93 138;
+  --c-coral: 255 122 89;
+  --c-pastel: 247 198 218;
+}
+
+[data-tema='morado'] {
+  --c-acento: 155 92 232;
+  --c-coral: 194 70 158;
+  --c-pastel: 227 212 249;
+}
+
+[data-tema='azul'] {
+  --c-acento: 62 142 247;
+  --c-coral: 52 201 208;
+  --c-pastel: 203 224 251;
+}
+
+[data-tema='verde'] {
+  --c-acento: 51 182 121;
+  --c-coral: 155 217 77;
+  --c-pastel: 201 239 215;
+}
+
+[data-tema='rojo'] {
+  --c-acento: 229 72 77;
+  --c-coral: 255 138 61;
+  --c-pastel: 249 208 206;
 }
 
 html {
@@ -29,7 +60,9 @@ body {
   overflow-x: clip;
 }
 
-/* Capa de degradado fija sin repintar en cada scroll (compositada en GPU) */
+/* Capa de degradado fija sin repintar en cada scroll (compositada en GPU).
+   Cada tema pinta una mezcla propia (no el mismo dibujo solo reteñido): cambia la
+   posición de las manchas, su tamaño y un tercer tono de fondo que le da su ánimo. */
 body::before {
   content: '';
   position: fixed;
@@ -37,10 +70,52 @@ body::before {
   z-index: -2;
   pointer-events: none;
   transform: translateZ(0);
+  transition: background 0.4s ease;
+  /* Más grande que la pantalla + animado: el fondo respira lentamente en vez de
+     quedarse clavado, así se siente vivo y no un dibujo estático. */
+  background-size: 160% 160%;
+  animation: gradiente-mueve 22s ease-in-out infinite;
   background:
-    radial-gradient(circle at 12% -6%, rgba(232, 93, 138, 0.22), transparent 42%),
-    radial-gradient(circle at 92% 4%, rgba(107, 74, 134, 0.28), transparent 40%),
-    radial-gradient(circle at 50% 118%, rgba(179, 72, 107, 0.18), transparent 52%);
+    radial-gradient(ellipse 70% 55% at 14% -8%, rgb(var(--c-acento) / 0.45), transparent 58%),
+    radial-gradient(ellipse 60% 50% at 96% 2%, rgb(var(--c-coral) / 0.32), transparent 55%),
+    radial-gradient(ellipse 90% 60% at 50% 122%, rgb(var(--c-acento) / 0.28), transparent 65%),
+    var(--noche);
+}
+
+[data-tema='morado'] body::before {
+  background-size: 160% 160%;
+  background:
+    radial-gradient(ellipse 75% 60% at 8% -10%, rgb(var(--c-acento) / 0.5), transparent 60%),
+    radial-gradient(ellipse 55% 45% at 98% 0%, rgb(var(--c-coral) / 0.36), transparent 52%),
+    radial-gradient(ellipse 100% 65% at 50% 120%, rgba(88, 28, 135, 0.55), transparent 68%),
+    #150a1f;
+}
+
+[data-tema='azul'] body::before {
+  background-size: 160% 160%;
+  background:
+    radial-gradient(ellipse 75% 60% at 6% -10%, rgb(var(--c-acento) / 0.48), transparent 60%),
+    radial-gradient(ellipse 55% 45% at 100% -2%, rgb(var(--c-coral) / 0.34), transparent 54%),
+    radial-gradient(ellipse 100% 68% at 50% 124%, rgba(12, 60, 110, 0.6), transparent 70%),
+    #071224;
+}
+
+[data-tema='verde'] body::before {
+  background-size: 160% 160%;
+  background:
+    radial-gradient(ellipse 75% 58% at 8% -8%, rgb(var(--c-acento) / 0.46), transparent 58%),
+    radial-gradient(ellipse 55% 45% at 96% 0%, rgb(var(--c-coral) / 0.32), transparent 52%),
+    radial-gradient(ellipse 100% 65% at 50% 120%, rgba(16, 74, 46, 0.58), transparent 68%),
+    #0a1a12;
+}
+
+[data-tema='rojo'] body::before {
+  background-size: 160% 160%;
+  background:
+    radial-gradient(ellipse 75% 60% at 8% -10%, rgb(var(--c-acento) / 0.5), transparent 58%),
+    radial-gradient(ellipse 55% 45% at 98% 0%, rgb(var(--c-coral) / 0.34), transparent 52%),
+    radial-gradient(ellipse 100% 65% at 50% 120%, rgba(110, 20, 20, 0.55), transparent 68%),
+    #1c0a08;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -61,7 +136,9 @@ body::before {
     font-family: var(--fuente-titulos), 'Fredoka', sans-serif;
     font-weight: 600;
     letter-spacing: -0.015em;
-    color: #fff;
+    /* Título en el color del tema activo — las pantallas de marketing/login fijan su
+       propio text-white explícito encima, así que no les afecta este cambio. */
+    color: rgb(var(--c-acento));
   }
 }
 
@@ -70,7 +147,9 @@ body::before {
   .widget {
     @apply relative overflow-hidden rounded-widget border p-5;
     background: var(--sup);
-    border-color: var(--linea);
+    /* Borde con un toque del tema activo — antes era un gris fijo, así que cambiar de
+       tema no se notaba en las tarjetas, que son la mayor parte de cada pantalla. */
+    border-color: rgb(var(--c-acento) / 0.18);
     box-shadow: 0 20px 44px -22px rgba(0, 0, 0, 0.7);
   }
   .widget-lavanda {
@@ -80,7 +159,7 @@ body::before {
     background: linear-gradient(160deg, #1e3330, #16100f);
   }
   .widget-acento {
-    background: linear-gradient(160deg, #3a1a2a, #1c0e18);
+    background: linear-gradient(160deg, rgb(var(--c-acento) / 0.34), var(--noche-2) 65%);
   }
 
   /* Chrome (barras de navegación) — casi negro estilo Tinder */
@@ -95,8 +174,8 @@ body::before {
   /* --- Botones --- */
   .boton-primario {
     @apply inline-flex items-center justify-center gap-2 rounded-full
-      bg-gradient-to-r from-rosa-acento to-[#ff7a59] px-6 py-3 font-heading text-base
-      font-semibold text-white shadow-[0_12px_28px_-8px_rgba(232,93,138,0.65)]
+      bg-gradient-to-r from-rosa-acento to-coral px-6 py-3 font-heading text-base
+      font-semibold text-white shadow-[0_12px_28px_-8px_rgb(var(--c-acento)/0.65)]
       transition-all duration-200 hover:brightness-110 active:scale-95
       disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100;
   }
@@ -153,7 +232,7 @@ body::before {
     @apply relative flex items-center justify-center overflow-hidden rounded-[10px] border;
     border-color: rgba(255, 255, 255, 0.14);
     background:
-      radial-gradient(circle at 50% 40%, rgba(232, 93, 138, 0.35), transparent 62%),
+      radial-gradient(circle at 50% 40%, rgb(var(--c-acento) / 0.35), transparent 62%),
       repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.04) 0 6px, transparent 6px 12px),
       #201019;
   }
@@ -165,8 +244,8 @@ body::before {
   }
   .carta-reverso {
     background:
-      repeating-linear-gradient(45deg, rgba(232, 93, 138, 0.4) 0 2px, transparent 2px 10px),
-      repeating-linear-gradient(-45deg, rgba(232, 93, 138, 0.4) 0 2px, transparent 2px 10px),
+      repeating-linear-gradient(45deg, rgb(var(--c-acento) / 0.4) 0 2px, transparent 2px 10px),
+      repeating-linear-gradient(-45deg, rgb(var(--c-acento) / 0.4) 0 2px, transparent 2px 10px),
       #1c0e18;
     background-size: 14px 14px;
   }
@@ -188,7 +267,7 @@ body::before {
   }
   .lane-rival {
     @apply border-rosa-acento/40 bg-rosa-acento/[0.08];
-    box-shadow: 0 0 34px -6px rgba(232, 93, 138, 0.35);
+    box-shadow: 0 0 34px -6px rgb(var(--c-acento) / 0.35);
   }
   .lane-plot {
     @apply border-white/10;
@@ -287,8 +366,10 @@ body::before {
 
   .destello::after {
     content: '';
+    /* Antes era un brillo blanco fijo — no cambiaba con el tema aunque todo lo
+       demás sí. Ahora el brillo lleva el color de acento activo. */
     @apply pointer-events-none absolute inset-y-0 -left-1/3 w-1/3
-      bg-gradient-to-r from-transparent via-white/25 to-transparent;
+      bg-gradient-to-r from-transparent via-rosa-acento/40 to-transparent;
     animation: brillo-pasa 3.4s ease-in-out infinite;
   }
 
@@ -417,7 +498,9 @@ body::before {
 .corazon-flota {
   position: absolute;
   bottom: -40px;
-  color: #e85d8a;
+  /* Antes era un rosa fijo — el fondo decorativo (siempre visible, detrás de toda
+     la app) nunca cambiaba de color aunque el resto de la app sí. */
+  color: rgb(var(--c-acento));
   opacity: 0;
   animation: corazon-sube-fondo linear infinite;
 }

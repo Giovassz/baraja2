@@ -57,6 +57,9 @@ import {
   Eye,
   EyeOff,
   PawPrint,
+  Pencil,
+  Trash2,
+  Palette,
   Cat,
   Dog,
   Rabbit,
@@ -128,6 +131,9 @@ export const Icono = {
   micro: Mic,
   video: Video,
   huella: PawPrint,
+  lapiz: Pencil,
+  papelera: Trash2,
+  paleta: Palette,
 } satisfies Record<string, LucideIcon>;
 
 export type NombreIcono = keyof typeof Icono;

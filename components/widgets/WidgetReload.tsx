@@ -64,7 +64,9 @@ export function WidgetReload({
 
       <motion.button
         whileTap={{ scale: 0.96 }}
-        className="boton-primario mt-3 w-full py-2 text-sm"
+        className={`boton-primario mt-3 w-full py-2 text-sm ${
+          !bloqueado && !pendiente ? 'animate-pulso-glow' : ''
+        }`}
         disabled={bloqueado || pendiente}
         onClick={recargar}
       >

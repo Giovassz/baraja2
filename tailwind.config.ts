@@ -12,9 +12,11 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'rosa-pastel': '#F7C6DA',
-        'rosa-acento': '#E85D8A',
-        coral: '#FF7A59',
+        // Colores de tema: variables CSS (ver :root y [data-tema] en globals.css) para
+        // que cambien en toda la app sin recompilar — el usuario elige tema en Perfil.
+        'rosa-pastel': 'rgb(var(--c-pastel) / <alpha-value>)',
+        'rosa-acento': 'rgb(var(--c-acento) / <alpha-value>)',
+        coral: 'rgb(var(--c-coral) / <alpha-value>)',
         lavanda: '#D9C9EC',
         menta: '#BFEAD1',
         'morado-marca': '#3B1F4D',
@@ -35,12 +37,12 @@ const config: Config = {
         body: ['var(--fuente-cuerpo)', 'Nunito', 'sans-serif'],
       },
       boxShadow: {
-        widget: '0 18px 40px -16px rgba(232, 93, 138, 0.35)',
+        widget: '0 18px 40px -16px rgb(var(--c-acento) / 0.35)',
         'widget-sm': '0 8px 22px -8px rgba(59, 31, 77, 0.20)',
         naipe: '0 16px 34px -12px rgba(59, 31, 77, 0.5)',
         'naipe-alta': '0 30px 60px -14px rgba(59, 31, 77, 0.55)',
-        glow: '0 0 0 1px rgba(232,93,138,0.3), 0 0 30px -4px rgba(232,93,138,0.6)',
-        'glow-fuerte': '0 0 0 2px rgba(232,93,138,0.4), 0 0 44px -2px rgba(232,93,138,0.75)',
+        glow: '0 0 0 1px rgb(var(--c-acento) / 0.3), 0 0 30px -4px rgb(var(--c-acento) / 0.6)',
+        'glow-fuerte': '0 0 0 2px rgb(var(--c-acento) / 0.4), 0 0 44px -2px rgb(var(--c-acento) / 0.75)',
         nav: '0 -12px 30px -16px rgba(59,31,77,0.4)',
       },
       backgroundImage: {
@@ -77,8 +79,8 @@ const config: Config = {
           '100%': { transform: 'translateX(240%) skewX(-18deg)' },
         },
         'pulso-glow': {
-          '0%, 100%': { boxShadow: '0 0 0 0 rgba(232,93,138,0.5)' },
-          '50%': { boxShadow: '0 0 0 14px rgba(232,93,138,0)' },
+          '0%, 100%': { boxShadow: '0 0 0 0 rgb(var(--c-acento) / 0.5)' },
+          '50%': { boxShadow: '0 0 0 14px rgb(var(--c-acento) / 0)' },
         },
         'gradiente-mueve': {
           '0%, 100%': { backgroundPosition: '0% 50%' },

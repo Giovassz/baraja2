@@ -37,7 +37,7 @@ export function BarraInferior() {
             <motion.span
               animate={{ scale: activo ? 1.05 : 1 }}
               className={`flex h-8 w-8 items-center justify-center rounded-full transition ${
-                activo ? 'bg-gradient-to-br from-rosa-acento to-coral text-white shadow-[0_6px_16px_-4px_rgba(232,93,138,0.7)]' : 'text-white/45'
+                activo ? 'bg-gradient-to-br from-rosa-acento to-coral text-white shadow-[0_6px_16px_-4px_rgb(var(--c-acento)/0.7)]' : 'text-white/45'
               }`}
             >
               <Ico className="h-[18px] w-[18px]" strokeWidth={activo ? 2.6 : 2} />

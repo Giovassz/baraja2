@@ -97,7 +97,7 @@ export function CaraCarta({
   return (
     <div
       className={`carta ${MARCO[acento]} ${atenuado ? 'opacity-60 saturate-50' : ''} ${
-        listaParaConfirmar ? 'ring-2 ring-rosa-acento shadow-[0_0_22px_rgba(232,93,138,0.65)]' : ''
+        listaParaConfirmar ? 'ring-2 ring-rosa-acento shadow-[0_0_22px_rgb(var(--c-acento)/0.65)]' : ''
       } ${className}`}
     >
       <div className={`carta-inner ${compacta ? 'gap-1 p-1.5' : 'gap-2 p-2.5'}`}>

@@ -33,13 +33,13 @@ export function AnilloProgreso({
         width={tamano}
         height={tamano}
         className="-rotate-90"
-        style={{ filter: p > 0 ? 'drop-shadow(0 0 6px rgba(232,93,138,0.45))' : undefined }}
+        style={{ filter: p > 0 ? 'drop-shadow(0 0 6px rgb(var(--c-acento) / 0.45))' : undefined }}
       >
         <defs>
           <linearGradient id={`g-${gid}`} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#E85D8A" />
-            <stop offset="60%" stopColor="#B3486B" />
-            <stop offset="100%" stopColor="#D9C9EC" />
+            <stop offset="0%" stopColor="rgb(var(--c-acento))" />
+            <stop offset="60%" stopColor="rgb(var(--c-coral))" />
+            <stop offset="100%" stopColor="rgb(var(--c-pastel))" />
           </linearGradient>
         </defs>
         <circle
@@ -47,7 +47,7 @@ export function AnilloProgreso({
           cy={tamano / 2}
           r={radio}
           fill="none"
-          stroke="#F7C6DA"
+          stroke="rgb(var(--c-pastel))"
           strokeOpacity={0.5}
           strokeWidth={grosor}
         />

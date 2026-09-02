@@ -1,5 +1,6 @@
 // Pila de retos recibidos, estilo Tinder: carta grande al frente, siguientes asomando.
-// Botón ✕ = ver el siguiente · botón ♥ = avisar "ya lo hice" (con animación de swipe).
+// Botón ✕ = ver el siguiente · botón de acción = avisar "ya lo hice" (con animación de
+// swipe). Ese botón lleva el ícono del tema activo (antes siempre era un corazón fijo).
 // Ojo: esto NO da el punto todavía — solo le avisa a quien mandó la carta para que
 // confirme. El punto se otorga hasta que ella confirme desde su mano (ManoFan).
 // Implementa BJ2-020
@@ -8,8 +9,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Icono } from '@/components/ui/iconos';
+import { Icono, type NombreIcono } from '@/components/ui/iconos';
 import { useCelebracion } from '@/components/ui/Celebracion';
+import { useIconoDeTema } from '@/components/ui/useTemaActivo';
 import { presentacionCarta } from '@/lib/reglas/carta';
 import { reclamarCumplida } from '@/lib/actions/cartas';
 import type { EstadoCarta } from '@/lib/supabase/tipos';
@@ -42,6 +44,8 @@ export function PilaRetos({
   const pendiente = enviando;
   const [error, setError] = useState<string | null>(null);
   const { celebrar, Corazones } = useCelebracion();
+  const iconoTema = useIconoDeTema();
+  const IconoAvisar = Icono[iconoTema as NombreIcono];
 
   const total = retos.length;
   const actual = retos[i % total];
@@ -123,7 +127,7 @@ export function PilaRetos({
             </div>
 
             <div className="flex flex-1 flex-col items-center justify-center gap-4 px-5 text-center">
-              <span className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-rosa-acento to-coral text-white shadow-[0_16px_36px_-10px_rgba(232,93,138,0.7)]">
+              <span className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-rosa-acento to-coral text-white shadow-[0_16px_36px_-10px_rgb(var(--c-acento)/0.7)]">
                 <Ico className="h-9 w-9" strokeWidth={2} />
               </span>
               <p className="font-heading text-base font-semibold leading-snug text-white text-balance">
@@ -153,13 +157,13 @@ export function PilaRetos({
           onClick={avisar}
           disabled={pendiente}
           aria-label="Avisar que ya lo cumpliste"
-          className="flex h-[74px] w-[74px] items-center justify-center rounded-full bg-gradient-to-br from-rosa-acento to-coral text-white shadow-[0_18px_44px_-8px_rgba(232,93,138,0.85)] transition active:scale-90 disabled:opacity-50"
+          className="flex h-[74px] w-[74px] items-center justify-center rounded-full bg-gradient-to-br from-rosa-acento to-coral text-white shadow-[0_18px_44px_-8px_rgb(var(--c-acento)/0.85)] transition active:scale-90 disabled:opacity-50"
         >
-          <Icono.corazon className="h-9 w-9" strokeWidth={2.5} fill="currentColor" />
+          <IconoAvisar className="h-9 w-9" strokeWidth={2.5} fill="currentColor" />
         </button>
       </div>
       <p className="mt-2 text-center text-[11px] text-white/45">
-        {pendiente ? 'Avisando…' : 'Toca el corazón cuando ya lo hayas cumplido'}
+        {pendiente ? 'Avisando…' : 'Toca el botón cuando ya lo hayas cumplido'}
       </p>
       <p className="mt-0.5 text-center text-[10px] text-white/35">
         Tu pareja confirma desde su mano y ahí ganas el punto.

@@ -1,6 +1,10 @@
-// Fondo ambiental: corazones que suben lentamente detrás de todo.
-// Implementa BJ2-002
-import { Heart } from 'lucide-react';
+// Fondo ambiental: íconos que suben lentamente detrás de todo, en el color y la
+// forma del tema activo (antes siempre eran corazones rosa fijos).
+// Implementa BJ2-002, BJ2-041
+'use client';
+
+import { Icono, type NombreIcono } from '@/components/ui/iconos';
+import { useIconoDeTema } from '@/components/ui/useTemaActivo';
 
 const CORAZONES = [
   { left: '6%', size: 24, dur: 15, delay: 0, op: 0.16 },
@@ -18,6 +22,8 @@ const CORAZONES = [
 ];
 
 export function FondoCorazones() {
+  const IconoFondo = Icono[useIconoDeTema() as NombreIcono];
+
   return (
     <div className="corazones-fondo" aria-hidden>
       {CORAZONES.map((c, i) => (
@@ -31,7 +37,7 @@ export function FondoCorazones() {
             ['--op' as string]: c.op,
           }}
         >
-          <Heart width={c.size} height={c.size} fill="currentColor" strokeWidth={0} />
+          <IconoFondo width={c.size} height={c.size} fill="currentColor" strokeWidth={0} />
         </span>
       ))}
     </div>

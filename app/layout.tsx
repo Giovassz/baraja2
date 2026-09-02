@@ -57,6 +57,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es-MX" className={`${fredoka.variable} ${nunito.variable}`}>
+      <head>
+        {/* Aplica el tema guardado (Perfil > Tema) antes del primer pintado, para que
+            no se vea un parpadeo del rosa por defecto al cargar. Es por dispositivo
+            (localStorage), no por cuenta. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var t=localStorage.getItem('bj2-tema');if(t)document.documentElement.setAttribute('data-tema',t)}catch(e){}",
+          }}
+        />
+      </head>
       <body className="font-body">
         {children}
         <RegistrarServiceWorker />
