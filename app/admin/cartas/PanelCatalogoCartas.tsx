@@ -2,11 +2,15 @@
 // línea) y quitar cartas existentes una por una.
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useFormState } from 'react-dom';
 import { BotonEnviar, Boton } from '@/components/ui/Boton';
 import { Icono } from '@/components/ui/iconos';
-import { agregarCartasCatalogo, desactivarCartaCatalogo } from '@/lib/actions/admin';
+import {
+  agregarCartasCatalogo,
+  desactivarCartaCatalogo,
+  editarCartaCatalogo,
+} from '@/lib/actions/admin';
 
 export interface FilaCarta {
   id: string;
@@ -151,7 +155,73 @@ function FormularioAgregar() {
 
 function FilaCartaCatalogo({ fila }: { fila: FilaCarta }) {
   const [confirmando, setConfirmando] = useState(false);
+  const [editando, setEditando] = useState(false);
   const [estado, accion] = useFormState(desactivarCartaCatalogo, null);
+  const [estadoEditar, accionEditar] = useFormState(editarCartaCatalogo, null);
+
+  // Cerrar el modo edición cuando el guardado sale bien (con efecto, no en el
+  // cuerpo del render — si no, la próxima vez que se abra "editar" se cerraría
+  // solo, porque el estado de useFormState no vuelve a null por su cuenta).
+  useEffect(() => {
+    if (estadoEditar?.ok) setEditando(false);
+  }, [estadoEditar]);
+
+  if (editando) {
+    return (
+      <form action={accionEditar} className="widget flex flex-col gap-2 !p-3">
+        <input type="hidden" name="id" value={fila.id} />
+        <textarea
+          name="texto"
+          defaultValue={fila.texto}
+          rows={2}
+          className="campo-texto resize-y text-sm"
+        />
+        <div className="flex gap-2">
+          <select name="tipo" defaultValue={fila.tipo} className="campo-texto !py-2 text-sm">
+            {TIPOS.map((t) => (
+              <option key={t.valor} value={t.valor}>
+                {t.etiqueta}
+              </option>
+            ))}
+          </select>
+          <select
+            name="modalidad"
+            defaultValue={fila.modalidad}
+            className="campo-texto !py-2 text-sm"
+          >
+            {MODALIDADES.map((m) => (
+              <option key={m.valor} value={m.valor}>
+                {m.etiqueta}
+              </option>
+            ))}
+          </select>
+          <input
+            type="number"
+            name="puntos"
+            defaultValue={fila.puntos}
+            min={1}
+            max={10}
+            className="campo-texto !w-16 !py-2 text-sm"
+            aria-label="Puntos"
+          />
+        </div>
+        {estadoEditar?.error && (
+          <p className="text-xs text-rosa-acento">{estadoEditar.mensaje}</p>
+        )}
+        <div className="flex justify-end gap-1.5">
+          <Boton
+            type="button"
+            variante="secundario"
+            className="!px-2.5 !py-1.5 text-xs"
+            onClick={() => setEditando(false)}
+          >
+            Cancelar
+          </Boton>
+          <BotonEnviar className="!px-2.5 !py-1.5 text-xs">Guardar</BotonEnviar>
+        </div>
+      </form>
+    );
+  }
 
   return (
     <div className="widget !p-3">
@@ -182,14 +252,24 @@ function FilaCartaCatalogo({ fila }: { fila: FilaCarta }) {
             <BotonEnviar className="!px-2.5 !py-1.5 text-xs">Confirmar</BotonEnviar>
           </form>
         ) : (
-          <button
-            type="button"
-            onClick={() => setConfirmando(true)}
-            aria-label="Quitar carta del catálogo"
-            className="shrink-0 rounded-full bg-white/10 p-2 text-white/60 transition hover:bg-rosa-acento/20 hover:text-rosa-acento"
-          >
-            <Icono.papelera className="h-4 w-4" strokeWidth={2.5} />
-          </button>
+          <div className="flex shrink-0 gap-1.5">
+            <button
+              type="button"
+              onClick={() => setEditando(true)}
+              aria-label="Editar carta"
+              className="rounded-full bg-white/10 p-2 text-white/60 transition hover:bg-white/20 hover:text-white"
+            >
+              <Icono.lapiz className="h-4 w-4" strokeWidth={2.5} />
+            </button>
+            <button
+              type="button"
+              onClick={() => setConfirmando(true)}
+              aria-label="Quitar carta del catálogo"
+              className="rounded-full bg-white/10 p-2 text-white/60 transition hover:bg-rosa-acento/20 hover:text-rosa-acento"
+            >
+              <Icono.papelera className="h-4 w-4" strokeWidth={2.5} />
+            </button>
+          </div>
         )}
       </div>
     </div>

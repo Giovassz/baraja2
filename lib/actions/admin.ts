@@ -12,6 +12,9 @@ import {
   esquemaAlternarTester,
   esquemaAgregarCartasCatalogo,
   esquemaDesactivarCartaCatalogo,
+  esquemaEditarCartaCatalogo,
+  esquemaEditarUsuario,
+  esquemaEliminarUsuario,
 } from '@/lib/validaciones/admin';
 import { exito, fallo, type ResultadoAccion } from './_resultado';
 
@@ -123,5 +126,100 @@ export async function desactivarCartaCatalogo(
   if (error) return fallo('ERROR_INESPERADO');
 
   revalidatePath('/admin/cartas');
+  revalidatePath('/admin');
   return exito('Carta quitada del catálogo.');
+}
+
+/** Cambia el texto/tipo/modalidad/puntos de una carta ya existente en el catálogo. */
+export async function editarCartaCatalogo(
+  _prev: ResultadoAccion | null,
+  formData: FormData,
+): Promise<ResultadoAccion> {
+  const usuario = await obtenerUsuarioActual();
+  if (!esCorreoAdmin(usuario.email)) return fallo('NO_AUTENTICADO');
+
+  const parsed = esquemaEditarCartaCatalogo.safeParse({
+    id: formData.get('id'),
+    texto: formData.get('texto'),
+    tipo: formData.get('tipo'),
+    modalidad: formData.get('modalidad'),
+    puntos: formData.get('puntos'),
+  });
+  if (!parsed.success) return fallo('DATOS_INVALIDOS', parsed.error.issues[0]?.message);
+
+  const admin = crearClienteAdmin();
+  const { error } = await admin
+    .from('catalogo_cartas')
+    .update({
+      texto: parsed.data.texto,
+      tipo: parsed.data.tipo,
+      modalidad: parsed.data.modalidad,
+      puntos_otorgados: parsed.data.puntos,
+    })
+    .eq('id', parsed.data.id);
+  if (error) return fallo('ERROR_INESPERADO');
+
+  revalidatePath('/admin/cartas');
+  revalidatePath('/admin');
+  return exito('Carta actualizada.');
+}
+
+/** Cambia el nombre visible de un usuario. */
+export async function editarNombreUsuario(
+  _prev: ResultadoAccion | null,
+  formData: FormData,
+): Promise<ResultadoAccion> {
+  const usuario = await obtenerUsuarioActual();
+  if (!esCorreoAdmin(usuario.email)) return fallo('NO_AUTENTICADO');
+
+  const parsed = esquemaEditarUsuario.safeParse({
+    id: formData.get('id'),
+    nombre: formData.get('nombre'),
+  });
+  if (!parsed.success) return fallo('DATOS_INVALIDOS', parsed.error.issues[0]?.message);
+
+  const admin = crearClienteAdmin();
+  const { error } = await admin
+    .from('usuarios')
+    .update({ nombre: parsed.data.nombre })
+    .eq('id', parsed.data.id);
+  if (error) return fallo('ERROR_INESPERADO');
+
+  revalidatePath('/admin/usuarios');
+  return exito('Nombre actualizado.');
+}
+
+/**
+ * Elimina la cuenta por completo (auth.users, con cascada a usuarios). Ojo: solo
+ * usuarios(id) tiene "on delete cascade" hacia auth.users — cartas_asignadas,
+ * parejas, historial_eventos, etc. NO la tienen, así que esto falla (a propósito,
+ * por integridad referencial de Postgres) para cualquier cuenta que ya haya jugado.
+ * Sirve para limpiar cuentas de prueba recién creadas sin actividad todavía.
+ */
+export async function eliminarUsuario(
+  _prev: ResultadoAccion | null,
+  formData: FormData,
+): Promise<ResultadoAccion> {
+  const usuario = await obtenerUsuarioActual();
+  if (!esCorreoAdmin(usuario.email)) return fallo('NO_AUTENTICADO');
+
+  const parsed = esquemaEliminarUsuario.safeParse({ id: formData.get('id') });
+  if (!parsed.success) return fallo('DATOS_INVALIDOS');
+
+  if (parsed.data.id === usuario.id) {
+    return fallo('DATOS_INVALIDOS', 'No puedes eliminar tu propia cuenta desde aquí.');
+  }
+
+  const admin = crearClienteAdmin();
+  const { error } = await admin.auth.admin.deleteUser(parsed.data.id);
+  if (error) {
+    return fallo(
+      'ERROR_INESPERADO',
+      `No se pudo eliminar — probablemente porque esta cuenta ya tiene actividad de juego (cartas, puntos, historial) y esas tablas no permiten borrado en cascada. Detalle: ${error.message}`,
+    );
+  }
+
+  revalidatePath('/admin/usuarios');
+  revalidatePath('/admin');
+  return exito('Cuenta eliminada.');
 }
